@@ -20,6 +20,7 @@
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 <style>
 :root{
   --pi-red:#e60023;--pi-bg:#fff;--pi-surface:#f0f0f0;--pi-text:#111;--pi-muted:#767676;--pi-border:#e2e2e2;
@@ -86,11 +87,7 @@ body{font-family:var(--font);background:var(--panel);color:#e8e0e2;min-height:10
 </style>
 </head>
 <body>
-<header class="site-header">
-  <a href="./">📱 Website Viewer</a><span class="breadcrumb-sep">›</span>
-  <a href="#">Social Media</a><span class="breadcrumb-sep">›</span>
-  <span class="page-title">Pinterest Pin Preview</span>
-</header>
+<header id="header-component"></header>
 <div class="app">
   <aside class="controls">
     <div><h2>Pinterest Pin Preview</h2><p class="sub">Simulate your pin on the Pinterest feed.</p></div>
@@ -163,6 +160,9 @@ body{font-family:var(--font);background:var(--panel);color:#e8e0e2;min-height:10
     </div>
   </main>
 </div>
+  <footer id="footer-component"></footer>
+<script src="header.js"></script>
+<script src="footer.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
