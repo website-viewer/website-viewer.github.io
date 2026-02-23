@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facebook Share Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your website link looks when shared on Facebook. Simulate feed posts, stories, and messenger link previews with real Facebook UI mockups.">
+<meta name="keywords" content="facebook share preview, facebook link preview, og tags facebook, facebook post preview, social share checker">
+<meta property="og:title" content="Facebook Share Preview Tool — Website Viewer">
+<meta property="og:description" content="See exactly how your links appear when shared on Facebook — news feed, stories, and Messenger.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/facebook-share-preview">
+<link rel="canonical" href="https://website-viewer.github.io/facebook-share-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Facebook Share Preview Tool",
+  "url": "https://website-viewer.github.io/facebook-share-preview",
+  "description": "Preview how your website link appears when shared on Facebook. Simulate news feed posts, Messenger previews and mobile views with authentic Facebook UI mockups.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Organization", "name": "Website Viewer" }
+}
+</script>
+<style>
+/* FB shell */
+.fb-shell { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; max-width:500px; margin:0 auto; }
+.fb-shell.dark { background:#18191a; color:#e4e6eb; }
+.fb-shell.light { background:#fff; color:#050505; }
+
+.fb-post-card { border-radius:8px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+.fb-shell.dark .fb-post-card { background:#242526; }
+.fb-shell.light .fb-post-card { background:#fff; }
+
+.fb-post-header { display:flex; align-items:center; gap:10px; padding:12px 16px; }
+.fb-avatar { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#4267B2,#898F9C); flex-shrink:0; display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.85rem; }
+.fb-user-name { font-size:15px; font-weight:600; }
+.fb-shell.dark .fb-user-name { color:#e4e6eb; }
+.fb-shell.light .fb-user-name { color:#050505; }
+.fb-post-time { font-size:12px; color:#65676b; }
+.fb-post-text { padding:0 16px 12px; font-size:15px; line-height:1.5; }
+.fb-shell.dark .fb-post-text { color:#e4e6eb; }
+
+/* Link card styles */
+.fb-link-card-large { border:1px solid; overflow:hidden; }
+.fb-shell.dark .fb-link-card-large { border-color:#3a3b3c; }
+.fb-shell.light .fb-link-card-large { border-color:#dddfe2; }
+.fb-link-img { width:100%; height:261px; object-fit:cover; display:block; }
+.fb-link-img-empty { width:100%; height:261px; background:#e4e6eb; display:flex;align-items:center;justify-content:center;color:#65676b;font-size:0.85rem; }
+.fb-shell.dark .fb-link-img-empty { background:#3a3b3c; color:#b0b3b8; }
+.fb-link-body { padding:12px; }
+.fb-shell.dark .fb-link-body { background:#3a3b3c; }
+.fb-shell.light .fb-link-body { background:#f0f2f5; }
+.fb-link-domain { font-size:12px; color:#65676b; text-transform:uppercase; margin-bottom:2px; letter-spacing:.02em; }
+.fb-link-title { font-size:16px; font-weight:600; line-height:1.3; margin-bottom:2px; }
+.fb-shell.dark .fb-link-title { color:#e4e6eb; }
+.fb-link-desc { font-size:14px; color:#65676b; line-height:1.4; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+
+/* Small (right thumbnail) card */
+.fb-link-card-small { border:1px solid; overflow:hidden; display:flex; height:100px; }
+.fb-shell.dark .fb-link-card-small { border-color:#3a3b3c; }
+.fb-shell.light .fb-link-card-small { border-color:#dddfe2; }
+.fb-link-card-small .fbs-img { width:100px; height:100px; flex-shrink:0; object-fit:cover; display:block; background:#e4e6eb; display:flex;align-items:center;justify-content:center;color:#65676b;font-size:0.7rem; }
+.fb-link-card-small .fbs-img img { width:100px;height:100px;object-fit:cover;display:block; }
+.fb-link-card-small .fbs-body { padding:10px 12px; display:flex; flex-direction:column; justify-content:center; }
+.fb-shell.dark .fb-link-card-small .fbs-body { background:#3a3b3c; }
+.fb-shell.light .fb-link-card-small .fbs-body { background:#f0f2f5; }
+
+/* Reactions bar */
+.fb-reactions { display:flex; align-items:center; justify-content:space-between; padding:4px 16px; border-top:1px solid; margin-top:0; }
+.fb-shell.dark .fb-reactions { border-color:#3a3b3c; }
+.fb-shell.light .fb-reactions { border-color:#dddfe2; }
+.fb-react-count { font-size:13px; color:#65676b; }
+.fb-react-btns { display:flex; gap:0; }
+.fb-react-btn { padding:8px 12px; font-size:13px; font-weight:600; color:#65676b; cursor:pointer; border-radius:4px; display:flex;align-items:center;gap:5px; }
+.fb-react-btn:hover { background:rgba(0,0,0,.05); }
+.fb-shell.dark .fb-react-btn:hover { background:rgba(255,255,255,.05); }
+
+/* Messenger bubble */
+.messenger-shell { max-width:340px; margin:0 auto; font-family:-apple-system,system-ui,sans-serif; }
+.messenger-bubble { background:#0084ff; border-radius:18px 18px 4px 18px; padding:4px; max-width:260px; margin-left:auto; }
+.messenger-link-card { background:#fff; border-radius:14px; overflow:hidden; }
+.messenger-link-img { width:100%; height:140px; object-fit:cover; display:block; background:#e9e9e9; display:flex;align-items:center;justify-content:center;color:#aaa;font-size:0.75rem; }
+.messenger-link-img img { width:100%;height:140px;object-fit:cover;display:block; }
+.messenger-link-body { padding:10px; }
+.messenger-link-domain { font-size:11px; color:#65676b; text-transform:uppercase; margin-bottom:2px; }
+.messenger-link-title { font-size:13px; font-weight:700; color:#050505; }
+.messenger-time { font-size:11px; color:#65676b; text-align:right; margin-top:4px; }
+
+.view-tabs { display:flex; gap:0.5rem; margin-bottom:1.25rem; flex-wrap:wrap; }
+.vtab { padding:0.4rem 1rem; border-radius:999px; border:1px solid var(--color-border); background:transparent; color:var(--color-text-muted); font-size:0.78rem; font-weight:600; cursor:pointer; font-family:var(--font-sans); transition:var(--transition); }
+.vtab.active { background:#4267B2; border-color:#4267B2; color:#fff; }
+.vtab:hover:not(.active) { border-color:#4267B2; color:#4267B2; }
+
+.theme-toggle { display:flex; align-items:center; gap:0.5rem; font-size:0.8rem; color:var(--color-text-muted); margin-bottom:1rem; }
+.toggle-switch { position:relative; width:36px; height:20px; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; inset:0; background:#334155; border-radius:999px; cursor:pointer; transition:.3s; }
+.toggle-slider:before { content:''; position:absolute; width:14px; height:14px; background:#fff; border-radius:50%; top:3px; left:3px; transition:.3s; }
+.toggle-switch input:checked + .toggle-slider { background:#4267B2; }
+.toggle-switch input:checked + .toggle-slider:before { transform:translateX(16px); }
+
+.code-output { background:#0d1117; border:1px solid var(--color-border); border-radius:var(--radius); padding:1rem; font-family:var(--font-mono); font-size:0.78rem; color:#c9d1d9; line-height:1.7; white-space:pre-wrap; word-break:break-all; margin-top:1rem; max-height:260px; overflow-y:auto; }
+</style>
+</head>
+<body>
+
+<header id="header-component"></header>
+
+<main>
+<div class="tool-page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Link Share Previews</a><span>/</span>
+    <span style="color:var(--color-text-light)">Facebook Share Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge">📘 Facebook</div>
+    <h1>Facebook Share Preview Tool</h1>
+    <p>Simulate exactly how your link appears in the Facebook News Feed, right-thumbnail layout, and Messenger — before you post.</p>
+  </div>
+
+  <!-- INPUTS -->
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Page Details</div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page Title (og:title)</label>
+        <input id="fbTitle" type="text" class="form-control" placeholder="Your amazing page title" maxlength="100" oninput="liveUpdate();cnt('fbTitle','tcnt',100)">
+        <div class="char-counter" id="tcnt">0 / 100</div>
+      </div>
+      <div class="form-group">
+        <label>Domain / Site Name</label>
+        <input id="fbDomain" type="text" class="form-control" placeholder="yoursite.com" oninput="liveUpdate()">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Description (og:description)</label>
+        <textarea id="fbDesc" class="form-control" rows="3" placeholder="A compelling description…" maxlength="200" oninput="liveUpdate();cnt('fbDesc','dcnt',200)"></textarea>
+        <div class="char-counter" id="dcnt">0 / 200</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Image URL (og:image — 1200×630 recommended)</label>
+        <input id="fbImage" type="url" class="form-control" placeholder="https://yoursite.com/og-image.jpg" oninput="liveUpdate()">
+      </div>
+      <div class="form-group">
+        <label>Post Caption (optional)</label>
+        <input id="fbCaption" type="text" class="form-control" placeholder="Check this out!" oninput="liveUpdate()">
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Preview</div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
+      <div class="view-tabs">
+        <button class="vtab active" onclick="switchView('feed-large',this)">📰 Feed (Large)</button>
+        <button class="vtab" onclick="switchView('feed-small',this)">📄 Feed (Thumbnail)</button>
+        <button class="vtab" onclick="switchView('messenger',this)">💬 Messenger</button>
+      </div>
+      <div class="theme-toggle">
+        🌙 <label class="toggle-switch"><input type="checkbox" id="fbTheme" onchange="liveUpdate()"><span class="toggle-slider"></span></label> ☀️
+      </div>
+    </div>
+
+    <div id="previewWrap" style="background:#111827;border-radius:var(--radius-lg);padding:1.5rem;min-height:200px;display:flex;align-items:center;justify-content:center;">
+      <div class="preview-placeholder"><span class="icon">📘</span>Fill in the fields above to see your Facebook share preview</div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="copyCode()">📋 Copy OG Tags</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div id="codeOut" class="code-output" style="display:none"></div>
+  </div>
+
+  <!-- HOW TO -->
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use This Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box"><div class="step-num">Step 01</div><h4>Enter Page Info</h4><p>Fill in the title, description, image URL, and domain of the page you want to share on Facebook.</p></div>
+      <div class="step-box"><div class="step-num">Step 02</div><h4>Switch Views</h4><p>Toggle between Feed Large Image, Feed Thumbnail, and Messenger preview to test every context.</p></div>
+      <div class="step-box"><div class="step-num">Step 03</div><h4>Check Both Themes</h4><p>Toggle dark/light mode to make sure your card reads well on Facebook's different color schemes.</p></div>
+      <div class="step-box"><div class="step-num">Step 04</div><h4>Copy & Implement</h4><p>Copy the generated OG meta tags, paste into your HTML <code>&lt;head&gt;</code>, and publish.</p></div>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Facebook Link Sharing</h2>
+    <p>When a URL is shared on Facebook — whether in a post, a comment, or via Messenger — Facebook's crawler (facebookexternalhit) fetches your page and reads its OpenGraph meta tags to build the link preview. The quality of your OG tags has a direct impact on engagement: posts with rich previews consistently outperform plain-URL posts in clicks and shares.</p>
+    <p>Facebook renders link cards in different layouts depending on context. The <strong>large image card</strong> (News Feed default) shows a full-width image above your domain, title, and description. The <strong>thumbnail card</strong> appears when sharing to specific groups or when no large image is detected. <strong>Messenger</strong> shows a compact card inside the chat bubble.</p>
+    <p><strong>Facebook-specific tips:</strong></p>
+    <ul>
+      <li>Image dimensions: <strong>1200×630px</strong> for large cards, <strong>200×200px</strong> minimum for thumbnail</li>
+      <li>Facebook caches OG data aggressively — use the <a href="https://developers.facebook.com/tools/debug/" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">Sharing Debugger</a> to force a refresh after changes</li>
+      <li>Title should be concise: Facebook truncates at ~65 characters in most views</li>
+      <li>Include <code>og:url</code> to prevent Facebook from choosing a random canonical URL</li>
+      <li>Avoid misleading previews — Facebook penalizes clickbait with reduced distribution</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+
+<footer id="footer-component"></footer>
+<script src="../script.js"></script>
+<script>
+let currentView = 'feed-large';
+
+function cnt(id, cid, max) {
+  const v = document.getElementById(id).value.length;
+  const el = document.getElementById(cid);
+  el.textContent = `${v} / ${max}`;
+  el.className = 'char-counter' + (v > max * 0.9 ? ' warn' : '') + (v >= max ? ' over' : '');
+}
+
+function getV() {
+  return {
+    title: document.getElementById('fbTitle').value.trim() || 'Your Page Title',
+    desc: document.getElementById('fbDesc').value.trim(),
+    domain: document.getElementById('fbDomain').value.trim() || 'YOURSITE.COM',
+    image: document.getElementById('fbImage').value.trim(),
+    caption: document.getElementById('fbCaption').value.trim() || 'Check this out! 🎉',
+    dark: !document.getElementById('fbTheme').checked
+  };
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function feedLarge(v, theme) {
+  const imgSection = v.image
+    ? `<img class="fb-link-img" src="${v.image}" alt="" onerror="this.style.display='none'">`
+    : `<div class="fb-link-img-empty">🖼️ No image — use 1200×630px for best results</div>`;
+  return `<div class="fb-shell ${theme}">
+    <div class="fb-post-card">
+      <div class="fb-post-header">
+        <div class="fb-avatar">YN</div>
+        <div><div class="fb-user-name">Your Name</div><div class="fb-post-time">Just now · 🌐</div></div>
+      </div>
+      <div class="fb-post-text">${esc(v.caption)}</div>
+      <div class="fb-link-card-large">
+        ${imgSection}
+        <div class="fb-link-body">
+          <div class="fb-link-domain">${esc(v.domain)}</div>
+          <div class="fb-link-title">${esc(v.title)}</div>
+          ${v.desc ? `<div class="fb-link-desc">${esc(v.desc)}</div>` : ''}
+        </div>
+      </div>
+      <div class="fb-reactions" style="padding:10px 16px">
+        <div class="fb-react-count">👍 ❤️ 😮 &nbsp; 0</div>
+        <div class="fb-react-btns">
+          <div class="fb-react-btn">👍 Like</div>
+          <div class="fb-react-btn">💬 Comment</div>
+          <div class="fb-react-btn">↗️ Share</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function feedSmall(v, theme) {
+  const imgSection = v.image
+    ? `<div class="fbs-img"><img src="${v.image}" alt="" onerror="this.style.display='none'"></div>`
+    : `<div class="fbs-img">🖼️</div>`;
+  return `<div class="fb-shell ${theme}">
+    <div class="fb-post-card">
+      <div class="fb-post-header">
+        <div class="fb-avatar">YN</div>
+        <div><div class="fb-user-name">Your Name</div><div class="fb-post-time">Just now · 🌐</div></div>
+      </div>
+      <div class="fb-post-text">${esc(v.caption)}</div>
+      <div class="fb-link-card-small">
+        ${imgSection}
+        <div class="fbs-body">
+          <div class="fb-link-domain">${esc(v.domain)}</div>
+          <div class="fb-link-title" style="font-size:14px;font-weight:600;line-height:1.3">${esc(v.title)}</div>
+          ${v.desc ? `<div class="fb-link-desc" style="font-size:12px;color:#65676b;margin-top:2px">${esc(v.desc.substring(0,80))}${v.desc.length>80?'…':''}</div>` : ''}
+        </div>
+      </div>
+      <div class="fb-reactions" style="padding:8px 16px">
+        <div class="fb-react-count">👍 0</div>
+        <div class="fb-react-btns"><div class="fb-react-btn">👍 Like</div><div class="fb-react-btn">💬 Comment</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function messengerView(v) {
+  const imgSection = v.image
+    ? `<div class="messenger-link-img"><img src="${v.image}" alt=""></div>`
+    : `<div class="messenger-link-img">🖼️ No image</div>`;
+  return `<div style="background:#f0f0f0;border-radius:12px;padding:16px">
+    <div class="messenger-shell">
+      <div style="font-size:11px;color:#65676b;text-align:right;margin-bottom:4px">You</div>
+      <div class="messenger-bubble">
+        <div class="messenger-link-card">
+          ${imgSection}
+          <div class="messenger-link-body">
+            <div class="messenger-link-domain">${esc(v.domain)}</div>
+            <div class="messenger-link-title">${esc(v.title)}</div>
+            ${v.desc ? `<div style="font-size:12px;color:#65676b;margin-top:3px">${esc(v.desc.substring(0,100))}${v.desc.length>100?'…':''}</div>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="messenger-time">10:30 AM ✓✓</div>
+    </div>
+  </div>`;
+}
+
+function liveUpdate() {
+  const v = getV();
+  const wrap = document.getElementById('previewWrap');
+  const hasContent = document.getElementById('fbTitle').value.trim() || document.getElementById('fbImage').value.trim();
+  if (!hasContent) {
+    wrap.innerHTML = '<div class="preview-placeholder"><span class="icon">📘</span>Fill in the fields above to see your Facebook share preview</div>';
+    return;
+  }
+  const theme = v.dark ? 'dark' : 'light';
+  let html = '';
+  if (currentView === 'feed-large') html = feedLarge(v, theme);
+  else if (currentView === 'feed-small') html = feedSmall(v, theme);
+  else html = messengerView(v);
+  wrap.innerHTML = `<div style="width:100%">${html}</div>`;
+  updateCode(v);
+}
+
+function switchView(view, btn) {
+  currentView = view;
+  document.querySelectorAll('.vtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  liveUpdate();
+}
+
+function updateCode(v) {
+  const el = document.getElementById('codeOut');
+  el.style.display = 'block';
+  el.textContent = [
+    `<!-- Facebook / OpenGraph Meta Tags -->`,
+    `<meta property="og:title" content="${v.title}" />`,
+    `<meta property="og:description" content="${v.desc}" />`,
+    `<meta property="og:image" content="${v.image}" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:site_name" content="${v.domain}" />`
+  ].join('\n');
+}
+
+function copyCode() {
+  const el = document.getElementById('codeOut');
+  if (!el.textContent) { alert('Fill in some fields first!'); return; }
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const b = event.target; b.textContent = '✅ Copied!';
+    setTimeout(() => b.textContent = '📋 Copy OG Tags', 2000);
+  });
+}
+
+function resetAll() {
+  ['fbTitle','fbDesc','fbDomain','fbImage','fbCaption'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fbTheme').checked = false;
+  document.getElementById('codeOut').style.display = 'none';
+  ['tcnt','dcnt'].forEach((id,i) => document.getElementById(id).textContent = `0 / ${[100,200][i]}`);
+  document.getElementById('previewWrap').innerHTML = '<div class="preview-placeholder"><span class="icon">📘</span>Fill in the fields above to see your Facebook share preview</div>';
+}
+
+document.addEventListener('DOMContentLoaded', () => { renderHeader(); renderFooter(); });
+</script>
+</body>
+</html>
