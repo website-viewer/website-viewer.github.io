@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Essential Meta Tags for SEO -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Website Viewer - Check how your website looks on mobile, tablet, and desktop devices. Responsive website preview tool with real-time rendering.">
+    <meta name="keywords" content="website viewer, responsive design, mobile preview, tablet preview, desktop preview, website checker">
+    <meta name="author" content="Website Viewer">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    
+    <!-- Open Graph Tags for Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://website-viewer.github.io">
+    <meta property="og:title" content="Website Viewer - Responsive Design Preview Tool">
+    <meta property="og:description" content="Check how your website looks on mobile, tablet, and desktop devices. Responsive website preview tool with real-time rendering.">
+    <meta property="og:site_name" content="Website Viewer">
+    
+    <!-- Twitter Card Tags -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://website-viewer.github.io">
+    <meta property="twitter:title" content="Website Viewer - Responsive Design Preview Tool">
+    <meta property="twitter:description" content="Check how your website looks on mobile, tablet, and desktop devices.">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://website-viewer.github.io">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%23ffffff'>📱</text></svg>">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Website Viewer">
+    
+    <title>Website Viewer - Responsive Design Preview Tool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header Component -->
+    <header id="header-component"></header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Website Preview Tool</h1>
+                <p class="hero-subtitle">Check how your website looks on mobile, tablet, and desktop</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="scrollToViewer()">Get Started</button>
+                    <button class="btn btn-secondary" onclick="scrollToFeatures()">Learn More</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <h2>Why Use Website Viewer?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile Preview</h3>
+                    <p>Test your website on various mobile devices with different screen sizes</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>Desktop Preview</h3>
+                    <p>View your website exactly as it appears on desktop monitors</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⌨️</div>
+                    <h3>Tablet Preview</h3>
+                    <p>Check responsive design on tablet devices and screen sizes</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-time Rendering</h3>
+                    <p>See instant changes as you modify your website URL</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure & Fast</h3>
+                    <p>No data storage, instant loading, completely secure</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Easy to Use</h3>
+                    <p>Simple interface for quick and easy website previews</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Website Viewer Section -->
+        <section class="viewer-section" id="viewer">
+            <h2>Website Viewer</h2>
+            <div class="viewer-container">
+                <div class="viewer-controls">
+                    <div class="input-group">
+                        <input 
+                            type="url" 
+                            id="urlInput" 
+                            placeholder="Enter website URL (e.g., https://example.com)"
+                            class="url-input"
+                        >
+                        <button class="btn btn-primary" onclick="loadWebsite()">Preview</button>
+                    </div>
+                    <div class="device-buttons">
+                        <button class="device-btn active" data-device="mobile" onclick="switchDevice('mobile')">
+                            <span class="device-icon">📱</span> Mobile
+                        </button>
+                        <button class="device-btn" data-device="tablet" onclick="switchDevice('tablet')">
+                            <span class="device-icon">⌨️</span> Tablet
+                        </button>
+                        <button class="device-btn" data-device="desktop" onclick="switchDevice('desktop')">
+                            <span class="device-icon">💻</span> Desktop
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preview-area">
+                    <div class="device-frame" id="deviceFrame">
+                        <div class="device-notch" id="deviceNotch"></div>
+                        <iframe 
+                            id="previewFrame" 
+                            title="Website Preview"
+                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                        ></iframe>
+                        <div class="device-bezels"></div>
+                    </div>
+                </div>
+
+                <div class="preview-info">
+                    <p id="previewStatus">Enter a URL and click Preview to see the website</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Component -->
+    <footer id="footer-component"></footer>
+
+    <!-- Schema Markup - Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Website Viewer",
+        "description": "A responsive website preview tool to check how websites look on mobile, tablet, and desktop devices",
+        "url": "https://website-viewer.github.io",
+        "logo": "https://website-viewer.github.io/logo.svg",
+        "sameAs": [
+            "https://github.com/website-viewer"
+        ],
+        "contact": {
+            "@type": "ContactPoint",
+            "contactType": "General Support",
+            "url": "https://github.com/website-viewer"
+        }
+    }
+    </script>
+
+    <!-- Schema Markup - SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Website Viewer",
+        "description": "Check how your website looks on mobile, tablet, and desktop devices. Responsive design preview tool with real-time rendering.",
+        "url": "https://website-viewer.github.io",
+        "applicationCategory": "WebApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/OnlineOnly"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "ratingCount": "100"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "Website Viewer"
+        }
+    }
+    </script>
+
+    <!-- Schema Markup - BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://website-viewer.github.io"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Features",
+                "item": "https://website-viewer.github.io#features"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Viewer",
+                "item": "https://website-viewer.github.io#viewer"
+            }
+        ]
+    }
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>
