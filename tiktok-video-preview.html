@@ -20,6 +20,7 @@
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 <style>
 :root{
   --tk-bg:#000;--tk-text:#fff;--tk-muted:rgba(255,255,255,.7);--tk-pink:#fe2c55;--tk-cyan:#25f4ee;
@@ -99,11 +100,7 @@ body{font-family:var(--font-ui);background:var(--panel);color:#e8e8e8;min-height
 </style>
 </head>
 <body>
-<header class="site-header">
-  <a href="./">📱 Website Viewer</a><span class="breadcrumb-sep">›</span>
-  <a href="#">Social Media</a><span class="breadcrumb-sep">›</span>
-  <span class="page-title">TikTok Video Preview</span>
-</header>
+<header id="header-component"></header>
 <div class="app">
   <aside class="controls">
     <div><h2>TikTok Preview</h2><p class="sub">Simulate your TikTok on the For You Page.</p></div>
@@ -200,6 +197,9 @@ body{font-family:var(--font-ui);background:var(--panel);color:#e8e8e8;min-height
     </div>
   </main>
 </div>
+  <footer id="footer-component"></footer>
+<script src="header.js"></script>
+<script src="footer.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const fmt=n=>n>=1000000?(n/1000000).toFixed(1).replace(/\.0$/,'')+'M':n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
