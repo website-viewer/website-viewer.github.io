@@ -20,6 +20,7 @@
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 <style>
 :root{
   --yt-red:#ff0000;--yt-bg:#0f0f0f;--yt-surface:#272727;--yt-border:#3f3f3f;--yt-text:#f1f1f1;--yt-muted:#aaa;
@@ -104,6 +105,7 @@ body{font-family:var(--font);background:var(--panel);color:#e0e0e0;min-height:10
 </style>
 </head>
 <body>
+  <header id="header-component"></header>
 <header class="site-header">
   <a href="./">📱 Website Viewer</a><span class="breadcrumb-sep">›</span>
   <a href="#">Social Media</a><span class="breadcrumb-sep">›</span>
@@ -207,6 +209,9 @@ body{font-family:var(--font);background:var(--panel);color:#e0e0e0;min-height:10
     </div>
   </main>
 </div>
+  <footer id="footer-component"></footer>
+<script src="header.js"></script>
+<script src="footer.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const fmt=n=>n>=1000000?(n/1000000).toFixed(1).replace(/\.0$/,'')+'M':n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
