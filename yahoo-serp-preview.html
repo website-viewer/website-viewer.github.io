@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yahoo SERP Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your webpage appears in Yahoo Search results. Simulate Yahoo desktop and mobile SERPs with title, description, breadcrumbs and rich snippets.">
+<meta name="keywords" content="yahoo serp preview, yahoo search preview, yahoo snippet tool, yahoo seo preview, yahoo search results preview">
+<meta property="og:title" content="Yahoo SERP Preview Tool — Website Viewer">
+<meta property="og:description" content="See exactly how your page appears in Yahoo Search — desktop and mobile, with rich snippets and character validation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/yahoo-serp-preview">
+<link rel="canonical" href="https://website-viewer.github.io/yahoo-serp-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"Yahoo SERP Preview Tool",
+  "url":"https://website-viewer.github.io/yahoo-serp-preview",
+  "description":"Preview how your webpage appears in Yahoo Search results. Simulate authentic Yahoo desktop and mobile SERPs with title tags, meta descriptions, breadcrumbs and rich snippets.",
+  "applicationCategory":"DeveloperApplication",
+  "operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<style>
+.yahoo-shell {
+  font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 680px;
+  margin: 0 auto;
+  box-shadow: 0 2px 14px rgba(0,0,0,.13);
+}
+.yahoo-header {
+  background: #fff;
+  padding: 10px 16px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+.yahoo-logo {
+  font-size: 26px;
+  font-weight: 900;
+  color: #6001d2;
+  letter-spacing: -1px;
+  padding-bottom: 6px;
+  display: inline-block;
+  font-family: Georgia,serif;
+}
+.yahoo-searchbar {
+  display: flex;
+  border: 2px solid #6001d2;
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 560px;
+  margin: 6px 0 8px;
+}
+.yahoo-searchbar input {
+  flex: 1; border: none; outline: none;
+  padding: 9px 14px; font-size: 14px; color: #202020;
+  font-family: inherit; background: transparent;
+}
+.yahoo-search-btn {
+  background: #6001d2; color: #fff; border: none;
+  padding: 9px 18px; font-size: 16px; cursor: pointer;
+}
+.yahoo-tabs {
+  display: flex; font-size: 13px; color: #606060;
+  overflow-x: auto; gap: 0;
+}
+.yahoo-tab {
+  padding: 8px 16px; cursor: pointer; white-space: nowrap;
+  border-bottom: 3px solid transparent;
+}
+.yahoo-tab.active { color: #6001d2; border-bottom-color: #6001d2; font-weight: 700; }
+.yahoo-tab:hover:not(.active) { background: #f5f0ff; }
+
+/* Results */
+.yahoo-results { padding: 12px 16px 20px; }
+.yahoo-stats { font-size: 12px; color: #666; margin-bottom: 14px; }
+
+.yahoo-result { margin-bottom: 22px; }
+.yahoo-result-url {
+  font-size: 13px; color: #008000; margin-bottom: 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+.yahoo-favicon { width: 16px; height: 16px; border-radius: 2px; background: #f1f1f1; display: flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+.yahoo-favicon img { width:16px;height:16px;object-fit:cover;display:block;border-radius:2px; }
+.yahoo-result-title {
+  font-size: 20px; color: #3a0088; font-weight: 400;
+  text-decoration: none; display: block; margin-bottom: 4px; line-height: 1.3;
+}
+.yahoo-result-title:hover { text-decoration: underline; }
+.yahoo-result-desc { font-size: 14px; color: #3d3d3d; line-height: 1.55; }
+.yahoo-result-date { color: #888; }
+
+/* Rich — news card */
+.yahoo-news-card {
+  border: 1px solid #e0e0e0; border-radius: 8px;
+  overflow: hidden; display: flex; margin-top: 8px;
+}
+.yahoo-news-img { width: 100px; height: 75px; object-fit: cover; background: #e8e0f7; flex-shrink: 0; display:flex;align-items:center;justify-content:center;color:#a070c0;font-size:1.5rem; }
+.yahoo-news-body { padding: 8px 12px; }
+.yahoo-news-source { font-size: 11px; color: #6001d2; font-weight: 700; margin-bottom: 2px; }
+.yahoo-news-title { font-size: 13px; font-weight: 600; color: #202020; line-height: 1.3; }
+.yahoo-news-time { font-size: 11px; color: #888; margin-top: 4px; }
+
+.yahoo-stars { color: #f4a836; font-size: 13px; margin-top: 4px; }
+
+/* Mobile */
+.yahoo-mobile-shell {
+  font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+  background: #fff; border-radius: 12px; overflow: hidden;
+  max-width: 380px; margin: 0 auto;
+  box-shadow: 0 2px 14px rgba(0,0,0,.15);
+}
+.yahoo-mobile-header { background: #6001d2; padding: 10px 12px; }
+.yahoo-mobile-logo { font-size: 18px; font-weight: 900; color: #fff; font-family: Georgia,serif; margin-bottom: 8px; }
+.yahoo-mobile-searchbar { background: #fff; border-radius: 20px; padding: 8px 14px; display:flex; align-items:center; gap:6px; }
+.yahoo-mobile-result { padding: 12px; border-bottom: 1px solid #e8e8e8; }
+.yahoo-mobile-url { font-size: 12px; color: #008000; display:flex;align-items:center;gap:4px; }
+.yahoo-mobile-title { font-size: 16px; color: #3a0088; margin: 3px 0 4px; line-height: 1.3; }
+.yahoo-mobile-desc { font-size: 13px; color: #3d3d3d; line-height: 1.5; }
+
+/* shared */
+.meter-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+.meter-bar{flex:1;height:5px;background:#1e293b;border-radius:3px;overflow:hidden}
+.meter-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
+.meter-label{font-size:.72rem;color:var(--color-text-muted);white-space:nowrap;min-width:55px;text-align:right}
+.device-toggle{display:flex;background:var(--color-bg-dark);border-radius:8px;padding:3px;gap:2px;width:fit-content;margin-bottom:1rem}
+.dtog{padding:.35rem .9rem;border-radius:6px;font-size:.78rem;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--color-text-muted);font-family:var(--font-sans);transition:var(--transition)}
+.dtog.active{background:var(--color-bg-darker);color:var(--color-text-light);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.code-output{background:#0d1117;border:1px solid var(--color-border);border-radius:var(--radius);padding:1rem;font-family:var(--font-mono);font-size:.78rem;color:#c9d1d9;line-height:1.7;white-space:pre-wrap;word-break:break-all;margin-top:1rem;max-height:280px;overflow-y:auto}
+.tag-warn{display:inline-flex;align-items:center;gap:.3rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:var(--color-warn);border-radius:999px;padding:.2rem .65rem;font-size:.7rem;font-weight:700;margin:.3rem .3rem 0 0}
+.tag-ok{display:inline-flex;align-items:center;gap:.3rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--color-success);border-radius:999px;padding:.2rem .65rem;font-size:.7rem;font-weight:700;margin:.3rem .3rem 0 0}
+.tag-err{display:inline-flex;align-items:center;gap:.3rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--color-error);border-radius:999px;padding:.2rem .65rem;font-size:.7rem;font-weight:700;margin:.3rem .3rem 0 0}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+<main>
+<div class="tool-page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Search Engine Previews</a><span>/</span>
+    <span style="color:var(--color-text-light)">Yahoo SERP Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge" style="background:rgba(96,1,210,.1);border-color:rgba(96,1,210,.3);color:#6001d2;">🟣 Yahoo Search</div>
+    <h1>Yahoo SERP Preview Tool</h1>
+    <p>Preview how your website appears in Yahoo Search results — complete with authentic Yahoo UI, breadcrumbs, rich snippets and device previews.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Page SEO Details</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page Title (title tag)</label>
+        <input id="yTitle" type="text" class="form-control" placeholder="Top Running Shoes for 2025 — Expert Reviews" maxlength="120" oninput="live()">
+        <div class="meter-row"><div class="meter-bar"><div class="meter-fill" id="titleMeter" style="width:0%"></div></div><div class="meter-label" id="titleCount">0 / 65</div></div>
+      </div>
+      <div class="form-group">
+        <label>Published Date (optional)</label>
+        <input id="yDate" type="date" class="form-control" oninput="live()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Meta Description</label>
+        <textarea id="yDesc" class="form-control" rows="3" placeholder="Write a compelling description. Yahoo typically shows 140–155 characters." maxlength="300" oninput="live()"></textarea>
+        <div class="meter-row"><div class="meter-bar"><div class="meter-fill" id="descMeter" style="width:0%"></div></div><div class="meter-label" id="descCount">0 / 155</div></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page URL</label>
+        <input id="yUrl" type="url" class="form-control" placeholder="https://yoursite.com/best-running-shoes" oninput="live()">
+      </div>
+      <div class="form-group">
+        <label>Search Query</label>
+        <input id="yQuery" type="text" class="form-control" placeholder="best running shoes 2025" oninput="live()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Rich Snippet</label>
+        <select id="ySnippet" class="form-control" onchange="live()">
+          <option value="none">None (standard)</option>
+          <option value="stars">⭐ Rating</option>
+          <option value="news">📰 News Card</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Favicon URL (optional)</label>
+        <input id="yFavicon" type="url" class="form-control" placeholder="https://yoursite.com/favicon.ico" oninput="live()">
+      </div>
+    </div>
+    <div id="starsSection" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>Rating (1–5)</label><input id="yRating" type="number" class="form-control" min="1" max="5" step="0.1" value="4.5" oninput="live()"></div>
+        <div class="form-group"><label>Review Count</label><input id="yReviews" type="number" class="form-control" value="756" oninput="live()"></div>
+      </div>
+    </div>
+    <div id="newsSection" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>News Source Name</label><input id="yNewsSource" class="form-control" placeholder="TechCrunch" oninput="live()"></div>
+        <div class="form-group"><label>News Image URL (optional)</label><input id="yNewsImage" type="url" class="form-control" placeholder="https://yoursite.com/news-thumb.jpg" oninput="live()"></div>
+        <div class="form-group"><label>Published Time</label><input id="yNewsTime" class="form-control" placeholder="2 hours ago" oninput="live()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Yahoo SERP Preview</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
+      <div class="device-toggle">
+        <button class="dtog active" onclick="setDevice('desktop',this)">🖥 Desktop</button>
+        <button class="dtog" onclick="setDevice('mobile',this)">📱 Mobile</button>
+      </div>
+      <div id="tagChips" style="display:flex;flex-wrap:wrap;gap:.25rem"></div>
+    </div>
+    <div id="previewWrap" style="background:#f5f0ff;border-radius:var(--radius-lg);padding:1.5rem;min-height:200px;display:flex;align-items:center;justify-content:center;">
+      <div class="preview-placeholder"><span class="icon">🟣</span>Fill in your page details to see the Yahoo SERP preview</div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="copyMeta()">📋 Copy Meta Tags</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div id="codeOut" class="code-output" style="display:none"></div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the Yahoo SERP Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box"><div class="step-num">Step 01</div><h4>Enter Details</h4><p>Add your title tag, meta description, page URL, and the search term you're targeting.</p></div>
+      <div class="step-box"><div class="step-num">Step 02</div><h4>Select Snippet</h4><p>Choose a standard result, rating snippet, or news card to simulate your enhanced listing.</p></div>
+      <div class="step-box"><div class="step-num">Step 03</div><h4>Switch Devices</h4><p>View both desktop and mobile previews to ensure your snippet reads well on all screens.</p></div>
+      <div class="step-box"><div class="step-num">Step 04</div><h4>Copy Tags</h4><p>Grab the generated meta tags and add them to your HTML <code>&lt;head&gt;</code>.</p></div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Yahoo Search</h2>
+    <p>Yahoo Search is powered by Microsoft Bing's index under a long-standing partnership, meaning optimising for Bing effectively optimises for Yahoo as well. Despite sharing an index, Yahoo renders its own SERP design with the familiar purple colour scheme, distinct URL formatting, and its own layout for rich results and news.</p>
+    <p>Yahoo still commands a meaningful share of desktop search traffic in the United States, particularly among older demographics and users of the Yahoo Mail and Yahoo News ecosystems. A well-optimised snippet that performs in Bing will inherently surface on Yahoo.</p>
+    <ul>
+      <li><strong>Title display:</strong> Yahoo shows approximately <strong>65 characters</strong> before truncation</li>
+      <li><strong>Description:</strong> Yahoo displays around <strong>140–155 characters</strong> of the meta description</li>
+      <li>Yahoo inherits Bing's crawl data — submit your sitemap to <strong>Bing Webmaster Tools</strong> and it will propagate to Yahoo</li>
+      <li>Yahoo frequently pulls <strong>news results</strong> from its own editorial sources; schema.org Article markup helps eligibility</li>
+      <li>Structured data supported: Review, Product, Recipe, Article, Event, FAQ and more</li>
+      <li>Yahoo Search does not have its own webmaster console — use <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">Bing Webmaster Tools</a> for indexing and insights</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+<footer id="footer-component"></footer>
+<script src="../script.js"></script>
+<script>
+let device='desktop';
+function setDevice(d,btn){device=d;document.querySelectorAll('.dtog').forEach(b=>b.classList.remove('active'));btn.classList.add('active');live();}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function getV(){return{title:document.getElementById('yTitle').value.trim(),desc:document.getElementById('yDesc').value.trim(),url:document.getElementById('yUrl').value.trim(),favicon:document.getElementById('yFavicon').value.trim(),date:document.getElementById('yDate').value,query:document.getElementById('yQuery').value.trim()||'your search query',snippet:document.getElementById('ySnippet').value,rating:parseFloat(document.getElementById('yRating')?.value||4.5),reviews:document.getElementById('yReviews')?.value||'756',newsSource:document.getElementById('yNewsSource')?.value?.trim()||'Your Publication',newsImage:document.getElementById('yNewsImage')?.value?.trim()||'',newsTime:document.getElementById('yNewsTime')?.value?.trim()||'2 hours ago'};}
+function parseDomain(u){try{return new URL(u).hostname;}catch{return u||'yoursite.com';}}
+function parseBreadcrumb(u){try{const x=new URL(u);const p=x.pathname.split('/').filter(Boolean);return x.hostname+(p.length?' › '+p.map(s=>s.replace(/-/g,' ')).join(' › '):'');}catch{return u||'yoursite.com';}}
+function stars(r){const f=Math.floor(r),h=r%1>=.5?1:0,e=5-f-h;return'★'.repeat(f)+(h?'½':'')+'☆'.repeat(e);}
+function meter(id,mid,cid,target,max){const val=document.getElementById(id)?.value?.length||0;const pct=Math.min((val/max)*100,100);const fill=document.getElementById(mid);if(!fill)return;fill.style.width=pct+'%';fill.style.background=val===0?'#334155':val<=target?'#10b981':val<=target*1.1?'#f59e0b':'#ef4444';const c=document.getElementById(cid);if(c)c.textContent=`${val} / ${target}`;}
+function chips(v){const el=document.getElementById('tagChips');if(!el)return;const tl=v.title.length,dl=v.desc.length;const h=[];if(!tl)h.push('<span class="tag-err">✗ No title</span>');else if(tl<=65)h.push('<span class="tag-ok">✓ Title</span>');else h.push('<span class="tag-warn">⚠ Title long</span>');if(!dl)h.push('<span class="tag-err">✗ No description</span>');else if(dl>=120&&dl<=155)h.push('<span class="tag-ok">✓ Description</span>');else h.push('<span class="tag-warn">⚠ Description</span>');if(!v.url)h.push('<span class="tag-warn">⚠ No URL</span>');else h.push('<span class="tag-ok">✓ URL</span>');el.innerHTML=h.join('');}
+
+function buildDesktop(v){
+  const bc=parseBreadcrumb(v.url);const domain=parseDomain(v.url);
+  const title=v.title||'Page Title — Your Website';
+  const desc=v.desc||'Your meta description appears here. Write something that makes Yahoo searchers want to click.';
+  const dateStr=v.date?`<span class="yahoo-result-date">${new Date(v.date).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})} — </span>`:'';
+  const favEl=v.favicon?`<img class="yahoo-favicon" src="${v.favicon}" alt="" onerror="this.outerHTML='<div class=&quot;yahoo-favicon&quot;>🌐</div>'">`:`<div class="yahoo-favicon">🌐</div>`;
+  let snippet='';
+  if(v.snippet==='stars')snippet=`<div class="yahoo-stars">${stars(v.rating)} <span style="color:#888;font-size:13px">${v.rating} · ${Number(v.reviews).toLocaleString()} ratings</span></div>`;
+  else if(v.snippet==='news'){const imgEl=v.newsImage?`<img class="yahoo-news-img" src="${v.newsImage}" alt="" onerror="this.outerHTML='<div class=&quot;yahoo-news-img&quot;>📰</div>'">`:`<div class="yahoo-news-img">📰</div>`;snippet=`<div class="yahoo-news-card">${imgEl}<div class="yahoo-news-body"><div class="yahoo-news-source">${esc(v.newsSource)}</div><div class="yahoo-news-title">${esc(title)}</div><div class="yahoo-news-time">${esc(v.newsTime)}</div></div></div>`;}
+  return`<div class="yahoo-shell">
+    <div class="yahoo-header">
+      <div class="yahoo-logo">Yahoo!</div>
+      <div class="yahoo-searchbar"><input value="${esc(v.query)}" readonly><button class="yahoo-search-btn">🔍</button></div>
+      <div class="yahoo-tabs"><div class="yahoo-tab active">Web</div><div class="yahoo-tab">Images</div><div class="yahoo-tab">Video</div><div class="yahoo-tab">News</div><div class="yahoo-tab">Shopping</div></div>
+    </div>
+    <div class="yahoo-results">
+      <div class="yahoo-stats">About 8,930,000 results · SafeSearch: Moderate</div>
+      <div class="yahoo-result">
+        <div class="yahoo-result-url">${favEl}${esc(bc)}</div>
+        <a class="yahoo-result-title" href="#">${esc(title)}</a>
+        <div class="yahoo-result-desc">${dateStr}${esc(desc)}</div>
+        ${snippet}
+      </div>
+      <div class="yahoo-result" style="opacity:.3">
+        <div class="yahoo-result-url"><div class="yahoo-favicon">🌐</div>anothersite.com › category</div>
+        <a class="yahoo-result-title" href="#">Another Yahoo Search Result</a>
+        <div class="yahoo-result-desc">Surrounding results provide context for how your listing competes for attention in Yahoo's search results page.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildMobile(v){
+  const domain=parseDomain(v.url);const bc=parseBreadcrumb(v.url);
+  const title=v.title||'Page Title — Your Website';
+  const desc=v.desc||'Your meta description on Yahoo mobile.';
+  return`<div class="yahoo-mobile-shell">
+    <div class="yahoo-mobile-header">
+      <div class="yahoo-mobile-logo">Yahoo!</div>
+      <div class="yahoo-mobile-searchbar"><span>🔍</span><span style="font-size:13px;color:#333">${esc(v.query)}</span><span style="margin-left:auto;font-size:11px;color:#666">✕</span></div>
+    </div>
+    <div style="padding:6px 12px;border-bottom:1px solid #e0e0e0;display:flex;gap:12px;font-size:12px;color:#666;overflow-x:auto">
+      <span style="color:#6001d2;font-weight:700;border-bottom:2px solid #6001d2;padding-bottom:4px">Web</span>
+      <span>Images</span><span>Video</span><span>News</span>
+    </div>
+    <div class="yahoo-mobile-result">
+      <div class="yahoo-mobile-url"><div class="yahoo-favicon">🌐</div>${esc(domain)}</div>
+      <div class="yahoo-mobile-title">${esc(title)}</div>
+      <div class="yahoo-mobile-desc">${esc(desc)}</div>
+      ${v.snippet==='stars'?`<div class="yahoo-stars" style="font-size:12px;margin-top:4px">${stars(v.rating)} <span style="font-size:11px;color:#888">${v.rating} (${v.reviews})</span></div>`:''}
+    </div>
+    <div class="yahoo-mobile-result" style="opacity:.3">
+      <div class="yahoo-mobile-url">anothersite.com</div>
+      <div class="yahoo-mobile-title">Another Result on Yahoo Mobile</div>
+      <div class="yahoo-mobile-desc">Context for how your listing competes in Yahoo's mobile view.</div>
+    </div>
+  </div>`;
+}
+
+function live(){
+  const v=getV();
+  document.getElementById('starsSection').style.display=v.snippet==='stars'?'block':'none';
+  document.getElementById('newsSection').style.display=v.snippet==='news'?'block':'none';
+  meter('yTitle','titleMeter','titleCount',65,120);
+  meter('yDesc','descMeter','descCount',155,300);
+  chips(v);
+  const wrap=document.getElementById('previewWrap');
+  const has=v.title||v.desc||v.url;
+  if(!has){wrap.innerHTML='<div class="preview-placeholder"><span class="icon">🟣</span>Fill in your page details to see the Yahoo SERP preview</div>';document.getElementById('codeOut').style.display='none';return;}
+  wrap.innerHTML=`<div style="width:100%">${device==='desktop'?buildDesktop(v):buildMobile(v)}</div>`;
+  const el=document.getElementById('codeOut');el.style.display='block';
+  el.textContent=`<!-- Meta Tags for Yahoo / Bing Search -->
+<title>${v.title}</title>
+<meta name="description" content="${v.desc}" />
+<link rel="canonical" href="${v.url}" />
+<meta property="og:title" content="${v.title}" />
+<meta property="og:description" content="${v.desc}" />
+<meta property="og:url" content="${v.url}" />
+<!-- Yahoo is powered by Bing — submit sitemap via Bing Webmaster Tools -->
+<meta name="msvalidate.01" content="YOUR_BING_VERIFICATION_CODE" />`;
+}
+
+function copyMeta(){const el=document.getElementById('codeOut');if(!el.textContent||el.style.display==='none'){alert('Fill fields first!');return;}navigator.clipboard.writeText(el.textContent).then(()=>{const b=event.target;b.textContent='✅ Copied!';setTimeout(()=>b.textContent='📋 Copy Meta Tags',2000);});}
+function resetAll(){['yTitle','yDesc','yUrl','yFavicon','yDate','yQuery','yNewsSource','yNewsImage','yNewsTime'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('ySnippet').value='none';document.getElementById('yRating').value='4.5';document.getElementById('yReviews').value='756';document.getElementById('codeOut').style.display='none';live();}
+document.addEventListener('DOMContentLoaded',()=>{renderHeader();renderFooter();});
+</script>
+</body>
+</html>
