@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DuckDuckGo SERP Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your webpage appears in DuckDuckGo Search results. Simulate authentic DDG desktop and mobile SERPs with title, description, and instant answer previews.">
+<meta name="keywords" content="duckduckgo serp preview, ddg search preview, duckduckgo snippet tool, privacy search preview, duckduckgo seo">
+<meta property="og:title" content="DuckDuckGo SERP Preview Tool — Website Viewer">
+<meta property="og:description" content="See exactly how your page appears in DuckDuckGo Search — desktop and mobile, with instant answers and character validation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/duckduckgo-serp-preview">
+<link rel="canonical" href="https://website-viewer.github.io/duckduckgo-serp-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"DuckDuckGo SERP Preview Tool",
+  "url":"https://website-viewer.github.io/duckduckgo-serp-preview",
+  "description":"Preview how your webpage appears in DuckDuckGo Search results. Simulate authentic DDG desktop and mobile SERPs with title, description, and instant answer previews.",
+  "applicationCategory":"DeveloperApplication",
+  "operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<style>
+/* DDG colour palette */
+:root {
+  --ddg-orange: #de5833;
+  --ddg-title: #1a0dab;
+  --ddg-url: #006000;
+  --ddg-text: #222;
+  --ddg-bg: #fff;
+  --ddg-topbar: #fff;
+  --ddg-border: #e0e0e0;
+}
+
+.ddg-shell {
+  font-family: 'Proxima Nova',arial,sans-serif;
+  background: var(--ddg-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 680px;
+  margin: 0 auto;
+  box-shadow: 0 2px 14px rgba(0,0,0,.12);
+}
+.ddg-header { background: var(--ddg-topbar); padding: 10px 16px 0; border-bottom: 1px solid var(--ddg-border); }
+
+/* DDG logo */
+.ddg-logo { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.ddg-logo-icon { width: 28px; height: 28px; background: var(--ddg-orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.ddg-logo-text { font-size: 18px; font-weight: 700; color: #222; }
+
+.ddg-searchbar {
+  display: flex; align-items: center;
+  border: 1px solid #c9c9c9; border-radius: 6px;
+  overflow: hidden; max-width: 560px; margin: 0 0 8px;
+  background: #fff;
+}
+.ddg-searchbar input {
+  flex: 1; border: none; outline: none;
+  padding: 9px 14px; font-size: 14px; color: #222;
+  font-family: inherit; background: transparent;
+}
+.ddg-search-btn { background: var(--ddg-orange); color: #fff; border: none; padding: 9px 14px; font-size: 14px; cursor: pointer; }
+
+.ddg-tabs {
+  display: flex; font-size: 13px; color: #777; overflow-x: auto; gap: 0;
+}
+.ddg-tab { padding: 8px 16px; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+.ddg-tab.active { color: var(--ddg-orange); border-bottom-color: var(--ddg-orange); font-weight: 700; }
+.ddg-tab:hover:not(.active) { background: #f8f5f0; }
+
+/* Results */
+.ddg-results { padding: 12px 16px 20px; }
+.ddg-ia-box { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+.ddg-ia-header { font-size: 11px; font-weight: 700; color: var(--ddg-orange); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.ddg-ia-content { font-size: 14px; color: #222; line-height: 1.6; }
+.ddg-ia-source { font-size: 12px; color: #777; margin-top: 6px; }
+
+.ddg-result { margin-bottom: 22px; }
+.ddg-result-url { font-size: 13px; color: var(--ddg-url); margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+.ddg-favicon { width: 16px; height: 16px; border-radius: 2px; background: #f1f1f1; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+.ddg-favicon img { width:16px;height:16px;object-fit:cover;display:block;border-radius:2px; }
+.ddg-result-title { font-size: 19px; color: var(--ddg-title); font-weight: 400; text-decoration: none; display: block; margin-bottom: 4px; line-height: 1.3; }
+.ddg-result-title:hover { text-decoration: underline; }
+.ddg-result-desc { font-size: 14px; color: var(--ddg-text); line-height: 1.55; }
+.ddg-result-date { color: #777; }
+
+/* Privacy notice badge */
+.ddg-privacy-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #fff8f6; border: 1px solid #f0cfc4;
+  border-radius: 4px; padding: 4px 10px; font-size: 12px; color: #de5833;
+  margin-bottom: 12px; font-weight: 600;
+}
+
+/* Mobile */
+.ddg-mobile-shell {
+  font-family: 'Proxima Nova',arial,sans-serif;
+  background: #fff; border-radius: 12px; overflow: hidden;
+  max-width: 380px; margin: 0 auto;
+  box-shadow: 0 2px 14px rgba(0,0,0,.15);
+}
+.ddg-mobile-header { background: #fff; padding: 10px 12px; border-bottom: 1px solid #e0e0e0; }
+.ddg-mobile-searchbar { border: 1px solid #c9c9c9; border-radius: 20px; padding: 8px 14px; display:flex; align-items:center; gap:6px; }
+.ddg-mobile-result { padding: 12px; border-bottom: 1px solid #e8e8e8; }
+.ddg-mobile-url { font-size: 12px; color: #006000; display:flex; align-items:center; gap:4px; }
+.ddg-mobile-title { font-size: 16px; color: #1a0dab; margin: 3px 0 4px; line-height: 1.3; }
+.ddg-mobile-desc { font-size: 13px; color: #222; line-height: 1.5; }
+
+/* shared */
+.meter-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+.meter-bar{flex:1;height:5px;background:#1e293b;border-radius:3px;overflow:hidden}
+.meter-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
+.meter-label{font-size:.72rem;color:var(--color-text-muted);white-space:nowrap;min-width:55px;text-align:right}
+.device-toggle{display:flex;background:var(--color-bg-dark);border-radius:8px;padding:3px;gap:2px;width:fit-content;margin-bottom:1rem}
+.dtog{padding:.35rem .9rem;border-radius:6px;font-size:.78rem;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--color-text-muted);font-family:var(--font-sans);transition:var(--transition)}
+.dtog.active{background:var(--color-bg-darker);color:var(--color-text-light);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.code-output{background:#0d1117;border:1px solid var(--color-border);border-radius:var(--radius);padding:1rem;font-family:var(--font-mono);font-size:.78rem;color:#c9d1d9;line-height:1.7;white-space:pre-wrap;word-break:break-all;margin-top:1rem;max-height:280px;overflow-y:auto}
+.tag-warn{display:inline-flex;align-items:center;gap:.3rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:var(--color-warn);border-radius:999px;padding:.2rem .65rem;font-size:.7rem;font-weight:700;margin:.3rem .3rem 0 0}
+.tag-ok{display:inline-flex;align-items:center;gap:.3rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--color-success);border-radius:999px;padding:.2rem .65rem;font-size:.7rem;font-weight:700;margin:.3rem .3rem 0 0}
+.tag-err{display:inline-flex;align-items:center;gap:.3rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--color-error);border-radius:999px;padding:.2rem .65rem;font-size:.7rem;font-weight:700;margin:.3rem .3rem 0 0}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+<main>
+<div class="tool-page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Search Engine Previews</a><span>/</span>
+    <span style="color:var(--color-text-light)">DuckDuckGo SERP Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge" style="background:rgba(222,88,51,.1);border-color:rgba(222,88,51,.3);color:#de5833;">🦆 DuckDuckGo</div>
+    <h1>DuckDuckGo SERP Preview Tool</h1>
+    <p>Preview how your page appears in DuckDuckGo Search — with authentic DDG UI, instant answer boxes, desktop and mobile views.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Page SEO Details</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page Title (title tag)</label>
+        <input id="dTitle" type="text" class="form-control" placeholder="Privacy-Focused Running Shoe Reviews 2025" maxlength="120" oninput="live()">
+        <div class="meter-row"><div class="meter-bar"><div class="meter-fill" id="titleMeter" style="width:0%"></div></div><div class="meter-label" id="titleCount">0 / 63</div></div>
+      </div>
+      <div class="form-group">
+        <label>Published Date (optional)</label>
+        <input id="dDate" type="date" class="form-control" oninput="live()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Meta Description</label>
+        <textarea id="dDesc" class="form-control" rows="3" placeholder="DuckDuckGo shows approximately 120–145 characters of your meta description." maxlength="300" oninput="live()"></textarea>
+        <div class="meter-row"><div class="meter-bar"><div class="meter-fill" id="descMeter" style="width:0%"></div></div><div class="meter-label" id="descCount">0 / 145</div></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page URL</label>
+        <input id="dUrl" type="url" class="form-control" placeholder="https://yoursite.com/running-shoe-reviews" oninput="live()">
+      </div>
+      <div class="form-group">
+        <label>Search Query</label>
+        <input id="dQuery" type="text" class="form-control" placeholder="best running shoes 2025" oninput="live()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Show Instant Answer Box?</label>
+        <select id="dIA" class="form-control" onchange="live()">
+          <option value="none">No</option>
+          <option value="show">Yes — show instant answer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Favicon URL (optional)</label>
+        <input id="dFavicon" type="url" class="form-control" placeholder="https://yoursite.com/favicon.ico" oninput="live()">
+      </div>
+    </div>
+    <div id="iaSection" style="display:none">
+      <div class="form-row">
+        <div class="form-group" style="flex:2"><label>Instant Answer Text</label><textarea id="dIAText" class="form-control" rows="2" placeholder="A brief, factual answer shown directly in the results…" oninput="live()"></textarea></div>
+        <div class="form-group"><label>Answer Source</label><input id="dIASource" class="form-control" placeholder="Wikipedia" oninput="live()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live DuckDuckGo SERP Preview</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
+      <div class="device-toggle">
+        <button class="dtog active" onclick="setDevice('desktop',this)">🖥 Desktop</button>
+        <button class="dtog" onclick="setDevice('mobile',this)">📱 Mobile</button>
+      </div>
+      <div id="tagChips" style="display:flex;flex-wrap:wrap;gap:.25rem"></div>
+    </div>
+    <div id="previewWrap" style="background:#f8f5f0;border-radius:var(--radius-lg);padding:1.5rem;min-height:200px;display:flex;align-items:center;justify-content:center;">
+      <div class="preview-placeholder"><span class="icon">🦆</span>Fill in your page details to see the DuckDuckGo SERP preview</div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="copyMeta()">📋 Copy Meta Tags</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div id="codeOut" class="code-output" style="display:none"></div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the DuckDuckGo SERP Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box"><div class="step-num">Step 01</div><h4>Enter Page Details</h4><p>Fill in your title tag, meta description, page URL, and target search query.</p></div>
+      <div class="step-box"><div class="step-num">Step 02</div><h4>Add Instant Answer</h4><p>Optionally enable the instant answer box to simulate how DDG might surface your content in a zero-click result.</p></div>
+      <div class="step-box"><div class="step-num">Step 03</div><h4>Switch Devices</h4><p>Toggle Desktop / Mobile to verify your snippet renders well on both screen sizes.</p></div>
+      <div class="step-box"><div class="step-num">Step 04</div><h4>Copy & Deploy</h4><p>Grab the generated meta tags and paste them into your HTML <code>&lt;head&gt;</code>.</p></div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About DuckDuckGo Search</h2>
+    <p>DuckDuckGo is a privacy-first search engine that does not track or profile users. It has grown rapidly to serve hundreds of millions of searches per month and is the default browser on iOS in many regions. For SEO purposes, DuckDuckGo sources its organic results primarily from Bing's index, supplemented by its own crawl of niche content and over 400 other sources.</p>
+    <p>A standout DDG feature is its <strong>Instant Answer</strong> boxes — pulled from Wikipedia, Wolfram Alpha, and other trusted open sources — which can appear above organic results and may capture clicks that never reach your page (zero-click searches).</p>
+    <ul>
+      <li>DDG uses the <strong>same core index as Bing</strong> — Bing Webmaster Tools optimisation benefits DDG automatically</li>
+      <li><strong>Title display:</strong> approximately <strong>63 characters</strong> before truncation</li>
+      <li><strong>Description:</strong> DDG typically shows around <strong>120–145 characters</strong> on desktop</li>
+      <li>DDG provides <a href="https://duckduckgo.com/duckduckhack/overview" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">DuckDuckHack</a> for contributing to Instant Answers</li>
+      <li>Schema.org structured data is read and used for rich formatting — same markup as for Bing/Google</li>
+      <li>DDG respects <code>robots.txt</code> and the <code>noindex</code> meta tag via its own DuckDuckBot crawler</li>
+      <li>DDG's audience skews toward <strong>privacy-conscious, tech-savvy users</strong> — high-quality content and HTTPS are especially important</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+<footer id="footer-component"></footer>
+<script src="../script.js"></script>
+<script>
+let device='desktop';
+function setDevice(d,btn){device=d;document.querySelectorAll('.dtog').forEach(b=>b.classList.remove('active'));btn.classList.add('active');live();}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function getV(){return{title:document.getElementById('dTitle').value.trim(),desc:document.getElementById('dDesc').value.trim(),url:document.getElementById('dUrl').value.trim(),favicon:document.getElementById('dFavicon').value.trim(),date:document.getElementById('dDate').value,query:document.getElementById('dQuery').value.trim()||'your search query',ia:document.getElementById('dIA').value,iaText:document.getElementById('dIAText')?.value?.trim()||'An instant answer summary appears here, pulled from trusted sources like Wikipedia.',iaSource:document.getElementById('dIASource')?.value?.trim()||'Wikipedia'};}
+function parseDomain(u){try{return new URL(u).hostname;}catch{return u||'yoursite.com';}}
+function parseBreadcrumb(u){try{const x=new URL(u);const p=x.pathname.split('/').filter(Boolean);return x.hostname+(p.length?' › '+p.map(s=>s.replace(/-/g,' ')).join(' › '):'');}catch{return u||'yoursite.com';}}
+function meter(id,mid,cid,target,max){const val=document.getElementById(id)?.value?.length||0;const pct=Math.min((val/max)*100,100);const fill=document.getElementById(mid);if(!fill)return;fill.style.width=pct+'%';fill.style.background=val===0?'#334155':val<=target?'#10b981':val<=target*1.1?'#f59e0b':'#ef4444';const c=document.getElementById(cid);if(c)c.textContent=`${val} / ${target}`;}
+function chips(v){const el=document.getElementById('tagChips');if(!el)return;const tl=v.title.length,dl=v.desc.length;const h=[];if(!tl)h.push('<span class="tag-err">✗ No title</span>');else if(tl<=63)h.push('<span class="tag-ok">✓ Title</span>');else h.push('<span class="tag-warn">⚠ Title long</span>');if(!dl)h.push('<span class="tag-err">✗ No description</span>');else if(dl>=100&&dl<=145)h.push('<span class="tag-ok">✓ Description</span>');else h.push('<span class="tag-warn">⚠ Description</span>');if(!v.url)h.push('<span class="tag-warn">⚠ No URL</span>');else h.push('<span class="tag-ok">✓ URL</span>');el.innerHTML=h.join('');}
+
+function buildDesktop(v){
+  const bc=parseBreadcrumb(v.url);const domain=parseDomain(v.url);
+  const title=v.title||'Page Title — Your Website';const desc=v.desc||'Your meta description appears here in DuckDuckGo.';
+  const dateStr=v.date?`<span class="ddg-result-date">${new Date(v.date).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})} — </span>`:'';
+  const favEl=v.favicon?`<img class="ddg-favicon" src="${v.favicon}" alt="" onerror="this.outerHTML='<div class=&quot;ddg-favicon&quot;>🌐</div>'">`:`<div class="ddg-favicon">🌐</div>`;
+  const iaBox=v.ia==='show'?`<div class="ddg-ia-box"><div class="ddg-ia-header">🔍 Instant Answer</div><div class="ddg-ia-content">${esc(v.iaText)}</div><div class="ddg-ia-source">Source: ${esc(v.iaSource)}</div></div>`:'';
+  return`<div class="ddg-shell">
+    <div class="ddg-header">
+      <div class="ddg-logo"><div class="ddg-logo-icon">🦆</div><div class="ddg-logo-text">DuckDuckGo</div></div>
+      <div class="ddg-searchbar"><input value="${esc(v.query)}" readonly><button class="ddg-search-btn">🔍</button></div>
+      <div class="ddg-tabs"><div class="ddg-tab active">All</div><div class="ddg-tab">Images</div><div class="ddg-tab">Videos</div><div class="ddg-tab">News</div><div class="ddg-tab">Maps</div></div>
+    </div>
+    <div class="ddg-results">
+      <div class="ddg-privacy-badge">🛡 Your search is private. No tracking.</div>
+      ${iaBox}
+      <div class="ddg-result">
+        <div class="ddg-result-url">${favEl}${esc(bc)}</div>
+        <a class="ddg-result-title" href="#">${esc(title)}</a>
+        <div class="ddg-result-desc">${dateStr}${esc(desc)}</div>
+      </div>
+      <div class="ddg-result" style="opacity:.3">
+        <div class="ddg-result-url"><div class="ddg-favicon">🌐</div>anothersite.com › articles</div>
+        <a class="ddg-result-title" href="#">Another DuckDuckGo Result</a>
+        <div class="ddg-result-desc">Surrounding results give context for how your listing competes for attention in the DuckDuckGo SERP.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildMobile(v){
+  const domain=parseDomain(v.url);const bc=parseBreadcrumb(v.url);
+  const title=v.title||'Page Title';const desc=v.desc||'Your meta description on DuckDuckGo mobile.';
+  return`<div class="ddg-mobile-shell">
+    <div class="ddg-mobile-header">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><div class="ddg-logo-icon" style="width:22px;height:22px;font-size:13px;border-radius:50%;background:#de5833;display:flex;align-items:center;justify-content:center">🦆</div><span style="font-size:15px;font-weight:700;color:#222">DuckDuckGo</span></div>
+      <div class="ddg-mobile-searchbar"><span>🔍</span><span style="font-size:13px;color:#222">${esc(v.query)}</span><span style="margin-left:auto;font-size:11px;color:#999">✕</span></div>
+    </div>
+    <div style="padding:6px 12px;border-bottom:1px solid #e8e8e8;display:flex;gap:12px;font-size:12px;color:#777;overflow-x:auto">
+      <span style="color:#de5833;font-weight:700;border-bottom:2px solid #de5833;padding-bottom:4px">All</span>
+      <span>Images</span><span>Videos</span><span>News</span>
+    </div>
+    ${v.ia==='show'?`<div style="margin:8px 12px;background:#fafafa;border:1px solid #e8e8e8;border-radius:8px;padding:10px"><div style="font-size:10px;font-weight:700;color:#de5833;text-transform:uppercase;margin-bottom:4px">Instant Answer</div><div style="font-size:12px;color:#222">${esc(v.iaText.substring(0,120))}…</div></div>`:''}
+    <div class="ddg-mobile-result">
+      <div class="ddg-mobile-url"><div class="ddg-favicon">🌐</div>${esc(domain)}</div>
+      <div class="ddg-mobile-title">${esc(title)}</div>
+      <div class="ddg-mobile-desc">${esc(desc)}</div>
+    </div>
+    <div class="ddg-mobile-result" style="opacity:.3">
+      <div class="ddg-mobile-url">anothersite.com</div>
+      <div class="ddg-mobile-title">Another Result on Mobile DDG</div>
+      <div class="ddg-mobile-desc">Context for how your result competes on DuckDuckGo mobile.</div>
+    </div>
+  </div>`;
+}
+
+function live(){
+  const v=getV();
+  document.getElementById('iaSection').style.display=v.ia==='show'?'block':'none';
+  meter('dTitle','titleMeter','titleCount',63,120);
+  meter('dDesc','descMeter','descCount',145,300);
+  chips(v);
+  const wrap=document.getElementById('previewWrap');
+  const has=v.title||v.desc||v.url;
+  if(!has){wrap.innerHTML='<div class="preview-placeholder"><span class="icon">🦆</span>Fill in your page details to see the DuckDuckGo SERP preview</div>';document.getElementById('codeOut').style.display='none';return;}
+  wrap.innerHTML=`<div style="width:100%">${device==='desktop'?buildDesktop(v):buildMobile(v)}</div>`;
+  const el=document.getElementById('codeOut');el.style.display='block';
+  el.textContent=`<!-- Meta Tags for DuckDuckGo / Bing Search -->
+<title>${v.title}</title>
+<meta name="description" content="${v.desc}" />
+<link rel="canonical" href="${v.url}" />
+<!-- DDG uses Bing's index — submit via Bing Webmaster Tools -->
+<meta name="msvalidate.01" content="YOUR_BING_VERIFICATION_CODE" />
+<!-- Standard OG tags also read by DDG -->
+<meta property="og:title" content="${v.title}" />
+<meta property="og:description" content="${v.desc}" />
+<meta property="og:url" content="${v.url}" />`;
+}
+
+function copyMeta(){const el=document.getElementById('codeOut');if(!el.textContent||el.style.display==='none'){alert('Fill fields first!');return;}navigator.clipboard.writeText(el.textContent).then(()=>{const b=event.target;b.textContent='✅ Copied!';setTimeout(()=>b.textContent='📋 Copy Meta Tags',2000);});}
+function resetAll(){['dTitle','dDesc','dUrl','dFavicon','dDate','dQuery','dIAText','dIASource'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('dIA').value='none';document.getElementById('codeOut').style.display='none';live();}
+document.addEventListener('DOMContentLoaded',()=>{renderHeader();renderFooter();});
+</script>
+</body>
+</html>
