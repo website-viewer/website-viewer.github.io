@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bing SERP Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your webpage appears in Bing Search results. Simulate Bing desktop and mobile SERPs with title, description, breadcrumbs, and rich results.">
+<meta name="keywords" content="bing serp preview, bing search preview, bing meta preview, bing snippet tool, bing seo preview, microsoft search preview">
+<meta property="og:title" content="Bing SERP Preview Tool — Website Viewer">
+<meta property="og:description" content="See exactly how your page appears in Microsoft Bing Search — desktop and mobile, with rich snippets and character validation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/bing-serp-preview">
+<link rel="canonical" href="https://website-viewer.github.io/bing-serp-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"Bing SERP Preview Tool",
+  "url":"https://website-viewer.github.io/bing-serp-preview",
+  "description":"Preview how your webpage appears in Microsoft Bing Search results. Simulate desktop and mobile Bing SERPs with title, meta description, rich snippets and breadcrumbs.",
+  "applicationCategory":"DeveloperApplication",
+  "operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<style>
+/* Bing colour system */
+:root {
+  --bing-blue: #006cbf;
+  --bing-title: #001ba0;
+  --bing-url: #006cbf;
+  --bing-text: #444;
+  --bing-bg: #fff;
+  --bing-sidebar: #f5f5f5;
+  --bing-border: #e5e5e5;
+  --bing-header-bg: #fff;
+}
+
+/* Shell */
+.bing-shell {
+  font-family: 'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  background: var(--bing-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 680px;
+  margin: 0 auto;
+  box-shadow: 0 2px 14px rgba(0,0,0,.13);
+}
+
+/* Header */
+.bing-header {
+  background: var(--bing-header-bg);
+  padding: 10px 20px 0;
+  border-bottom: 1px solid var(--bing-border);
+}
+.bing-logo { font-size: 24px; font-weight: 900; color: #008272; letter-spacing: -1px; padding-bottom: 8px; display:inline-block; }
+.bing-logo span { color: #ffb900; }
+
+.bing-searchbar {
+  display: flex; align-items: center;
+  border: 1px solid #8a8a8a; border-right: none;
+  border-radius: 4px 0 0 4px; background: #fff;
+  max-width: 560px; margin: 6px 0 0;
+}
+.bing-searchbar input {
+  flex: 1; border: none; outline: none;
+  padding: 9px 14px; font-size: 14px; color: #212121;
+  font-family: 'Segoe UI',sans-serif; background: transparent;
+}
+.bing-search-btn {
+  background: #00809d; color: #fff; border: none;
+  padding: 9px 16px; font-size: 18px; cursor: pointer;
+  border-radius: 0 4px 4px 0;
+}
+.bing-tabs {
+  display: flex; gap: 0; font-size: 13px; color: #767676;
+  padding: 0; overflow-x: auto; margin-top: 4px;
+}
+.bing-tab {
+  padding: 10px 18px; cursor: pointer;
+  border-bottom: 3px solid transparent; white-space: nowrap;
+}
+.bing-tab.active { color: #001ba0; border-bottom-color: #001ba0; font-weight: 600; }
+.bing-tab:hover:not(.active) { background: #f2f2f2; }
+
+/* Results */
+.bing-results { padding: 12px 20px 20px; }
+.bing-stats { font-size: 12px; color: #767676; margin-bottom: 14px; }
+
+.bing-result { margin-bottom: 24px; }
+.bing-result-url { font-size: 13px; color: var(--bing-url); margin-bottom: 1px; display:flex; align-items:center; gap:6px; }
+.bing-favicon { width:16px; height:16px; border-radius:2px; background:#f1f3f4; display:flex;align-items:center;justify-content:center;font-size:10px; flex-shrink:0; }
+.bing-favicon img { width:16px;height:16px;object-fit:cover;display:block;border-radius:2px; }
+.bing-result-title {
+  font-size: 20px; color: var(--bing-title); font-weight: 400;
+  text-decoration: none; display: block; margin-bottom: 4px; line-height: 1.3;
+}
+.bing-result-title:hover { text-decoration: underline; color: #003696; }
+.bing-result-desc { font-size: 14px; color: var(--bing-text); line-height: 1.6; }
+.bing-result-date { color: #767676; }
+
+/* Rich results */
+.bing-stars { color: #ffb900; font-size: 13px; margin-top: 3px; }
+.bing-rating-info { font-size: 13px; color: #767676; }
+.bing-deep-links { display: flex; flex-wrap: wrap; gap: 0 20px; margin-top: 8px; }
+.bing-deep-link a { font-size: 14px; color: var(--bing-title); text-decoration: none; }
+.bing-deep-link a:hover { text-decoration: underline; }
+.bing-deep-link p { font-size: 12px; color: #767676; margin: 0; }
+
+/* Bing mobile */
+.bing-mobile-shell {
+  font-family: 'Segoe UI',Arial,sans-serif;
+  background: #fff; border-radius: 12px; overflow: hidden;
+  max-width: 380px; margin: 0 auto;
+  box-shadow: 0 2px 14px rgba(0,0,0,.15);
+}
+.bing-mobile-header { background: #fff; padding: 8px 12px; border-bottom: 1px solid #e5e5e5; }
+.bing-mobile-searchbar { border: 1px solid #8a8a8a; border-radius: 4px; padding: 8px 12px; display:flex; align-items:center; gap:6px; background:#f2f2f2; }
+.bing-mobile-result { padding: 12px; border-bottom: 1px solid #e5e5e5; }
+.bing-mobile-title { font-size: 17px; color: var(--bing-title); line-height: 1.3; margin: 3px 0 5px; }
+.bing-mobile-desc { font-size: 13px; color: #444; line-height: 1.5; }
+.bing-mobile-url { font-size: 12px; color: var(--bing-url); display:flex; align-items:center; gap:4px; }
+
+/* Meters & shared */
+.meter-row { display:flex; align-items:center; gap:8px; margin-top:4px; }
+.meter-bar { flex:1; height:5px; background:#1e293b; border-radius:3px; overflow:hidden; }
+.meter-fill { height:100%; border-radius:3px; transition:width .3s,background .3s; }
+.meter-label { font-size:.72rem; color:var(--color-text-muted); white-space:nowrap; min-width:55px; text-align:right; }
+
+.device-toggle { display:flex; background:var(--color-bg-dark); border-radius:8px; padding:3px; gap:2px; width:fit-content; margin-bottom:1rem; }
+.dtog { padding:.35rem .9rem; border-radius:6px; font-size:.78rem; font-weight:700; cursor:pointer; border:none; background:transparent; color:var(--color-text-muted); font-family:var(--font-sans); transition:var(--transition); }
+.dtog.active { background:var(--color-bg-darker); color:var(--color-text-light); box-shadow:0 1px 4px rgba(0,0,0,.3); }
+
+.code-output { background:#0d1117; border:1px solid var(--color-border); border-radius:var(--radius); padding:1rem; font-family:var(--font-mono); font-size:.78rem; color:#c9d1d9; line-height:1.7; white-space:pre-wrap; word-break:break-all; margin-top:1rem; max-height:280px; overflow-y:auto; }
+.tag-warn { display:inline-flex; align-items:center; gap:.3rem; background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:var(--color-warn); border-radius:999px; padding:.2rem .65rem; font-size:.7rem; font-weight:700; margin:.3rem .3rem 0 0; }
+.tag-ok { display:inline-flex; align-items:center; gap:.3rem; background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:var(--color-success); border-radius:999px; padding:.2rem .65rem; font-size:.7rem; font-weight:700; margin:.3rem .3rem 0 0; }
+.tag-err { display:inline-flex; align-items:center; gap:.3rem; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:var(--color-error); border-radius:999px; padding:.2rem .65rem; font-size:.7rem; font-weight:700; margin:.3rem .3rem 0 0; }
+</style>
+</head>
+<body>
+
+<header id="header-component"></header>
+
+<main>
+<div class="tool-page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Search Engine Previews</a><span>/</span>
+    <span style="color:var(--color-text-light)">Bing SERP Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge" style="background:rgba(0,130,114,.1);border-color:rgba(0,130,114,.3);color:#008272;">🔎 Microsoft Bing</div>
+    <h1>Bing SERP Preview Tool</h1>
+    <p>Simulate exactly how your page appears in Microsoft Bing Search — desktop and mobile views with ratings, deep links, and character validation.</p>
+  </div>
+
+  <!-- INPUTS -->
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Page SEO Details</div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page Title (title tag) — Bing shows ~65 characters</label>
+        <input id="bTitle" type="text" class="form-control" placeholder="Best Running Shoes 2025 — Reviews & Buying Guide" maxlength="120" oninput="live()">
+        <div class="meter-row">
+          <div class="meter-bar"><div class="meter-fill" id="titleMeter" style="width:0%"></div></div>
+          <div class="meter-label" id="titleCount">0 / 65</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Published Date (optional)</label>
+        <input id="bDate" type="date" class="form-control" oninput="live()">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Meta Description — Bing shows ~145 characters</label>
+        <textarea id="bDesc" class="form-control" rows="3" placeholder="Write a compelling meta description that encourages searchers to click your Bing result. 120–145 characters is ideal." maxlength="300" oninput="live()"></textarea>
+        <div class="meter-row">
+          <div class="meter-bar"><div class="meter-fill" id="descMeter" style="width:0%"></div></div>
+          <div class="meter-label" id="descCount">0 / 145</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page URL</label>
+        <input id="bUrl" type="url" class="form-control" placeholder="https://yoursite.com/best-running-shoes" oninput="live()">
+      </div>
+      <div class="form-group">
+        <label>Search Query</label>
+        <input id="bQuery" type="text" class="form-control" placeholder="best running shoes 2025" oninput="live()">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Rich Snippet Type</label>
+        <select id="bSnippet" class="form-control" onchange="live()">
+          <option value="none">None (standard)</option>
+          <option value="stars">⭐ Rating / Review</option>
+          <option value="deeplinks">🔗 Deep Links</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Favicon URL (optional)</label>
+        <input id="bFavicon" type="url" class="form-control" placeholder="https://yoursite.com/favicon.ico" oninput="live()">
+      </div>
+    </div>
+
+    <div id="starsSection" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>Rating (1–5)</label><input id="bRating" type="number" class="form-control" min="1" max="5" step="0.1" value="4.6" oninput="live()"></div>
+        <div class="form-group"><label>Review Count</label><input id="bReviews" type="number" class="form-control" value="892" oninput="live()"></div>
+        <div class="form-group"><label>Price (optional)</label><input id="bPrice" type="text" class="form-control" placeholder="$59.99" oninput="live()"></div>
+      </div>
+    </div>
+
+    <div id="deeplinksSection" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>Deep Link 1</label><input id="dl1" class="form-control" placeholder="Shop Men's Shoes" oninput="live()"></div>
+        <div class="form-group"><label>Deep Link 2</label><input id="dl2" class="form-control" placeholder="Shop Women's Shoes" oninput="live()"></div>
+        <div class="form-group"><label>Deep Link 3</label><input id="dl3" class="form-control" placeholder="Sale Items" oninput="live()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Bing SERP Preview</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
+      <div class="device-toggle">
+        <button class="dtog active" onclick="setDevice('desktop',this)">🖥 Desktop</button>
+        <button class="dtog" onclick="setDevice('mobile',this)">📱 Mobile</button>
+      </div>
+      <div id="tagChips" style="display:flex;flex-wrap:wrap;gap:.25rem"></div>
+    </div>
+    <div id="previewWrap" style="background:#f0f4f8;border-radius:var(--radius-lg);padding:1.5rem;min-height:200px;display:flex;align-items:center;justify-content:center;">
+      <div class="preview-placeholder"><span class="icon">🔎</span>Fill in your page details to see the Bing SERP preview</div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="copyMeta()">📋 Copy Meta Tags</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div id="codeOut" class="code-output" style="display:none"></div>
+  </div>
+
+  <!-- HOW TO -->
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the Bing SERP Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box"><div class="step-num">Step 01</div><h4>Enter Page Details</h4><p>Fill in your title tag, meta description, page URL, and the search query you're targeting.</p></div>
+      <div class="step-box"><div class="step-num">Step 02</div><h4>Add Rich Snippet</h4><p>Select a rating or deep links snippet type and fill in the additional fields that appear.</p></div>
+      <div class="step-box"><div class="step-num">Step 03</div><h4>Check Both Devices</h4><p>Switch between Desktop and Mobile views to validate your snippet at both breakpoints.</p></div>
+      <div class="step-box"><div class="step-num">Step 04</div><h4>Copy & Implement</h4><p>Use the generated meta tags in your HTML <code>&lt;head&gt;</code> to update your Bing listing.</p></div>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Bing Search Results</h2>
+    <p>Bing is Microsoft's search engine and powers search results across Bing.com, Microsoft Edge, Cortana, Yahoo Search (via syndication), and increasingly, Microsoft Copilot. Optimising for Bing can meaningfully expand your reach — particularly among enterprise and Windows users.</p>
+    <p>Bing reads standard HTML meta tags (<code>title</code>, <code>description</code>), OpenGraph tags, and schema.org structured data, much like Google. However, Bing has slightly different truncation limits and rendering behaviour:</p>
+    <ul>
+      <li><strong>Title tag:</strong> Bing typically shows up to <strong>65 characters</strong> before truncating</li>
+      <li><strong>Meta description:</strong> Bing shows approximately <strong>145 characters</strong> on desktop — slightly shorter than Google</li>
+      <li>Bing gives stronger weight to <strong>exact-match keywords</strong> in title tags and URLs than Google does</li>
+      <li>Use <strong>Bing Webmaster Tools</strong> at <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">bing.com/webmasters</a> to submit sitemaps and monitor indexing</li>
+      <li>Bing supports rich results via schema.org — review, product, recipe, event and more</li>
+      <li>Bing respects the <code>robots.txt</code> Bingbot directive and the <code>X-Robots-Tag</code> HTTP header</li>
+      <li>Pages with <strong>HTTPS</strong> and fast load times are strongly preferred in Bing ranking signals</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+
+<footer id="footer-component"></footer>
+<script src="../script.js"></script>
+<script>
+let device = 'desktop';
+function setDevice(d, btn) { device = d; document.querySelectorAll('.dtog').forEach(b => b.classList.remove('active')); btn.classList.add('active'); live(); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function getV() {
+  return {
+    title:   document.getElementById('bTitle').value.trim(),
+    desc:    document.getElementById('bDesc').value.trim(),
+    url:     document.getElementById('bUrl').value.trim(),
+    favicon: document.getElementById('bFavicon').value.trim(),
+    date:    document.getElementById('bDate').value,
+    query:   document.getElementById('bQuery').value.trim() || 'your search query',
+    snippet: document.getElementById('bSnippet').value,
+    rating:  parseFloat(document.getElementById('bRating')?.value || 4.6),
+    reviews: document.getElementById('bReviews')?.value || '892',
+    price:   document.getElementById('bPrice')?.value?.trim() || '',
+    dl1:     document.getElementById('dl1')?.value?.trim() || 'Products',
+    dl2:     document.getElementById('dl2')?.value?.trim() || 'About Us',
+    dl3:     document.getElementById('dl3')?.value?.trim() || 'Contact',
+  };
+}
+function parseDomain(url) { try { return new URL(url).hostname; } catch { return url || 'yoursite.com'; } }
+function parseBreadcrumb(url) {
+  try { const u = new URL(url); const p = u.pathname.split('/').filter(Boolean); return u.hostname + (p.length ? ' › ' + p.map(x=>x.replace(/-/g,' ')).join(' › ') : ''); }
+  catch { return url || 'yoursite.com'; }
+}
+function stars(r) { const f=Math.floor(r),h=r%1>=.5?1:0,e=5-f-h; return '★'.repeat(f)+(h?'½':'')+'☆'.repeat(e); }
+
+function meter(id, mid, cid, target, max) {
+  const val = document.getElementById(id)?.value?.length || 0;
+  const pct = Math.min((val/max)*100,100);
+  const fill = document.getElementById(mid); if(!fill)return;
+  fill.style.width = pct+'%';
+  fill.style.background = val===0?'#334155':val<=target?'#10b981':val<=target*1.1?'#f59e0b':'#ef4444';
+  const c = document.getElementById(cid); if(c) c.textContent = `${val} / ${target}`;
+}
+
+function chips(v) {
+  const el = document.getElementById('tagChips'); if(!el)return;
+  const tl = v.title.length, dl = v.desc.length;
+  const h = [];
+  if(!tl) h.push('<span class="tag-err">✗ No title</span>');
+  else if(tl<=65) h.push('<span class="tag-ok">✓ Title</span>');
+  else h.push('<span class="tag-warn">⚠ Title long</span>');
+  if(!dl) h.push('<span class="tag-err">✗ No description</span>');
+  else if(dl>=120&&dl<=145) h.push('<span class="tag-ok">✓ Description</span>');
+  else h.push('<span class="tag-warn">⚠ Description length</span>');
+  if(!v.url) h.push('<span class="tag-warn">⚠ No URL</span>');
+  else h.push('<span class="tag-ok">✓ URL</span>');
+  el.innerHTML = h.join('');
+}
+
+function buildDesktop(v) {
+  const domain = parseDomain(v.url);
+  const breadcrumb = parseBreadcrumb(v.url);
+  const title = v.title || 'Page Title — Your Website';
+  const desc  = v.desc  || 'Your meta description appears here. Write something compelling to earn the click.';
+  const dateStr = v.date ? `<span class="bing-result-date">${new Date(v.date).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})} — </span>` : '';
+  const favEl = v.favicon ? `<img class="bing-favicon" src="${v.favicon}" alt="" onerror="this.outerHTML='<div class=&quot;bing-favicon&quot;>🌐</div>'">` : `<div class="bing-favicon">🌐</div>`;
+
+  let snippet = '';
+  if(v.snippet==='stars') {
+    snippet = `<div class="bing-stars">${stars(v.rating)} <span style="color:#767676;font-size:13px">${v.rating} · ${Number(v.reviews).toLocaleString()} reviews${v.price?' · '+esc(v.price):''}</span></div>`;
+  } else if(v.snippet==='deeplinks') {
+    snippet = `<div class="bing-deep-links">
+      <div class="bing-deep-link"><a href="#">${esc(v.dl1)}</a><p>Browse ${esc(v.dl1).toLowerCase()}</p></div>
+      <div class="bing-deep-link"><a href="#">${esc(v.dl2)}</a><p>Explore ${esc(v.dl2).toLowerCase()}</p></div>
+      <div class="bing-deep-link"><a href="#">${esc(v.dl3)}</a><p>View ${esc(v.dl3).toLowerCase()}</p></div>
+    </div>`;
+  }
+
+  return `<div class="bing-shell">
+    <div class="bing-header">
+      <div class="bing-logo">Bi<span>n</span>g</div>
+      <div style="display:flex;gap:0;margin:6px 0 0">
+        <div class="bing-searchbar"><input value="${esc(v.query)}" readonly></div>
+        <button class="bing-search-btn">🔍</button>
+      </div>
+      <div class="bing-tabs">
+        <div class="bing-tab active">All</div>
+        <div class="bing-tab">Images</div>
+        <div class="bing-tab">Videos</div>
+        <div class="bing-tab">Maps</div>
+        <div class="bing-tab">News</div>
+        <div class="bing-tab">Shopping</div>
+      </div>
+    </div>
+    <div class="bing-results">
+      <div class="bing-stats">6,740,000 results · Any time</div>
+      <div class="bing-result">
+        <div class="bing-result-url">${favEl}${esc(breadcrumb)}</div>
+        <a class="bing-result-title" href="#">${esc(title)}</a>
+        <div class="bing-result-desc">${dateStr}${esc(desc)}</div>
+        ${snippet}
+      </div>
+      <div class="bing-result" style="opacity:.3">
+        <div class="bing-result-url"><div class="bing-favicon">🌐</div>anothersite.com › category › page</div>
+        <a class="bing-result-title" href="#">Another Result Appears Here in the SERP</a>
+        <div class="bing-result-desc">Surrounding results give context for how your listing competes for searcher attention in Bing's results page.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildMobile(v) {
+  const domain = parseDomain(v.url);
+  const title = v.title || 'Page Title — Your Website';
+  const desc  = v.desc  || 'Your meta description on mobile Bing.';
+  return `<div class="bing-mobile-shell">
+    <div class="bing-mobile-header">
+      <div class="bing-logo" style="font-size:18px;padding-bottom:6px">Bi<span>n</span>g</div>
+      <div class="bing-mobile-searchbar"><span>🔍</span><span style="font-size:13px;color:#212121">${esc(v.query)}</span><span style="margin-left:auto;font-size:12px">✕</span></div>
+      <div class="bing-tabs" style="font-size:12px">
+        <div class="bing-tab active" style="padding:7px 10px">All</div>
+        <div class="bing-tab" style="padding:7px 10px">Images</div>
+        <div class="bing-tab" style="padding:7px 10px">Videos</div>
+        <div class="bing-tab" style="padding:7px 10px">News</div>
+      </div>
+    </div>
+    <div class="bing-mobile-result">
+      <div class="bing-mobile-url"><div class="bing-favicon">🌐</div>${esc(domain)}</div>
+      <div class="bing-mobile-title">${esc(title)}</div>
+      <div class="bing-mobile-desc">${esc(desc)}</div>
+      ${v.snippet==='stars'?`<div class="bing-stars" style="font-size:12px;margin-top:4px">${stars(v.rating)} <span style="font-size:12px;color:#767676">${v.rating} (${v.reviews})</span></div>`:''}
+    </div>
+    <div class="bing-mobile-result" style="opacity:.3">
+      <div class="bing-mobile-url">anothersite.com</div>
+      <div class="bing-mobile-title">Another Result on Mobile Bing</div>
+      <div class="bing-mobile-desc">Context for how your listing competes in Bing's mobile view.</div>
+    </div>
+  </div>`;
+}
+
+function live() {
+  const v = getV();
+  document.getElementById('starsSection').style.display = v.snippet==='stars' ? 'block' : 'none';
+  document.getElementById('deeplinksSection').style.display = v.snippet==='deeplinks' ? 'block' : 'none';
+  meter('bTitle','titleMeter','titleCount',65,120);
+  meter('bDesc','descMeter','descCount',145,300);
+  chips(v);
+  const wrap = document.getElementById('previewWrap');
+  const has = v.title||v.desc||v.url;
+  if(!has){wrap.innerHTML='<div class="preview-placeholder"><span class="icon">🔎</span>Fill in your page details to see the Bing SERP preview</div>';document.getElementById('codeOut').style.display='none';return;}
+  wrap.innerHTML=`<div style="width:100%">${device==='desktop'?buildDesktop(v):buildMobile(v)}</div>`;
+  const el=document.getElementById('codeOut');el.style.display='block';
+  el.textContent=`<!-- Meta Tags for Bing / MSN Search -->
+<title>${v.title}</title>
+<meta name="description" content="${v.desc}" />
+<link rel="canonical" href="${v.url}" />
+
+<!-- Bing uses standard OG tags too -->
+<meta property="og:title" content="${v.title}" />
+<meta property="og:description" content="${v.desc}" />
+<meta property="og:url" content="${v.url}" />
+
+<!-- Bing Webmaster verification (replace with your code) -->
+<meta name="msvalidate.01" content="YOUR_BING_VERIFICATION_CODE" />`;
+}
+
+function copyMeta(){const el=document.getElementById('codeOut');if(!el.textContent||el.style.display==='none'){alert('Fill in fields first!');return;}navigator.clipboard.writeText(el.textContent).then(()=>{const b=event.target;b.textContent='✅ Copied!';setTimeout(()=>b.textContent='📋 Copy Meta Tags',2000);});}
+function resetAll(){['bTitle','bDesc','bUrl','bFavicon','bDate','bQuery','bPrice','dl1','dl2','dl3'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('bSnippet').value='none';document.getElementById('bRating').value='4.6';document.getElementById('bReviews').value='892';document.getElementById('codeOut').style.display='none';live();}
+document.addEventListener('DOMContentLoaded',()=>{renderHeader();renderFooter();});
+</script>
+</body>
+</html>
