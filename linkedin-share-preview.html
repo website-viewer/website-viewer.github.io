@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn Share Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your website link appears when shared on LinkedIn. See article, post, and message previews with authentic LinkedIn UI simulation.">
+<meta name="keywords" content="linkedin share preview, linkedin link preview, linkedin post preview, og tags linkedin, linkedin meta tags checker">
+<meta property="og:title" content="LinkedIn Share Preview Tool — Website Viewer">
+<meta property="og:description" content="Simulate how your links appear on LinkedIn posts, articles, and messages. Validate your OpenGraph tags for LinkedIn.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/linkedin-share-preview">
+<link rel="canonical" href="https://website-viewer.github.io/linkedin-share-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "LinkedIn Share Preview Tool",
+  "url": "https://website-viewer.github.io/linkedin-share-preview",
+  "description": "Preview and validate how your website links appear when shared on LinkedIn — including post feed, article, and InMail link previews.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Organization", "name": "Website Viewer" }
+}
+</script>
+<style>
+/* LinkedIn design system */
+.li-shell { font-family:-apple-system,'system-ui',Helvetica,Arial,sans-serif; max-width:554px; margin:0 auto; }
+.li-post-card { border:1px solid #e0e0e0; border-radius:8px; overflow:hidden; background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.06); }
+.li-post-header { display:flex; align-items:center; gap:10px; padding:12px 16px 0; }
+.li-avatar { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#0077b5,#00a0dc); flex-shrink:0; display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1rem; }
+.li-user-name { font-size:14px; font-weight:600; color:#000; }
+.li-user-headline { font-size:12px; color:#666; line-height:1.3; }
+.li-post-time { font-size:12px; color:#666; }
+.li-post-text { padding:10px 16px; font-size:14px; line-height:1.5; color:#000; }
+.li-follow-btn { margin-left:auto; border:1px solid #0077b5; color:#0077b5; background:transparent; border-radius:999px; padding:4px 12px; font-size:13px; font-weight:600; cursor:pointer; }
+
+/* Link card */
+.li-link-card { margin:0; border-top:1px solid #e0e0e0; }
+.li-link-img { width:100%; height:290px; object-fit:cover; display:block; background:#e9e9e9; }
+.li-link-img-empty { width:100%; height:290px; background:#eef3f8; display:flex;align-items:center;justify-content:center;color:#8c8c8c;font-size:0.85rem;flex-direction:column;gap:0.5rem; }
+.li-link-body { padding:12px 16px 14px; background:#f3f6f8; border-top:1px solid #e0e0e0; }
+.li-link-title { font-size:14px; font-weight:600; color:#000; margin-bottom:3px; line-height:1.35; }
+.li-link-desc { font-size:12px; color:#666; line-height:1.4; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; margin-bottom:4px; }
+.li-link-domain { font-size:12px; color:#666; }
+
+/* Reactions */
+.li-reactions { display:flex; gap:0; padding:4px 16px; border-top:1px solid #e0e0e0; }
+.li-react-btn { flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:10px 0; font-size:13px; font-weight:600; color:#666; cursor:pointer; border-radius:4px; }
+.li-react-btn:hover { background:#f3f6f8; }
+
+/* Message style */
+.li-message-shell { max-width:380px; margin:0 auto; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.08); }
+.li-message-header { background:#0077b5; color:#fff; padding:10px 14px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; }
+.li-message-body { padding:12px; }
+.li-msg-bubble { background:#e9f5fd; border-radius:0 12px 12px 12px; padding:10px 12px; font-size:13px; color:#000; margin-bottom:10px; }
+.li-msg-link { border:1px solid #d0dae4; border-radius:4px; overflow:hidden; }
+.li-msg-link-img { width:100%; height:120px; object-fit:cover; display:block; background:#e9e9e9; display:flex;align-items:center;justify-content:center;color:#aaa;font-size:0.75rem; }
+.li-msg-link-img img { width:100%;height:120px;object-fit:cover;display:block; }
+.li-msg-link-body { padding:8px; }
+.li-msg-link-title { font-size:12px; font-weight:700; color:#000; }
+.li-msg-link-domain { font-size:11px; color:#666; margin-top:2px; }
+
+.view-tabs { display:flex; gap:0.5rem; margin-bottom:1.25rem; flex-wrap:wrap; }
+.vtab { padding:0.4rem 1rem; border-radius:999px; border:1px solid var(--color-border); background:transparent; color:var(--color-text-muted); font-size:0.78rem; font-weight:600; cursor:pointer; font-family:var(--font-sans); transition:var(--transition); }
+.vtab.active { background:#0077b5; border-color:#0077b5; color:#fff; }
+.vtab:hover:not(.active) { border-color:#0077b5; color:#0077b5; }
+
+.code-output { background:#0d1117; border:1px solid var(--color-border); border-radius:var(--radius); padding:1rem; font-family:var(--font-mono); font-size:0.78rem; color:#c9d1d9; line-height:1.7; white-space:pre-wrap; word-break:break-all; margin-top:1rem; max-height:260px; overflow-y:auto; }
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+<main>
+<div class="tool-page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Link Share Previews</a><span>/</span>
+    <span style="color:var(--color-text-light)">LinkedIn Share Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge">💼 LinkedIn</div>
+    <h1>LinkedIn Share Preview Tool</h1>
+    <p>See how your links appear on LinkedIn posts, articles, and InMail messages — with pixel-accurate UI simulation.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Article & Link Details</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Article / Page Title</label>
+        <input id="liTitle" type="text" class="form-control" placeholder="Your compelling headline" maxlength="150" oninput="liveUp();cc('liTitle','tcnt',150)">
+        <div class="char-counter" id="tcnt">0 / 150</div>
+      </div>
+      <div class="form-group">
+        <label>Author / Company Name</label>
+        <input id="liAuthor" type="text" class="form-control" placeholder="Your Name" oninput="liveUp()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="liDesc" class="form-control" rows="3" placeholder="A professional summary of your content…" maxlength="200" oninput="liveUp();cc('liDesc','dcnt',200)"></textarea>
+        <div class="char-counter" id="dcnt">0 / 200</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Image URL (1200×627 recommended)</label>
+        <input id="liImage" type="url" class="form-control" placeholder="https://yoursite.com/image.jpg" oninput="liveUp()">
+      </div>
+      <div class="form-group">
+        <label>Domain</label>
+        <input id="liDomain" type="text" class="form-control" placeholder="yoursite.com" oninput="liveUp()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Post Text</label>
+        <textarea id="liPost" class="form-control" rows="2" placeholder="Excited to share this with my network! 🚀" maxlength="300" oninput="liveUp()"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Headline / Role</label>
+        <input id="liHeadline" type="text" class="form-control" placeholder="Senior Developer at Company" oninput="liveUp()">
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Preview</div>
+    <div class="view-tabs">
+      <button class="vtab active" onclick="setView('feed',this)">📋 Feed Post</button>
+      <button class="vtab" onclick="setView('message',this)">✉️ InMail / Message</button>
+    </div>
+    <div id="previewWrap" style="background:#f3f2ef;border-radius:var(--radius-lg);padding:1.5rem;min-height:220px;display:flex;align-items:center;justify-content:center;">
+      <div class="preview-placeholder"><span class="icon">💼</span>Fill in the fields above to preview your LinkedIn share</div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="copyCode()">📋 Copy OG Tags</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div id="codeOut" class="code-output" style="display:none"></div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use This Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box"><div class="step-num">Step 01</div><h4>Enter Your Details</h4><p>Fill in your article title, description, image URL, and author information.</p></div>
+      <div class="step-box"><div class="step-num">Step 02</div><h4>Switch Views</h4><p>Toggle between Feed Post and InMail / Message views to see both link card styles.</p></div>
+      <div class="step-box"><div class="step-num">Step 03</div><h4>Optimize</h4><p>Adjust title and description length until character counts are in the green zone.</p></div>
+      <div class="step-box"><div class="step-num">Step 04</div><h4>Deploy</h4><p>Copy the OG meta tags and add them to your HTML <code>&lt;head&gt;</code> before publishing.</p></div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About LinkedIn Link Sharing</h2>
+    <p>LinkedIn renders link cards when a URL is included in a post or message. Like Facebook and Twitter, LinkedIn reads OpenGraph meta tags to build these previews. However, LinkedIn applies its own rendering rules and has stricter image requirements than other platforms.</p>
+    <p>LinkedIn is particularly important for B2B content. A well-crafted link card on LinkedIn can drive significant traffic from a professional audience — making OG optimization directly tied to business outcomes.</p>
+    <ul>
+      <li>Recommended image size: <strong>1200×627px</strong> (LinkedIn-specific ratio)</li>
+      <li>Minimum image size: <strong>200×200px</strong> — smaller images are ignored</li>
+      <li>LinkedIn's crawler respects <code>og:title</code>, <code>og:description</code>, <code>og:image</code>, and <code>og:url</code></li>
+      <li>After updating tags, use the <a href="https://www.linkedin.com/post-inspector/" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">LinkedIn Post Inspector</a> to force a cache refresh</li>
+      <li>Titles over <strong>150 characters</strong> are truncated in the feed view</li>
+      <li>LinkedIn penalizes outbound link posts in organic reach — a strong image and title helps overcome this</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+<footer id="footer-component"></footer>
+<script src="../script.js"></script>
+<script>
+let currentView = 'feed';
+function cc(id,cid,max){const v=document.getElementById(id).value.length;const el=document.getElementById(cid);el.textContent=`${v} / ${max}`;el.className='char-counter'+(v>max*.9?' warn':'')+(v>=max?' over':'');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function getV(){return{title:document.getElementById('liTitle').value.trim()||'Your Page Title',desc:document.getElementById('liDesc').value.trim(),domain:document.getElementById('liDomain').value.trim()||'yoursite.com',image:document.getElementById('liImage').value.trim(),post:document.getElementById('liPost').value.trim()||'Excited to share this! 🚀',author:document.getElementById('liAuthor').value.trim()||'Your Name',headline:document.getElementById('liHeadline').value.trim()||'Professional'};}
+
+function feedHtml(v){
+  const imgH=v.image?`<img class="li-link-img" src="${v.image}" alt="" onerror="this.parentElement.classList.add('li-link-img-empty');this.remove()">`:`<div class="li-link-img-empty">🖼️<span>No image — use 1200×627px</span></div>`;
+  return`<div class="li-shell"><div class="li-post-card">
+    <div class="li-post-header"><div class="li-avatar">${esc(v.author.substring(0,2).toUpperCase())}</div><div><div class="li-user-name">${esc(v.author)}</div><div class="li-user-headline">${esc(v.headline)}</div><div class="li-post-time">Just now • 🌐</div></div><button class="li-follow-btn">+ Follow</button></div>
+    <div class="li-post-text">${esc(v.post)}</div>
+    <div class="li-link-card">${imgH}<div class="li-link-body"><div class="li-link-title">${esc(v.title)}</div>${v.desc?`<div class="li-link-desc">${esc(v.desc)}</div>`:''}<div class="li-link-domain">${esc(v.domain)}</div></div></div>
+    <div class="li-reactions"><div class="li-react-btn">👍 Like</div><div class="li-react-btn">💬 Comment</div><div class="li-react-btn">↗️ Repost</div><div class="li-react-btn">✉️ Send</div></div>
+  </div></div>`;
+}
+
+function messageHtml(v){
+  const imgH=v.image?`<img src="${v.image}" alt="" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.remove()">`:`<div class="li-msg-link-img">🖼️ No image</div>`;
+  return`<div style="background:#f3f2ef;border-radius:12px;padding:16px"><div class="li-message-shell">
+    <div class="li-message-header"><div style="width:28px;height:28px;border-radius:50%;background:#0077b5;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700">${esc(v.author.substring(0,2).toUpperCase())}</div>${esc(v.author)}</div>
+    <div class="li-message-body">
+      <div class="li-msg-bubble">${esc(v.post)}</div>
+      <div class="li-msg-link">${imgH}<div class="li-msg-link-body"><div class="li-msg-link-title">${esc(v.title)}</div><div class="li-msg-link-domain">${esc(v.domain)}</div></div></div>
+      <div style="font-size:11px;color:#666;margin-top:6px;text-align:right">10:42 AM</div>
+    </div>
+  </div></div>`;
+}
+
+function liveUp(){
+  const v=getV();const wrap=document.getElementById('previewWrap');
+  const has=document.getElementById('liTitle').value.trim()||document.getElementById('liImage').value.trim();
+  if(!has){wrap.innerHTML='<div class="preview-placeholder"><span class="icon">💼</span>Fill in the fields above to preview your LinkedIn share</div>';return;}
+  wrap.innerHTML=`<div style="width:100%">${currentView==='feed'?feedHtml(v):messageHtml(v)}</div>`;
+  const el=document.getElementById('codeOut');el.style.display='block';
+  el.textContent=[`<!-- OpenGraph / LinkedIn Meta Tags -->`,`<meta property="og:title" content="${v.title}" />`,`<meta property="og:description" content="${v.desc}" />`,`<meta property="og:image" content="${v.image}" />`,`<meta property="og:image:width" content="1200" />`,`<meta property="og:image:height" content="627" />`,`<meta property="og:type" content="article" />`,`<meta property="og:url" content="https://${v.domain}" />`].join('\n');
+}
+
+function setView(v,btn){currentView=v;document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');liveUp();}
+function copyCode(){const el=document.getElementById('codeOut');if(!el.textContent){alert('Fill fields first!');return;}navigator.clipboard.writeText(el.textContent).then(()=>{const b=event.target;b.textContent='✅ Copied!';setTimeout(()=>b.textContent='📋 Copy OG Tags',2000);});}
+function resetAll(){['liTitle','liDesc','liDomain','liImage','liPost','liAuthor','liHeadline'].forEach(id=>document.getElementById(id).value='');document.getElementById('codeOut').style.display='none';['tcnt','dcnt'].forEach((id,i)=>document.getElementById(id).textContent=`0 / ${[150,200][i]}`);document.getElementById('previewWrap').innerHTML='<div class="preview-placeholder"><span class="icon">💼</span>Fill in the fields above to preview your LinkedIn share</div>';}
+document.addEventListener('DOMContentLoaded',()=>{renderHeader();renderFooter();});
+</script>
+</body>
+</html>
