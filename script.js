@@ -10,9 +10,10 @@ function renderHeader() {
             </a>
             <nav>
                 <ul class="nav-menu">
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#viewer">Viewer</a></li>
-                    <li><a href="/about">About</a></li>
+                    <li><a href="./">Home</a></li>
+                     <li><a href="/contact">Contact</a></li>
+                     <li><a href="/privacy-policy">Privacy Policy</a></li>
+                     <li><a href="/terms-of-use">Terms of Use</a></li>
                 </ul>
             </nav>
         </div>
