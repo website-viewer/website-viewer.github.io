@@ -23,7 +23,6 @@
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
 <style>
 :root{
   --fb-bg:#f0f2f5;--fb-white:#fff;--fb-border:#ccd0d5;--fb-text:#050505;--fb-muted:#65676b;
@@ -33,7 +32,11 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--font-ui);background:var(--panel);color:var(--panel-text);min-height:100vh}
-/* The site-header styles are now handled by styles.css, but local overrides kept for safety */
+.site-header{background:#080810;border-bottom:1px solid var(--panel-border);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.site-header a{color:var(--panel-text);text-decoration:none;font-size:.85rem;opacity:.6;transition:.2s}
+.site-header a:hover{opacity:1}
+.breadcrumb-sep{opacity:.3}
+.page-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--fb-blue)}
 .app{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 57px)}
 .controls{background:#080810;border-right:1px solid var(--panel-border);padding:28px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:20px}
 .controls h2{font-family:var(--font-display);font-size:1.15rem;font-weight:800;color:#fff}
@@ -104,8 +107,13 @@ input:checked+.slider:before{transform:translateX(18px)}
 </head>
 <body> 
   
-<header id="header-component"></header>
-
+<header class="site-header">    
+  <a href="./">📱 Website Viewer</a>
+  <span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a>
+  <span class="breadcrumb-sep">›</span>
+  <span class="page-title">Facebook Post Preview</span>
+</header>
 <div class="app">
   <aside class="controls">
     <div>
@@ -253,9 +261,6 @@ input:checked+.slider:before{transform:translateX(18px)}
     </div>
   </main>
 </div>
-
-<footer id="footer-component"></footer>
-
 <script>
 const $=id=>document.getElementById(id);
 const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
