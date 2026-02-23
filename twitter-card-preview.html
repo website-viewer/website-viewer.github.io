@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twitter Card Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your website link appears when shared on Twitter/X. Test Summary, Summary Large Image, App, and Player card types instantly.">
+<meta name="keywords" content="twitter card preview, twitter card checker, x card preview, summary large image, twitter meta tags">
+<meta property="og:title" content="Twitter Card Preview Tool — Website Viewer">
+<meta property="og:description" content="Preview and validate Twitter Card meta tags before publishing. See exactly how your links appear on Twitter/X.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/twitter-card-preview">
+<link rel="canonical" href="https://website-viewer.github.io/twitter-card-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Twitter Card Preview Tool",
+  "url": "https://website-viewer.github.io/twitter-card-preview",
+  "description": "Preview and validate Twitter Card meta tags. See exactly how your links look when shared on Twitter/X with Summary, Summary Large Image, App and Player card types.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Organization", "name": "Website Viewer" },
+  "featureList": ["Twitter Summary Card preview", "Twitter Summary Large Image preview", "Character count validation", "Copy-ready meta tag code", "Light and dark mode simulation"]
+}
+</script>
+<style>
+.card-type-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:0.75rem; margin-bottom:1.5rem; }
+.card-type-btn { background:var(--color-bg-dark); border:1.5px solid var(--color-border); border-radius:var(--radius-lg); padding:1rem; text-align:center; cursor:pointer; transition:var(--transition); }
+.card-type-btn:hover { border-color:var(--color-primary); }
+.card-type-btn.active { border-color:#1d9bf0; background:rgba(29,155,240,0.08); }
+.card-type-btn .ct-icon { font-size:1.6rem; display:block; margin-bottom:0.4rem; }
+.card-type-btn .ct-name { font-size:0.78rem; font-weight:700; color:var(--color-text-light); display:block; }
+.card-type-btn .ct-desc { font-size:0.68rem; color:var(--color-text-muted); margin-top:0.2rem; display:block; }
+
+.theme-toggle { display:flex; align-items:center; gap:0.5rem; font-size:0.8rem; color:var(--color-text-muted); margin-bottom:1rem; }
+.toggle-switch { position:relative; width:36px; height:20px; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; inset:0; background:#334155; border-radius:999px; cursor:pointer; transition:.3s; }
+.toggle-slider:before { content:''; position:absolute; width:14px; height:14px; background:#fff; border-radius:50%; top:3px; left:3px; transition:.3s; }
+.toggle-switch input:checked + .toggle-slider { background:#1d9bf0; }
+.toggle-switch input:checked + .toggle-slider:before { transform:translateX(16px); }
+
+/* X / Twitter UI shell */
+.x-shell { border-radius:12px; overflow:hidden; max-width:598px; margin:0 auto; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+.x-shell.dark { background:#000; color:#e7e9ea; }
+.x-shell.light { background:#fff; color:#0f1419; }
+
+.x-tweet { padding:12px 16px; border-bottom:1px solid; }
+.x-shell.dark .x-tweet { border-color:#2f3336; }
+.x-shell.light .x-tweet { border-color:#eff3f4; }
+
+.x-tweet-header { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.x-avatar { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#ec4899); flex-shrink:0; display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.9rem; }
+.x-user-info .x-name { font-weight:700; font-size:15px; }
+.x-user-info .x-handle { font-size:15px; color:#71767b; }
+.x-tweet-text { font-size:15px; line-height:1.5; margin-bottom:10px; word-break:break-word; }
+.x-tweet-text a { color:#1d9bf0; text-decoration:none; }
+
+/* Summary Large Image Card */
+.x-card-large { border:1px solid; border-radius:16px; overflow:hidden; }
+.x-shell.dark .x-card-large { border-color:#2f3336; }
+.x-shell.light .x-card-large { border-color:#cfd9de; }
+.x-card-large .xc-img { width:100%; height:260px; object-fit:cover; display:block; background:#2f3336; }
+.x-card-large .xc-img.empty { display:flex;align-items:center;justify-content:center;color:#71767b;font-size:0.8rem;height:260px; }
+.x-card-large .xc-body { padding:12px; }
+.x-shell.dark .x-card-large .xc-body { background:#16181c; }
+.x-shell.light .x-card-large .xc-body { background:#f7f9f9; }
+.xc-domain { font-size:13px; color:#71767b; margin-bottom:2px; }
+.xc-title { font-size:15px; font-weight:700; margin-bottom:2px; }
+.xc-desc { font-size:13px; color:#71767b; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+
+/* Summary (small) Card */
+.x-card-small { border:1px solid; border-radius:16px; overflow:hidden; display:flex; }
+.x-shell.dark .x-card-small { border-color:#2f3336; }
+.x-shell.light .x-card-small { border-color:#cfd9de; }
+.x-card-small .xcs-img { width:110px; height:110px; object-fit:cover; flex-shrink:0; background:#2f3336; display:flex;align-items:center;justify-content:center;color:#71767b;font-size:0.7rem; }
+.x-card-small .xcs-img img { width:110px; height:110px; object-fit:cover; display:block; }
+.x-card-small .xcs-body { padding:10px 12px; display:flex; flex-direction:column; justify-content:center; flex:1; }
+.x-shell.dark .x-card-small .xcs-body { background:#16181c; }
+.x-shell.light .x-card-small .xcs-body { background:#f7f9f9; }
+
+.x-tweet-meta { display:flex; gap:20px; margin-top:10px; font-size:13px; color:#71767b; }
+
+.code-output { background:#0d1117; border:1px solid var(--color-border); border-radius:var(--radius); padding:1rem; font-family:var(--font-mono); font-size:0.78rem; color:#c9d1d9; line-height:1.7; white-space:pre-wrap; word-break:break-all; margin-top:1rem; max-height:260px; overflow-y:auto; }
+
+.char-row { display:flex; justify-content:space-between; align-items:center; gap:0.5rem; }
+.limit-bar { flex:1; height:4px; background:var(--color-border); border-radius:2px; overflow:hidden; }
+.limit-fill { height:100%; background:var(--color-success); border-radius:2px; transition:width 0.3s,background 0.3s; }
+</style>
+</head>
+<body>
+
+<header id="header-component"></header>
+
+<main>
+<div class="tool-page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Link Share Previews</a><span>/</span>
+    <span style="color:var(--color-text-light)">Twitter Card Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge">𝕏 Twitter / X</div>
+    <h1>Twitter Card Preview Tool</h1>
+    <p>Validate and preview your Twitter Card meta tags. See how your links render on Twitter/X before anyone else does.</p>
+  </div>
+
+  <!-- CARD TYPE SELECTOR -->
+  <div class="tool-card">
+    <div class="tool-card-title">🃏 Select Card Type</div>
+    <div class="card-type-grid">
+      <div class="card-type-btn active" onclick="setCardType('large',this)">
+        <span class="ct-icon">🖼️</span>
+        <span class="ct-name">Summary Large Image</span>
+        <span class="ct-desc">Full-width image card</span>
+      </div>
+      <div class="card-type-btn" onclick="setCardType('small',this)">
+        <span class="ct-icon">📄</span>
+        <span class="ct-name">Summary</span>
+        <span class="ct-desc">Thumbnail + text</span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Title (twitter:title)</label>
+        <input id="twTitle" type="text" class="form-control" placeholder="Your page title" maxlength="70" oninput="updatePreview();updateBar('twTitle','titleBar',70)">
+        <div class="char-row"><div class="limit-bar"><div class="limit-fill" id="titleBar" style="width:0%"></div></div><div class="char-counter" id="titleCount">0 / 70</div></div>
+      </div>
+      <div class="form-group">
+        <label>Site Handle (twitter:site)</label>
+        <input id="twSite" type="text" class="form-control" placeholder="@yourhandle" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Description (twitter:description)</label>
+        <textarea id="twDesc" class="form-control" rows="3" placeholder="A short summary of your page…" maxlength="200" oninput="updatePreview();updateBar('twDesc','descBar',200)"></textarea>
+        <div class="char-row"><div class="limit-bar"><div class="limit-fill" id="descBar" style="width:0%"></div></div><div class="char-counter" id="descCount">0 / 200</div></div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Image URL (twitter:image)</label>
+        <input id="twImage" type="url" class="form-control" placeholder="https://yoursite.com/card.jpg" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Page URL</label>
+        <input id="twUrl" type="url" class="form-control" placeholder="https://yoursite.com" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tweet Text (preview)</label>
+        <textarea id="twText" class="form-control" rows="2" placeholder="Check this out! https://yoursite.com" oninput="updatePreview()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Preview</div>
+    <div class="theme-toggle">
+      <span>🌙 Dark</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="themeToggle" onchange="updatePreview()">
+        <span class="toggle-slider"></span>
+      </label>
+      <span>☀️ Light</span>
+    </div>
+    <div id="previewWrap" style="display:flex;justify-content:center;padding:1rem;background:#111827;border-radius:var(--radius-lg);min-height:200px;align-items:center;">
+      <div class="preview-placeholder"><span class="icon">𝕏</span>Fill in the fields above to preview your Twitter Card</div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="copyTags()">📋 Copy Twitter Tags</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div id="codeOut" class="code-output" style="display:none"></div>
+  </div>
+
+  <!-- HOW TO -->
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the Twitter Card Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box"><div class="step-num">Step 01</div><h4>Choose Card Type</h4><p>Select Summary Large Image for a bold visual card, or Summary for a compact thumbnail layout.</p></div>
+      <div class="step-box"><div class="step-num">Step 02</div><h4>Enter Your Content</h4><p>Fill in title, description, image URL, site handle, and the page URL you want to share.</p></div>
+      <div class="step-box"><div class="step-num">Step 03</div><h4>Toggle Theme</h4><p>Switch between dark and light mode to ensure your card looks great on both Twitter/X themes.</p></div>
+      <div class="step-box"><div class="step-num">Step 04</div><h4>Copy &amp; Deploy</h4><p>Copy the generated meta tags, paste them in your HTML <code>&lt;head&gt;</code>, and publish your page.</p></div>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Twitter Cards</h2>
+    <p>Twitter Cards are meta tags that allow you to attach rich media experiences to tweets that link to your content. When someone tweets a link to your website, Twitter reads these tags and renders a card directly in the tweet — boosting visibility and click-through dramatically compared to plain link tweets.</p>
+    <p>There are two main card types in common use today: <strong>Summary</strong> shows a small thumbnail beside your title and description, while <strong>Summary Large Image</strong> renders a full-width hero image above your content — this is the most impactful format for engagement.</p>
+    <p><strong>Important rules:</strong></p>
+    <ul>
+      <li>Your image must be at least <strong>600×314px</strong> (1200×628px recommended) for large cards</li>
+      <li>Title is capped at <strong>70 characters</strong> before truncation</li>
+      <li>Description is shown up to <strong>200 characters</strong></li>
+      <li>Card images must be under <strong>5MB</strong> in file size</li>
+      <li>Use <code>twitter:site</code> with your <strong>@handle</strong> to get attribution</li>
+      <li>Twitter validates cards when a link is first shared — use the Twitter Card Validator to confirm after deployment</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+
+<footer id="footer-component"></footer>
+<script src="../script.js"></script>
+<script>
+let cardType = 'large';
+
+function setCardType(type, btn) {
+  cardType = type;
+  document.querySelectorAll('.card-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updatePreview();
+}
+
+function updateBar(id, barId, max) {
+  const val = document.getElementById(id).value.length;
+  const pct = Math.min((val / max) * 100, 100);
+  const bar = document.getElementById(barId);
+  bar.style.width = pct + '%';
+  bar.style.background = pct > 90 ? '#ef4444' : pct > 70 ? '#f59e0b' : '#10b981';
+  const counter = document.getElementById(id === 'twTitle' ? 'titleCount' : 'descCount');
+  counter.textContent = `${val} / ${max}`;
+}
+
+function getV() {
+  return {
+    title: document.getElementById('twTitle').value.trim() || 'Your Page Title',
+    desc: document.getElementById('twDesc').value.trim(),
+    site: document.getElementById('twSite').value.trim() || '@yourhandle',
+    image: document.getElementById('twImage').value.trim(),
+    url: document.getElementById('twUrl').value.trim() || 'https://yoursite.com',
+    tweet: document.getElementById('twText').value.trim() || 'Check this out!',
+    dark: !document.getElementById('themeToggle').checked
+  };
+}
+
+function getDomain(url) { try { return new URL(url).hostname; } catch { return 'yoursite.com'; } }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function buildPreview(v) {
+  const theme = v.dark ? 'dark' : 'light';
+  const col = v.dark ? '#e7e9ea' : '#0f1419';
+
+  const imgHtml = v.image
+    ? `<img src="${v.image}" alt="card image" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentElement.innerHTML='Image failed to load'">`
+    : '';
+
+  let cardHtml = '';
+  if (cardType === 'large') {
+    cardHtml = `<div class="x-card-large">
+      <div class="xc-img ${v.image ? '' : 'empty'}" style="height:260px">${imgHtml || '🖼️ No image — recommend 1200×628px'}</div>
+      <div class="xc-body"><div class="xc-domain">${getDomain(v.url)}</div><div class="xc-title" style="color:${col}">${esc(v.title)}</div>${v.desc ? `<div class="xc-desc">${esc(v.desc)}</div>` : ''}</div>
+    </div>`;
+  } else {
+    cardHtml = `<div class="x-card-small">
+      <div class="xcs-img">${imgHtml || '🖼️'}</div>
+      <div class="xcs-body"><div class="xc-domain">${getDomain(v.url)}</div><div class="xc-title" style="color:${col};font-size:14px;font-weight:700;margin-bottom:3px">${esc(v.title)}</div>${v.desc ? `<div class="xc-desc">${esc(v.desc)}</div>` : ''}</div>
+    </div>`;
+  }
+
+  return `<div class="x-shell ${theme}" style="width:100%;max-width:598px">
+    <div class="x-tweet" style="border-bottom:1px solid ${v.dark ? '#2f3336' : '#eff3f4'}">
+      <div class="x-tweet-header">
+        <div class="x-avatar">YO</div>
+        <div class="x-user-info"><div class="x-name" style="color:${col}">Your Name</div><div class="x-handle">${esc(v.site)}</div></div>
+      </div>
+      <div class="x-tweet-text" style="color:${col}">${esc(v.tweet)} <a href="#">${getDomain(v.url)}</a></div>
+      ${cardHtml}
+      <div class="x-tweet-meta">💬 0 &nbsp; 🔁 0 &nbsp; ❤️ 0 &nbsp; 📊 0 &nbsp; 🔖</div>
+    </div>
+  </div>`;
+}
+
+function updatePreview() {
+  const v = getV();
+  const wrap = document.getElementById('previewWrap');
+  const hasContent = document.getElementById('twTitle').value.trim() || document.getElementById('twImage').value.trim();
+  if (!hasContent) {
+    wrap.innerHTML = '<div class="preview-placeholder"><span class="icon">𝕏</span>Fill in the fields above to preview your Twitter Card</div>';
+    return;
+  }
+  wrap.innerHTML = `<div style="width:100%">${buildPreview(v)}</div>`;
+  updateCodeOut(v);
+}
+
+function updateCodeOut(v) {
+  const el = document.getElementById('codeOut');
+  el.style.display = 'block';
+  el.textContent = [
+    `<meta name="twitter:card" content="${cardType === 'large' ? 'summary_large_image' : 'summary'}" />`,
+    `<meta name="twitter:site" content="${v.site}" />`,
+    `<meta name="twitter:title" content="${v.title}" />`,
+    `<meta name="twitter:description" content="${v.desc}" />`,
+    `<meta name="twitter:image" content="${v.image}" />`,
+    `<meta name="twitter:url" content="${v.url}" />`
+  ].join('\n');
+}
+
+function copyTags() {
+  const el = document.getElementById('codeOut');
+  if (!el.textContent) { alert('Fill in some fields first!'); return; }
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const btn = event.target; btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy Twitter Tags', 2000);
+  });
+}
+
+function resetAll() {
+  ['twTitle','twDesc','twSite','twImage','twUrl','twText'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('themeToggle').checked = false;
+  document.getElementById('codeOut').style.display = 'none';
+  ['titleBar','descBar'].forEach(id => { document.getElementById(id).style.width = '0%'; });
+  ['titleCount','descCount'].forEach((id,i) => document.getElementById(id).textContent = `0 / ${[70,200][i]}`);
+  document.getElementById('previewWrap').innerHTML = '<div class="preview-placeholder"><span class="icon">𝕏</span>Fill in the fields above to preview your Twitter Card</div>';
+}
+
+document.addEventListener('DOMContentLoaded', () => { renderHeader(); renderFooter(); });
+</script>
+</body>
+</html>
