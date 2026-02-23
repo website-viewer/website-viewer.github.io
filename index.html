@@ -388,5 +388,41 @@
     </script>
 
     <script src="script.js"></script>
+<script>
+(function() {
+    function initToolsFilter() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const categories = document.querySelectorAll('.tool-category');
+
+        if (!filterBtns.length) return;
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const filter = this.dataset.filter;
+
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Show/hide categories
+                categories.forEach(cat => {
+                    if (filter === 'all' || cat.dataset.category === filter) {
+                        cat.classList.remove('hidden');
+                    } else {
+                        cat.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initToolsFilter);
+    } else {
+        initToolsFilter();
+    }
+})();
+</script>
+    
 </body>
 </html>
