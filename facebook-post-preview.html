@@ -106,6 +106,10 @@ input:checked+.slider:before{transform:translateX(18px)}
 </style>
 </head>
 <body>
+
+<!-- Header Component -->
+    <header id="header-component"></header>
+  
 <header class="site-header">
   <a href="./">📱 Website Viewer</a>
   <span class="breadcrumb-sep">›</span>
@@ -260,6 +264,8 @@ input:checked+.slider:before{transform:translateX(18px)}
     </div>
   </main>
 </div>
+<!-- Footer Component -->
+    <footer id="footer-component"></footer>  
 <script>
 const $=id=>document.getElementById(id);
 const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
