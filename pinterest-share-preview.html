@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pinterest Share Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your website link appears when shared on Pinterest. Simulate Pin cards with images, titles, descriptions and board layouts.">
+<meta name="keywords" content="pinterest preview, pinterest pin preview, pinterest card, pinterest share tool, pin checker, pinterest meta tags">
+<meta property="og:title" content="Pinterest Share Preview Tool — Website Viewer">
+<meta property="og:description" content="See how your URLs look as Pinterest Pins before sharing. Simulate pin cards, board grids, and mobile views.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/pinterest-share-preview">
+<link rel="canonical" href="https://website-viewer.github.io/pinterest-share-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Pinterest Share Preview Tool",
+  "url": "https://website-viewer.github.io/pinterest-share-preview",
+  "description": "Preview how your website link and images appear when pinned to Pinterest. Simulate pin cards, board grids, and mobile views.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Organization", "name": "Website Viewer" }
+}
+</script>
+<style>
+/* Pinterest palette */
+.pin-red { color: #e60023; }
+.pinterest-bg { background: #efefef; }
+
+/* Pin card */
+.pin-card { border-radius:16px; overflow:hidden; background:#fff; box-shadow:0 1px 8px rgba(0,0,0,.15); position:relative; width:236px; transition:box-shadow .2s; }
+.pin-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.25); }
+.pin-img-wrap { position:relative; overflow:hidden; }
+.pin-img-wrap img { width:100%; display:block; object-fit:cover; }
+.pin-img-placeholder { width:236px; height:320px; background:linear-gradient(135deg,#f0f0f0,#e0e0e0); display:flex;flex-direction:column;align-items:center;justify-content:center;color:#aaa;font-size:0.8rem;gap:0.4rem; }
+.pin-save-btn { position:absolute; top:10px; right:10px; background:#e60023; color:#fff; border:none; border-radius:999px; padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; opacity:0; transition:opacity .2s; }
+.pin-card:hover .pin-save-btn { opacity:1; }
+.pin-card-body { padding:10px 12px 12px; }
+.pin-card-title { font-size:14px; font-weight:600; color:#111; line-height:1.35; margin-bottom:4px; }
+.pin-card-desc { font-size:12px; color:#767676; line-height:1.4; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; margin-bottom:6px; }
+.pin-card-domain { font-size:11px; color:#767676; display:flex; align-items:center; gap:4px; }
+.pin-card-domain::before { content:''; display:inline-block; width:12px; height:12px; border:1px solid #ccc; border-radius:2px; }
+.pin-board-row { font-size:11px; color:#767676; margin-top:4px; display:flex; align-items:center; gap:4px; }
+
+/* Grid of pins (board view) */
+.pin-board-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; max-width:400px; }
+.pin-board-mini { border-radius:8px; overflow:hidden; background:#e0e0e0; }
+.pin-board-mini img { width:100%; height:120px; object-fit:cover; display:block; }
+.pin-board-mini-placeholder { width:100%; height:120px; background:linear-gradient(135deg,#f0e0e0,#e0c8c8); display:flex;align-items:center;justify-content:center;color:#b0a0a0;font-size:1.2rem; }
+
+/* Mobile pin detail */
+.pin-mobile-shell { max-width:375px; margin:0 auto; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.15); font-family:-apple-system,system-ui,sans-serif; }
+.pin-mobile-img { width:100%; max-height:400px; object-fit:cover; display:block; background:#f0f0f0; }
+.pin-mobile-img-empty { width:100%; height:280px; background:linear-gradient(135deg,#fce4e4,#f8d0d0); display:flex;align-items:center;justify-content:center;color:#c09090;font-size:0.85rem;flex-direction:column;gap:0.5rem; }
+.pin-mobile-body { padding:16px; }
+.pin-mobile-title { font-size:20px; font-weight:700; color:#111; margin-bottom:8px; line-height:1.25; }
+.pin-mobile-desc { font-size:14px; color:#767676; line-height:1.5; margin-bottom:12px; }
+.pin-mobile-source { display:flex; align-items:center; gap:8px; font-size:13px; color:#111; }
+.pin-mobile-favicon { width:24px; height:24px; border-radius:4px; background:#e60023; display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.6rem;font-weight:700; }
+.pin-mobile-save { width:100%; background:#e60023; color:#fff; border:none; border-radius:999px; padding:12px; font-size:16px; font-weight:700; cursor:pointer; margin-top:14px; font-family:inherit; }
+
+.view-tabs { display:flex; gap:0.5rem; margin-bottom:1.25rem; flex-wrap:wrap; }
+.vtab { padding:0.4rem 1rem; border-radius:999px; border:1px solid var(--color-border); background:transparent; color:var(--color-text-muted); font-size:0.78rem; font-weight:600; cursor:pointer; font-family:var(--font-sans); transition:var(--transition); }
+.vtab.active { background:#e60023; border-color:#e60023; color:#fff; }
+.vtab:hover:not(.active) { border-color:#e60023; color:#e60023; }
+
+.code-output { background:#0d1117; border:1px solid var(--color-border); border-radius:var(--radius); padding:1rem; font-family:var(--font-mono); font-size:0.78rem; color:#c9d1d9; line-height:1.7; white-space:pre-wrap; word-break:break-all; margin-top:1rem; max-height:260px; overflow-y:auto; }
+
+.aspect-selector { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+.aspect-btn { padding:0.35rem 0.8rem; border-radius:var(--radius); border:1px solid var(--color-border); background:transparent; color:var(--color-text-muted); font-size:0.75rem; font-weight:600; cursor:pointer; font-family:var(--font-sans); transition:var(--transition); }
+.aspect-btn.active { background:rgba(230,0,35,0.1); border-color:#e60023; color:#e60023; }
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+<main>
+<div class="tool-page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Link Share Previews</a><span>/</span>
+    <span style="color:var(--color-text-light)">Pinterest Share Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge" style="background:rgba(230,0,35,0.1);border-color:rgba(230,0,35,0.3);color:#e60023;">📌 Pinterest</div>
+    <h1>Pinterest Share Preview Tool</h1>
+    <p>See exactly how your content looks as a Pinterest Pin — card view, board grid, and full mobile pin detail.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Pin Details</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Pin Title</label>
+        <input id="pinTitle" type="text" class="form-control" placeholder="Beautiful DIY Home Decor Ideas for 2025" maxlength="100" oninput="liveUp();cc('pinTitle','tcnt',100)">
+        <div class="char-counter" id="tcnt">0 / 100</div>
+      </div>
+      <div class="form-group">
+        <label>Domain / Source</label>
+        <input id="pinDomain" type="text" class="form-control" placeholder="yoursite.com" oninput="liveUp()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="pinDesc" class="form-control" rows="3" placeholder="Discover stunning ideas to transform your living space with these easy DIY projects…" maxlength="500" oninput="liveUp();cc('pinDesc','dcnt',500)"></textarea>
+        <div class="char-counter" id="dcnt">0 / 500</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Image URL</label>
+        <input id="pinImage" type="url" class="form-control" placeholder="https://yoursite.com/pin-image.jpg" oninput="liveUp()">
+      </div>
+      <div class="form-group">
+        <label>Board Name</label>
+        <input id="pinBoard" type="text" class="form-control" placeholder="Home Decor" oninput="liveUp()">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Image Aspect Ratio</label>
+      <div class="aspect-selector">
+        <button class="aspect-btn active" onclick="setAspect('2:3',this)" data-ratio="1.5">2:3 (Standard)</button>
+        <button class="aspect-btn" onclick="setAspect('1:1',this)" data-ratio="1">1:1 (Square)</button>
+        <button class="aspect-btn" onclick="setAspect('4:5',this)" data-ratio="1.25">4:5</button>
+        <button class="aspect-btn" onclick="setAspect('9:16',this)" data-ratio="1.78">9:16 (Tall)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Preview</div>
+    <div class="view-tabs">
+      <button class="vtab active" onclick="setView('card',this)">📌 Pin Card</button>
+      <button class="vtab" onclick="setView('board',this)">🗂️ Board Grid</button>
+      <button class="vtab" onclick="setView('mobile',this)">📱 Mobile Detail</button>
+    </div>
+    <div id="previewWrap" style="background:#efefef;border-radius:var(--radius-lg);padding:2rem;min-height:220px;display:flex;align-items:center;justify-content:center;">
+      <div class="preview-placeholder"><span class="icon">📌</span>Fill in the fields above to preview your Pinterest Pin</div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="copyCode()">📋 Copy Pin Meta Tags</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div id="codeOut" class="code-output" style="display:none"></div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use This Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box"><div class="step-num">Step 01</div><h4>Enter Pin Info</h4><p>Add your pin title, description, image URL, and the source domain.</p></div>
+      <div class="step-box"><div class="step-num">Step 02</div><h4>Choose Aspect Ratio</h4><p>Select the image ratio that matches your actual image for an accurate preview.</p></div>
+      <div class="step-box"><div class="step-num">Step 03</div><h4>Check All Views</h4><p>Switch between Pin Card, Board Grid, and Mobile Detail to see all contexts.</p></div>
+      <div class="step-box"><div class="step-num">Step 04</div><h4>Copy Tags</h4><p>Copy the Pinterest and OG meta tags and add them to your page's <code>&lt;head&gt;</code>.</p></div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Pinterest Link Sharing</h2>
+    <p>Pinterest is a visual discovery platform where users save ("pin") content from across the web to curated boards. When someone pins your URL, Pinterest uses OpenGraph tags and Pinterest-specific meta tags to populate the pin's title, description, and image. Visually optimized pins drive significant referral traffic — Pinterest is one of the top sources of social referral traffic for lifestyle, food, fashion, and home content.</p>
+    <p>Unlike other social platforms, Pinterest pins have a long lifespan — a well-optimized pin can drive traffic for months or even years after being shared.</p>
+    <ul>
+      <li>Best image ratio: <strong>2:3</strong> (e.g., 1000×1500px) — tall images perform better in the Pinterest feed</li>
+      <li>Add <code>&lt;meta name="pinterest-rich-pin" content="true"&gt;</code> to enable Rich Pins with extra metadata</li>
+      <li>Use <code>og:image</code> with a high-resolution image — Pinterest downscales but benefits from quality sources</li>
+      <li>Include descriptive <code>alt</code> attributes on all images for Pinterest's visual search</li>
+      <li>Pinterest supports <strong>Article</strong>, <strong>Product</strong>, and <strong>Recipe</strong> Rich Pin types with extra structured data</li>
+      <li>Apply to be a verified merchant or site to unlock enhanced Rich Pin capabilities</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+<footer id="footer-component"></footer>
+<script src="../script.js"></script>
+<script>
+let currentView = 'card';
+let aspectRatio = 1.5;
+
+function setAspect(ratio, btn) {
+  aspectRatio = parseFloat(btn.dataset.ratio);
+  document.querySelectorAll('.aspect-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  liveUp();
+}
+
+function cc(id,cid,max){const v=document.getElementById(id).value.length;const el=document.getElementById(cid);el.textContent=`${v} / ${max}`;el.className='char-counter'+(v>max*.9?' warn':'')+(v>=max?' over':'');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function getV(){return{title:document.getElementById('pinTitle').value.trim()||'Beautiful Pin Title',desc:document.getElementById('pinDesc').value.trim(),domain:document.getElementById('pinDomain').value.trim()||'yoursite.com',image:document.getElementById('pinImage').value.trim(),board:document.getElementById('pinBoard').value.trim()||'My Board'};}
+
+function imgHeight(w) { return Math.round(w * aspectRatio); }
+
+function cardHtml(v){
+  const w=236; const h=imgHeight(w);
+  const imgSection = v.image
+    ? `<img src="${v.image}" alt="" style="width:100%;height:${h}px;object-fit:cover;display:block" onerror="this.style.display='none'">`
+    : `<div class="pin-img-placeholder" style="height:${h}px">🖼️<span>No image — add URL above</span></div>`;
+  return`<div style="display:flex;justify-content:center">
+    <div class="pin-card">
+      <div class="pin-img-wrap">${imgSection}<button class="pin-save-btn">Save</button></div>
+      <div class="pin-card-body">
+        <div class="pin-card-title">${esc(v.title)}</div>
+        ${v.desc?`<div class="pin-card-desc">${esc(v.desc)}</div>`:''}
+        <div class="pin-card-domain">${esc(v.domain)}</div>
+        ${v.board?`<div class="pin-board-row">📌 ${esc(v.board)}</div>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function boardHtml(v){
+  const h = imgHeight(120);
+  const cells = [0,1,2,3,4,5].map(i => {
+    if(i===0 && v.image) return `<div class="pin-board-mini"><img src="${v.image}" alt="" style="height:${Math.min(h,160)}px" onerror="this.parentElement.innerHTML='📌'"></div>`;
+    const colors = ['#fce4e4','#fde8d8','#fefce8','#ecfdf5','#eff6ff','#f5f3ff'];
+    return `<div class="pin-board-mini"><div class="pin-board-mini-placeholder" style="background:${colors[i]};height:${Math.min(h,160)}px">📌</div></div>`;
+  });
+  return`<div style="max-width:420px;margin:0 auto">
+    <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 1px 8px rgba(0,0,0,.1)">
+      <div style="font-size:18px;font-weight:700;color:#111;margin-bottom:12px">${esc(v.board||'My Board')}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;border-radius:8px;overflow:hidden">${cells.join('')}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+        <div style="font-size:13px;color:#767676">6 Pins</div>
+        <button style="background:#e60023;color:#fff;border:none;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">Follow</button>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:#767676;text-align:center">Your new pin will appear in this board</div>
+  </div>`;
+}
+
+function mobileHtml(v){
+  const h = Math.round(375 * aspectRatio * 0.7);
+  const imgSection = v.image
+    ? `<img src="${v.image}" alt="" style="width:100%;max-height:${Math.min(h,480)}px;object-fit:cover;display:block" onerror="this.style.display='none'">`
+    : `<div class="pin-mobile-img-empty" style="height:${Math.min(h,300)}px">🖼️<span>No image — add URL above</span></div>`;
+  return`<div style="max-width:375px;margin:0 auto"><div class="pin-mobile-shell">
+    ${imgSection}
+    <div class="pin-mobile-body">
+      <div class="pin-mobile-title">${esc(v.title)}</div>
+      ${v.desc?`<div class="pin-mobile-desc">${esc(v.desc)}</div>`:''}
+      <div class="pin-mobile-source"><div class="pin-mobile-favicon">🌐</div><div><div style="font-size:13px;font-weight:600">${esc(v.domain)}</div><div style="font-size:11px;color:#767676">Source</div></div></div>
+      <button class="pin-mobile-save">Save</button>
+    </div>
+  </div></div>`;
+}
+
+function liveUp(){
+  const v=getV(); const wrap=document.getElementById('previewWrap');
+  const has=document.getElementById('pinTitle').value.trim()||document.getElementById('pinImage').value.trim();
+  if(!has){wrap.innerHTML='<div class="preview-placeholder"><span class="icon">📌</span>Fill in the fields above to preview your Pinterest Pin</div>';return;}
+  let html='';
+  if(currentView==='card') html=cardHtml(v);
+  else if(currentView==='board') html=boardHtml(v);
+  else html=mobileHtml(v);
+  wrap.innerHTML=`<div style="width:100%">${html}</div>`;
+  const el=document.getElementById('codeOut');el.style.display='block';
+  el.textContent=[`<!-- Pinterest / OpenGraph Meta Tags -->`,`<meta property="og:title" content="${v.title}" />`,`<meta property="og:description" content="${v.desc}" />`,`<meta property="og:image" content="${v.image}" />`,`<meta property="og:type" content="website" />`,`<meta property="og:url" content="https://${v.domain}" />`,``,`<!-- Pinterest-specific -->`,`<meta name="pinterest-rich-pin" content="true" />`,`<meta name="pinterest:title" content="${v.title}" />`,`<meta name="pinterest:description" content="${v.desc}" />`].join('\n');
+}
+
+function setView(v,btn){currentView=v;document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');liveUp();}
+function copyCode(){const el=document.getElementById('codeOut');if(!el.textContent){alert('Fill fields first!');return;}navigator.clipboard.writeText(el.textContent).then(()=>{const b=event.target;b.textContent='✅ Copied!';setTimeout(()=>b.textContent='📋 Copy Pin Meta Tags',2000);});}
+function resetAll(){['pinTitle','pinDesc','pinDomain','pinImage','pinBoard'].forEach(id=>document.getElementById(id).value='');document.getElementById('codeOut').style.display='none';['tcnt','dcnt'].forEach((id,i)=>document.getElementById(id).textContent=`0 / ${[100,500][i]}`);document.getElementById('previewWrap').innerHTML='<div class="preview-placeholder"><span class="icon">📌</span>Fill in the fields above to preview your Pinterest Pin</div>';}
+document.addEventListener('DOMContentLoaded',()=>{renderHeader();renderFooter();});
+</script>
+</body>
+</html>
