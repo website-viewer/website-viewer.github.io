@@ -23,6 +23,7 @@
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 <style>
 :root{
   --fb-bg:#f0f2f5;--fb-white:#fff;--fb-border:#ccd0d5;--fb-text:#050505;--fb-muted:#65676b;
@@ -107,13 +108,8 @@ input:checked+.slider:before{transform:translateX(18px)}
 </head>
 <body> 
   
-<header class="site-header">    
-  <a href="./">📱 Website Viewer</a>
-  <span class="breadcrumb-sep">›</span>
-  <a href="#">Social Media</a>
-  <span class="breadcrumb-sep">›</span>
-  <span class="page-title">Facebook Post Preview</span>
-</header>
+<header id="header-component"></header>
+
 <div class="app">
   <aside class="controls">
     <div>
