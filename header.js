@@ -19,7 +19,7 @@ function renderHeader() {
                 <ul class="nav-menu">
                     <li><a href="#features">Features</a></li>
                     <li><a href="#viewer">Viewer</a></li>
-                    <li><a href="#footer-component">Contact</a></li>
+                    <li><a href="/about">About</a></li>
                 </ul>
             </nav>
         </div>
