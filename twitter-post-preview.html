@@ -20,6 +20,7 @@
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 <style>
 :root{
   --x-bg:#000;--x-border:#2f3336;--x-text:#e7e9ea;--x-muted:#71767b;--x-blue:#1d9bf0;--x-accent:#1d9bf0;
@@ -106,6 +107,7 @@ input:checked+.slider:before{transform:translateX(18px)}
 </style>
 </head>
 <body>
+  <header id="header-component"></header>
 <header class="site-header">
   <a href="./">📱 Website Viewer</a>
   <span class="breadcrumb-sep">›</span>
@@ -239,6 +241,9 @@ input:checked+.slider:before{transform:translateX(18px)}
     </div>
   </main>
 </div>
+  <footer id="footer-component"></footer>
+<script src="header.js"></script>
+<script src="footer.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const fmt=n=>n>=1000000?(n/1000000).toFixed(1).replace(/\.0$/,'')+'M':n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
