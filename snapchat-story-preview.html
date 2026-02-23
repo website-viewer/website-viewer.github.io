@@ -20,6 +20,7 @@
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 <style>
 :root{
   --sc-yellow:#fffc00;--sc-ghost:#fff;--sc-bg:#000;--sc-ui:rgba(255,255,255,.12);--sc-text:#fff;
@@ -103,11 +104,7 @@ body{font-family:var(--font);background:var(--panel);color:#e0e0e0;min-height:10
 </style>
 </head>
 <body>
-<header class="site-header">
-  <a href="./">📱 Website Viewer</a><span class="breadcrumb-sep">›</span>
-  <a href="#">Social Media</a><span class="breadcrumb-sep">›</span>
-  <span class="page-title">Snapchat Story Preview</span>
-</header>
+<header id="header-component"></header>
 <div class="app">
   <aside class="controls">
     <div><h2>Snapchat Story Preview</h2><p class="sub">Simulate your story before posting.</p></div>
@@ -209,6 +206,9 @@ body{font-family:var(--font);background:var(--panel);color:#e0e0e0;min-height:10
     </div>
   </main>
 </div>
+  <footer id="footer-component"></footer>
+<script src="header.js"></script>
+<script src="footer.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
