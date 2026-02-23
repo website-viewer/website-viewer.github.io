@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google SERP Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your page appears in Google Search results. Simulate desktop and mobile SERPs with title, description, breadcrumb, rich snippets, site links and more.">
+<meta name="keywords" content="google serp preview, google search preview, meta title preview, meta description preview, serp snippet tool, seo preview tool">
+<meta property="og:title" content="Google SERP Preview Tool — Website Viewer">
+<meta property="og:description" content="See exactly how your page appears in Google Search — desktop and mobile, with rich snippets, sitelinks and breadcrumbs.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/google-serp-preview">
+<link rel="canonical" href="https://website-viewer.github.io/google-serp-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"Google SERP Preview Tool",
+  "url":"https://website-viewer.github.io/google-serp-preview",
+  "description":"Preview how your webpage appears in Google Search results. Simulate desktop and mobile SERPs with title, meta description, breadcrumbs, rich snippets and sitelinks.",
+  "applicationCategory":"DeveloperApplication",
+  "operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "author":{"@type":"Organization","name":"Website Viewer"},
+  "featureList":["Desktop & Mobile SERP simulation","Rich snippet preview (stars, FAQ, breadcrumbs)","Character limit meters","Sitelinks simulation","Pixel-accurate Google UI","Copy-ready meta tag code"]
+}
+</script>
+
+<style>
+/* ── Page chrome ── */
+.serp-shell {
+  font-family: arial,sans-serif;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.12);
+  max-width: 660px;
+  margin: 0 auto;
+}
+
+/* Google top bar */
+.g-topbar {
+  background: #fff;
+  padding: 10px 20px 0;
+  border-bottom: 1px solid #e8eaed;
+}
+.g-logo {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  padding-bottom: 8px;
+  display: inline-block;
+}
+.g-logo span:nth-child(1){color:#4285f4}
+.g-logo span:nth-child(2){color:#ea4335}
+.g-logo span:nth-child(3){color:#fbbc05}
+.g-logo span:nth-child(4){color:#4285f4}
+.g-logo span:nth-child(5){color:#34a853}
+.g-logo span:nth-child(6){color:#ea4335}
+.g-searchbar {
+  display:flex; align-items:center; gap:8px;
+  border:1px solid #dfe1e5; border-radius:24px;
+  padding:8px 16px; margin:8px 0 0;
+  font-size:14px; color:#202124; background:#fff;
+  box-shadow:0 1px 6px rgba(32,33,36,.28);
+  max-width:560px;
+}
+.g-searchbar input {
+  border:none; outline:none; flex:1; font-size:14px;
+  color:#202124; font-family:arial,sans-serif; background:transparent;
+}
+.g-tabs {
+  display:flex; gap:0; border-bottom:none;
+  font-size:13px; color:#70757a; padding:0 0 0 10px;
+  overflow-x:auto;
+}
+.g-tab {
+  padding:10px 16px; cursor:pointer; border-bottom:3px solid transparent;
+  white-space:nowrap; transition:.15s;
+}
+.g-tab.active { color:#1a73e8; border-bottom-color:#1a73e8; font-weight:600; }
+.g-tab:hover:not(.active) { background:#f1f3f4; border-radius:4px 4px 0 0; }
+
+/* Results container */
+.g-results-area { padding:0 20px 20px; background:#fff; }
+.g-stats { font-size:13px; color:#70757a; padding:8px 0 14px; }
+
+/* Single organic result */
+.g-result { margin-bottom:28px; }
+.g-breadcrumb { display:flex; align-items:center; gap:6px; margin-bottom:2px; }
+.g-favicon { width:18px; height:18px; border-radius:2px; object-fit:cover; flex-shrink:0; background:#f1f3f4; display:flex;align-items:center;justify-content:center;font-size:10px; }
+.g-site-name { font-size:14px; color:#202124; }
+.g-site-url { font-size:12px; color:#4d5156; }
+.g-result-title {
+  font-size:20px; line-height:1.3; color:#1a0dab;
+  text-decoration:none; display:block;
+  margin-bottom:4px; cursor:pointer;
+  font-weight:400; font-family:arial,sans-serif;
+}
+.g-result-title:hover { text-decoration:underline; }
+.g-result-desc { font-size:14px; color:#4d5156; line-height:1.58; }
+.g-result-date { color:#70757a; }
+
+/* Rich snippets */
+.g-stars { color:#fbbc04; font-size:13px; }
+.g-rating-info { font-size:13px; color:#70757a; margin-top:2px; }
+.g-sitelinks { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
+.g-sitelink { border:1px solid #dfe1e5; border-radius:8px; padding:8px 12px; }
+.g-sitelink a { font-size:14px; color:#1a0dab; text-decoration:none; display:block; margin-bottom:2px; }
+.g-sitelink a:hover { text-decoration:underline; }
+.g-sitelink p { font-size:12px; color:#4d5156; margin:0; }
+.g-faq-item { border-top:1px solid #e8eaed; padding:12px 0; }
+.g-faq-q { font-size:15px; color:#202124; display:flex; justify-content:space-between; cursor:pointer; }
+.g-faq-a { font-size:14px; color:#4d5156; margin-top:6px; display:none; }
+.g-faq-item.open .g-faq-a { display:block; }
+
+/* Mobile shell */
+.g-mobile-shell {
+  font-family: Roboto,arial,sans-serif;
+  background:#fff; border-radius:12px;
+  overflow:hidden; max-width:380px; margin:0 auto;
+  box-shadow:0 2px 12px rgba(0,0,0,.15);
+}
+.g-mobile-topbar { background:#fff; padding:8px 12px; border-bottom:1px solid #e8eaed; }
+.g-mobile-searchbar {
+  border:1px solid #dfe1e5; border-radius:20px;
+  padding:8px 14px; display:flex; align-items:center; gap:8px;
+  font-size:14px; background:#f1f3f4;
+}
+.g-mobile-result { padding:12px; border-bottom:1px solid #e8eaed; }
+.g-mobile-title { font-size:18px; color:#1a0dab; line-height:1.3; margin:4px 0; }
+.g-mobile-desc { font-size:13px; color:#4d5156; line-height:1.5; }
+.g-mobile-url { font-size:12px; color:#4d5156; }
+
+/* Meters */
+.meter-row { display:flex; align-items:center; gap:8px; margin-top:4px; }
+.meter-bar { flex:1; height:5px; background:#1e293b; border-radius:3px; overflow:hidden; }
+.meter-fill { height:100%; border-radius:3px; transition:width .3s,background .3s; }
+.meter-label { font-size:0.72rem; color:var(--color-text-muted); white-space:nowrap; min-width:55px; text-align:right; }
+
+/* Snippet type tabs */
+.snippet-tabs { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.25rem; }
+.stab {
+  padding:.4rem 1rem; border-radius:999px;
+  border:1px solid var(--color-border);
+  background:transparent; color:var(--color-text-muted);
+  font-size:.78rem; font-weight:600; cursor:pointer;
+  font-family:var(--font-sans); transition:var(--transition);
+}
+.stab.active { background:#4285f4; border-color:#4285f4; color:#fff; }
+.stab:hover:not(.active) { border-color:#4285f4; color:#4285f4; }
+
+/* Device toggle */
+.device-toggle { display:flex; background:var(--color-bg-dark); border-radius:8px; padding:3px; gap:2px; width:fit-content; margin-bottom:1rem; }
+.dtog { padding:.35rem .9rem; border-radius:6px; font-size:.78rem; font-weight:700; cursor:pointer; border:none; background:transparent; color:var(--color-text-muted); font-family:var(--font-sans); transition:var(--transition); }
+.dtog.active { background:var(--color-bg-darker); color:var(--color-text-light); box-shadow:0 1px 4px rgba(0,0,0,.3); }
+
+.code-output { background:#0d1117; border:1px solid var(--color-border); border-radius:var(--radius); padding:1rem; font-family:var(--font-mono); font-size:.78rem; color:#c9d1d9; line-height:1.7; white-space:pre-wrap; word-break:break-all; margin-top:1rem; max-height:280px; overflow-y:auto; }
+
+/* Warning chips */
+.tag-warn { display:inline-flex; align-items:center; gap:.3rem; background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:var(--color-warn); border-radius:999px; padding:.2rem .65rem; font-size:.7rem; font-weight:700; margin:.3rem .3rem 0 0; }
+.tag-ok { display:inline-flex; align-items:center; gap:.3rem; background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:var(--color-success); border-radius:999px; padding:.2rem .65rem; font-size:.7rem; font-weight:700; margin:.3rem .3rem 0 0; }
+.tag-err { display:inline-flex; align-items:center; gap:.3rem; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:var(--color-error); border-radius:999px; padding:.2rem .65rem; font-size:.7rem; font-weight:700; margin:.3rem .3rem 0 0; }
+</style>
+</head>
+<body>
+
+<header id="header-component"></header>
+
+<main>
+<div class="tool-page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Search Engine Previews</a><span>/</span>
+    <span style="color:var(--color-text-light)">Google SERP Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge" style="background:rgba(66,133,244,.1);border-color:rgba(66,133,244,.3);color:#4285f4;">🔍 Google Search</div>
+    <h1>Google SERP Preview Tool</h1>
+    <p>Simulate exactly how your page appears in Google Search — desktop and mobile, with rich snippets, sitelinks, breadcrumbs and character validation.</p>
+  </div>
+
+  <!-- ── INPUTS ── -->
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Page SEO Details</div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page Title (title tag)</label>
+        <input id="gTitle" type="text" class="form-control" placeholder="Best Running Shoes 2025 — Top Picks & Reviews" maxlength="120" oninput="live()">
+        <div class="meter-row">
+          <div class="meter-bar"><div class="meter-fill" id="titleMeter" style="width:0%"></div></div>
+          <div class="meter-label" id="titleCount">0 / 60</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Published Date (optional)</label>
+        <input id="gDate" type="date" class="form-control" oninput="live()">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Meta Description</label>
+        <textarea id="gDesc" class="form-control" rows="3" placeholder="A concise, compelling description that makes searchers click your result. Keep between 120–160 characters." maxlength="320" oninput="live()"></textarea>
+        <div class="meter-row">
+          <div class="meter-bar"><div class="meter-fill" id="descMeter" style="width:0%"></div></div>
+          <div class="meter-label" id="descCount">0 / 160</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page URL</label>
+        <input id="gUrl" type="url" class="form-control" placeholder="https://yoursite.com/best-running-shoes" oninput="live()">
+      </div>
+      <div class="form-group">
+        <label>Favicon URL (optional)</label>
+        <input id="gFavicon" type="url" class="form-control" placeholder="https://yoursite.com/favicon.ico" oninput="live()">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Search Query (shown in bar)</label>
+        <input id="gQuery" type="text" class="form-control" placeholder="best running shoes 2025" oninput="live()">
+      </div>
+      <div class="form-group">
+        <label>Rich Snippet Type</label>
+        <select id="gSnippet" class="form-control" onchange="live()">
+          <option value="none">None (standard)</option>
+          <option value="stars">⭐ Review / Rating</option>
+          <option value="faq">❓ FAQ</option>
+          <option value="sitelinks">🔗 Sitelinks</option>
+          <option value="breadcrumb">🧭 Breadcrumb only</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Conditional extras -->
+    <div id="starsSection" style="display:none">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Rating (1–5)</label>
+          <input id="gRating" type="number" class="form-control" min="1" max="5" step="0.1" value="4.7" oninput="live()">
+        </div>
+        <div class="form-group">
+          <label>Review Count</label>
+          <input id="gReviews" type="number" class="form-control" value="1243" oninput="live()">
+        </div>
+        <div class="form-group">
+          <label>Price Range (optional)</label>
+          <input id="gPrice" type="text" class="form-control" placeholder="$49 – $120" oninput="live()">
+        </div>
+      </div>
+    </div>
+
+    <div id="faqSection" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>FAQ Question 1</label><input id="faq1q" class="form-control" placeholder="What are the best running shoes?" oninput="live()"></div>
+        <div class="form-group"><label>FAQ Answer 1</label><input id="faq1a" class="form-control" placeholder="The best running shoes depend on your gait…" oninput="live()"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>FAQ Question 2</label><input id="faq2q" class="form-control" placeholder="How long do running shoes last?" oninput="live()"></div>
+        <div class="form-group"><label>FAQ Answer 2</label><input id="faq2a" class="form-control" placeholder="Most shoes last 300–500 miles…" oninput="live()"></div>
+      </div>
+    </div>
+
+    <div id="sitelinksSection" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>Sitelink 1</label><input id="sl1t" class="form-control" placeholder="Men's Running Shoes" oninput="live()"></div>
+        <div class="form-group"><label>Sitelink 2</label><input id="sl2t" class="form-control" placeholder="Women's Running Shoes" oninput="live()"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Sitelink 3</label><input id="sl3t" class="form-control" placeholder="Sale & Clearance" oninput="live()"></div>
+        <div class="form-group"><label>Sitelink 4</label><input id="sl4t" class="form-control" placeholder="Shoe Size Guide" oninput="live()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PREVIEW ── -->
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live SERP Preview</div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
+      <div class="device-toggle">
+        <button class="dtog active" onclick="setDevice('desktop',this)">🖥 Desktop</button>
+        <button class="dtog" onclick="setDevice('mobile',this)">📱 Mobile</button>
+      </div>
+      <div id="tagChips" style="display:flex;flex-wrap:wrap;gap:.25rem"></div>
+    </div>
+
+    <div id="previewWrap" style="background:#f8f9fa;border-radius:var(--radius-lg);padding:1.5rem;min-height:200px;display:flex;align-items:center;justify-content:center;">
+      <div class="preview-placeholder"><span class="icon">🔍</span>Fill in your page details to see the Google SERP preview</div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="copyMeta()">📋 Copy Meta Tags</button>
+      <button class="btn btn-ghost" onclick="copySchema()">📋 Copy Schema JSON</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div id="codeOut" class="code-output" style="display:none"></div>
+  </div>
+
+  <!-- ── HOW TO ── -->
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the Google SERP Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box"><div class="step-num">Step 01</div><h4>Enter Page Details</h4><p>Fill in your title tag, meta description, and full page URL. Watch the character meters update live.</p></div>
+      <div class="step-box"><div class="step-num">Step 02</div><h4>Choose Rich Snippet</h4><p>Select a rich snippet type — stars, FAQ, or sitelinks — and fill in the extra fields that appear.</p></div>
+      <div class="step-box"><div class="step-num">Step 03</div><h4>Switch Devices</h4><p>Toggle between Desktop and Mobile to see how Google renders your snippet differently on each.</p></div>
+      <div class="step-box"><div class="step-num">Step 04</div><h4>Copy & Deploy</h4><p>Copy the generated meta tags or JSON-LD schema and paste them into your page's <code>&lt;head&gt;</code>.</p></div>
+    </div>
+  </div>
+
+  <!-- ── DESCRIPTION ── -->
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Google SERP Snippets</h2>
+    <p>A Google SERP snippet is the block of text shown for each result on Google's Search Engine Results Page. It consists of three core elements: the <strong>title tag</strong> (blue link), the <strong>breadcrumb URL</strong>, and the <strong>meta description</strong> (grey text). Together these determine whether a searcher clicks your result or scrolls past it.</p>
+    <p>Google may also display <strong>rich results</strong> — enhanced snippets generated from structured data (schema.org markup) on your page. These include star ratings, FAQ dropdowns, sitelinks, video thumbnails, product prices and more. Rich results significantly increase click-through rate and real estate in the SERP.</p>
+    <p><strong>Key optimisation rules:</strong></p>
+    <ul>
+      <li><strong>Title tag:</strong> Keep between <strong>50–60 characters</strong> (≈600px rendered width). Longer titles get truncated with an ellipsis</li>
+      <li><strong>Meta description:</strong> Aim for <strong>120–158 characters</strong>. Google sometimes rewrites descriptions — make yours compelling to reduce that risk</li>
+      <li><strong>URL structure:</strong> Use clean, readable slugs. Google reads the path as breadcrumbs — avoid parameter-heavy URLs</li>
+      <li><strong>Rich snippets:</strong> Add <code>application/ld+json</code> structured data for FAQ, Review, Product, Article and other types</li>
+      <li>Google doesn't guarantee displaying your meta description — it may substitute text from your page if it deems it more relevant</li>
+      <li>Use the <a href="https://search.google.com/search-console/welcome" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">Google Search Console</a> to monitor actual impressions, CTR and average position</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+
+<footer id="footer-component"></footer>
+<script src="../script.js"></script>
+<script>
+let device = 'desktop';
+
+function setDevice(d, btn) {
+  device = d;
+  document.querySelectorAll('.dtog').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  live();
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function getV() {
+  return {
+    title:   document.getElementById('gTitle').value.trim(),
+    desc:    document.getElementById('gDesc').value.trim(),
+    url:     document.getElementById('gUrl').value.trim(),
+    favicon: document.getElementById('gFavicon').value.trim(),
+    date:    document.getElementById('gDate').value,
+    query:   document.getElementById('gQuery').value.trim() || 'your search query',
+    snippet: document.getElementById('gSnippet').value,
+    rating:  parseFloat(document.getElementById('gRating')?.value || 4.7),
+    reviews: document.getElementById('gReviews')?.value || '1,243',
+    price:   document.getElementById('gPrice')?.value.trim() || '',
+    faq1q:   document.getElementById('faq1q')?.value.trim() || 'What are the best options?',
+    faq1a:   document.getElementById('faq1a')?.value.trim() || 'It depends on your specific needs and budget.',
+    faq2q:   document.getElementById('faq2q')?.value.trim() || 'How do I choose the right one?',
+    faq2a:   document.getElementById('faq2a')?.value.trim() || 'Consider the key features and reviews.',
+    sl1:     document.getElementById('sl1t')?.value.trim() || 'Products',
+    sl2:     document.getElementById('sl2t')?.value.trim() || 'About Us',
+    sl3:     document.getElementById('sl3t')?.value.trim() || 'Contact',
+    sl4:     document.getElementById('sl4t')?.value.trim() || 'Blog',
+  };
+}
+
+function parseDomain(url) {
+  try { const u = new URL(url); return u.hostname; } catch { return url || 'yoursite.com'; }
+}
+
+function parseBreadcrumb(url) {
+  try {
+    const u = new URL(url);
+    const parts = u.pathname.split('/').filter(Boolean);
+    if (!parts.length) return u.hostname;
+    return u.hostname + ' › ' + parts.map(p => p.replace(/-/g,' ')).join(' › ');
+  } catch { return url || 'yoursite.com'; }
+}
+
+function meter(id, meterId, counterId, target, max) {
+  const val = document.getElementById(id).value.length;
+  const pct = Math.min((val / max) * 100, 100);
+  const fill = document.getElementById(meterId);
+  fill.style.width = pct + '%';
+  const inTarget = val >= (target - 10) && val <= target;
+  fill.style.background = val === 0 ? '#334155' : inTarget ? '#10b981' : val > target ? '#ef4444' : '#f59e0b';
+  document.getElementById(counterId).textContent = `${val} / ${target}`;
+}
+
+function stars(r) {
+  const full = Math.floor(r), half = r % 1 >= 0.5 ? 1 : 0, empty = 5 - full - half;
+  return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
+}
+
+function buildDesktop(v) {
+  const domain = parseDomain(v.url);
+  const breadcrumb = parseBreadcrumb(v.url);
+  const title = v.title || 'Page Title — Your Website';
+  const desc  = v.desc  || 'A meta description will appear here. Write a compelling summary that makes searchers want to click your result.';
+  const dateStr = v.date ? `<span class="g-result-date">${new Date(v.date).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})} — </span>` : '';
+
+  let snippet = '';
+  if (v.snippet === 'stars') {
+    const starStr = stars(v.rating);
+    snippet = `<div class="g-stars">${starStr}</div>
+    <div class="g-rating-info">${v.rating} · ${Number(v.reviews).toLocaleString()} reviews${v.price ? ' · ' + esc(v.price) : ''}</div>`;
+  } else if (v.snippet === 'faq') {
+    snippet = `<div style="margin-top:8px;border:1px solid #e8eaed;border-radius:8px;overflow:hidden">
+      <div class="g-faq-item" onclick="this.classList.toggle('open')">
+        <div class="g-faq-q">${esc(v.faq1q)}<span>▾</span></div>
+        <div class="g-faq-a">${esc(v.faq1a)}</div>
+      </div>
+      <div class="g-faq-item" onclick="this.classList.toggle('open')">
+        <div class="g-faq-q">${esc(v.faq2q)}<span>▾</span></div>
+        <div class="g-faq-a">${esc(v.faq2a)}</div>
+      </div>
+    </div>`;
+  } else if (v.snippet === 'sitelinks') {
+    const slUrl = v.url || 'https://yoursite.com';
+    snippet = `<div class="g-sitelinks">
+      <div class="g-sitelink"><a href="#">${esc(v.sl1)}</a><p>Explore our ${esc(v.sl1).toLowerCase()} collection</p></div>
+      <div class="g-sitelink"><a href="#">${esc(v.sl2)}</a><p>Browse ${esc(v.sl2).toLowerCase()} options</p></div>
+      <div class="g-sitelink"><a href="#">${esc(v.sl3)}</a><p>Check out ${esc(v.sl3).toLowerCase()}</p></div>
+      <div class="g-sitelink"><a href="#">${esc(v.sl4)}</a><p>View ${esc(v.sl4).toLowerCase()}</p></div>
+    </div>`;
+  }
+
+  const faviconHtml = v.favicon
+    ? `<img class="g-favicon" src="${v.favicon}" alt="" onerror="this.outerHTML='<div class=&quot;g-favicon&quot;>🌐</div>'">`
+    : `<div class="g-favicon">🌐</div>`;
+
+  return `<div class="serp-shell">
+    <div class="g-topbar">
+      <div class="g-logo"><span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span></div>
+      <div class="g-searchbar"><span>🔍</span><input value="${esc(v.query)}" readonly></div>
+      <div class="g-tabs">
+        <div class="g-tab active">All</div>
+        <div class="g-tab">🖼 Images</div>
+        <div class="g-tab">🗺 Maps</div>
+        <div class="g-tab">🎬 Videos</div>
+        <div class="g-tab">📰 News</div>
+      </div>
+    </div>
+    <div class="g-results-area">
+      <div class="g-stats">About 4,820,000,000 results (0.42 seconds)</div>
+      <div class="g-result">
+        <div class="g-breadcrumb">
+          ${faviconHtml}
+          <div><div class="g-site-name">${esc(domain)}</div><div class="g-site-url">${esc(breadcrumb)}</div></div>
+        </div>
+        <a class="g-result-title" href="#">${esc(title)}</a>
+        <div class="g-result-desc">${dateStr}${esc(desc)}</div>
+        ${snippet}
+      </div>
+      <div class="g-result" style="opacity:.35">
+        <div class="g-breadcrumb"><div class="g-favicon">🌐</div><div><div class="g-site-name">anothersite.com</div><div class="g-site-url">anothersite.com › category</div></div></div>
+        <a class="g-result-title" href="#">Another Search Result Appears Here</a>
+        <div class="g-result-desc">This is how adjacent results look in the SERP, giving you context for how your listing competes for attention.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildMobile(v) {
+  const title = v.title || 'Page Title — Your Website';
+  const desc  = v.desc  || 'Your meta description will appear here on mobile.';
+  const domain = parseDomain(v.url);
+  const breadcrumb = parseBreadcrumb(v.url);
+
+  return `<div class="g-mobile-shell">
+    <div class="g-mobile-topbar">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div class="g-logo" style="font-size:16px"><span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span></div>
+      </div>
+      <div class="g-mobile-searchbar"><span>🔍</span><span style="font-size:14px;color:#202124">${esc(v.query)}</span><span style="margin-left:auto">✕</span></div>
+      <div class="g-tabs" style="font-size:12px;padding:0">
+        <div class="g-tab active" style="padding:8px 12px">All</div>
+        <div class="g-tab" style="padding:8px 12px">Images</div>
+        <div class="g-tab" style="padding:8px 12px">Videos</div>
+        <div class="g-tab" style="padding:8px 12px">News</div>
+      </div>
+    </div>
+    <div class="g-mobile-result">
+      <div class="g-breadcrumb"><div class="g-favicon">🌐</div><div><div class="g-site-name" style="font-size:12px">${esc(domain)}</div><div class="g-mobile-url">${esc(breadcrumb)}</div></div></div>
+      <div class="g-mobile-title">${esc(title)}</div>
+      <div class="g-mobile-desc">${esc(desc)}</div>
+      ${v.snippet === 'stars' ? `<div class="g-stars" style="font-size:12px;margin-top:4px">${stars(v.rating)} <span style="font-size:12px;color:#70757a">${v.rating} (${v.reviews} reviews)</span></div>` : ''}
+    </div>
+    <div class="g-mobile-result" style="opacity:.35">
+      <div class="g-mobile-url">anothersite.com › articles</div>
+      <div class="g-mobile-title">Another Result in Mobile View</div>
+      <div class="g-mobile-desc">Context for how your result competes on mobile devices where space is limited.</div>
+    </div>
+  </div>`;
+}
+
+function updateChips(v) {
+  const chips = document.getElementById('tagChips');
+  const titleLen = v.title.length, descLen = v.desc.length;
+  const html = [];
+  if (titleLen === 0) html.push('<span class="tag-err">✗ No title</span>');
+  else if (titleLen <= 60) html.push('<span class="tag-ok">✓ Title length</span>');
+  else html.push('<span class="tag-warn">⚠ Title too long</span>');
+  if (descLen === 0) html.push('<span class="tag-err">✗ No description</span>');
+  else if (descLen >= 120 && descLen <= 160) html.push('<span class="tag-ok">✓ Description</span>');
+  else if (descLen < 120) html.push('<span class="tag-warn">⚠ Description short</span>');
+  else html.push('<span class="tag-warn">⚠ Description long</span>');
+  if (!v.url) html.push('<span class="tag-warn">⚠ No URL</span>');
+  else html.push('<span class="tag-ok">✓ URL set</span>');
+  chips.innerHTML = html.join('');
+}
+
+function live() {
+  const v = getV();
+
+  // Show/hide conditional sections
+  document.getElementById('starsSection').style.display   = v.snippet === 'stars'     ? 'block' : 'none';
+  document.getElementById('faqSection').style.display     = v.snippet === 'faq'       ? 'block' : 'none';
+  document.getElementById('sitelinksSection').style.display = v.snippet === 'sitelinks' ? 'block' : 'none';
+
+  // Meters
+  meter('gTitle', 'titleMeter', 'titleCount', 60, 120);
+  meter('gDesc',  'descMeter',  'descCount',  160, 320);
+
+  updateChips(v);
+
+  const wrap = document.getElementById('previewWrap');
+  const hasContent = v.title || v.desc || v.url;
+  if (!hasContent) {
+    wrap.innerHTML = '<div class="preview-placeholder"><span class="icon">🔍</span>Fill in your page details to see the Google SERP preview</div>';
+    document.getElementById('codeOut').style.display = 'none';
+    return;
+  }
+
+  wrap.innerHTML = `<div style="width:100%">${device === 'desktop' ? buildDesktop(v) : buildMobile(v)}</div>`;
+
+  // Code output
+  const domain = parseDomain(v.url);
+  const code = `<!-- Primary Meta Tags -->
+<title>${v.title}</title>
+<meta name="description" content="${v.desc}" />
+<link rel="canonical" href="${v.url}" />
+
+<!-- OpenGraph -->
+<meta property="og:title" content="${v.title}" />
+<meta property="og:description" content="${v.desc}" />
+<meta property="og:url" content="${v.url}" />
+<meta property="og:type" content="website" />`;
+
+  const el = document.getElementById('codeOut');
+  el.style.display = 'block';
+  el.textContent = code;
+}
+
+function copyMeta() {
+  const el = document.getElementById('codeOut');
+  if (!el.textContent || el.style.display === 'none') { alert('Fill in some fields first!'); return; }
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const b = event.target; b.textContent = '✅ Copied!';
+    setTimeout(() => b.textContent = '📋 Copy Meta Tags', 2000);
+  });
+}
+
+function copySchema() {
+  const v = getV();
+  if (!v.title) { alert('Fill in some fields first!'); return; }
+  let schema = {};
+  if (v.snippet === 'stars') {
+    schema = {"@context":"https://schema.org","@type":"Product","name":v.title,"description":v.desc,"url":v.url,"aggregateRating":{"@type":"AggregateRating","ratingValue":v.rating,"reviewCount":parseInt(v.reviews)||100}};
+  } else if (v.snippet === 'faq') {
+    schema = {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":v.faq1q,"acceptedAnswer":{"@type":"Answer","text":v.faq1a}},{"@type":"Question","name":v.faq2q,"acceptedAnswer":{"@type":"Answer","text":v.faq2a}}]};
+  } else {
+    schema = {"@context":"https://schema.org","@type":"WebPage","name":v.title,"description":v.desc,"url":v.url};
+  }
+  const out = `<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n<\/script>`;
+  navigator.clipboard.writeText(out).then(() => {
+    const b = event.target; b.textContent = '✅ Schema Copied!';
+    setTimeout(() => b.textContent = '📋 Copy Schema JSON', 2000);
+  });
+}
+
+function resetAll() {
+  ['gTitle','gDesc','gUrl','gFavicon','gDate','gQuery','faq1q','faq1a','faq2q','faq2a','sl1t','sl2t','sl3t','sl4t','gPrice'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('gSnippet').value = 'none';
+  document.getElementById('gRating').value = '4.7';
+  document.getElementById('gReviews').value = '1243';
+  document.getElementById('codeOut').style.display = 'none';
+  live();
+}
+
+document.addEventListener('DOMContentLoaded', () => { renderHeader(); renderFooter(); });
+</script>
+</body>
+</html>
