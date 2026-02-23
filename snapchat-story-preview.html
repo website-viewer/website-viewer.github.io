@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snapchat Story Preview Tool – Story Simulator</title>
+<meta name="description" content="Preview your Snapchat story before posting. Simulate the story viewer with text overlays, stickers, and engagement stats.">
+<meta name="keywords" content="snapchat story preview, snapchat mockup, snapchat story simulator, snap preview">
+<link rel="canonical" href="https://website-viewer.github.io/snapchat-story-preview">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"Snapchat Story Preview Tool",
+  "description":"Preview your Snapchat story before posting. Simulate the story viewer with text overlays, stickers, and view counts.",
+  "url":"https://website-viewer.github.io/snapchat-story-preview",
+  "applicationCategory":"UtilitiesApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "featureList":["Snapchat story frame simulation","Text overlay with customizable colours","Sticker/emoji placement","View count display","Image upload"],
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sc-yellow:#fffc00;--sc-ghost:#fff;--sc-bg:#000;--sc-ui:rgba(255,255,255,.12);--sc-text:#fff;
+  --panel:#09090a;--panel-border:#1c1c1e;--panel-muted:#4a4a4e;--accent:#fffc00;
+  --font:'Plus Jakarta Sans',sans-serif;--font-display:'Righteous',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--panel);color:#e0e0e0;min-height:100vh}
+.site-header{background:#050506;border-bottom:1px solid var(--panel-border);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.site-header a{color:#e0e0e0;text-decoration:none;font-size:.85rem;opacity:.6}
+.breadcrumb-sep{opacity:.3}
+.page-title{font-family:var(--font-display);font-size:1.05rem;color:var(--sc-yellow)}
+.app{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 57px)}
+.controls{background:#050506;border-right:1px solid var(--panel-border);padding:26px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+.controls h2{font-family:var(--font-display);font-size:1.2rem;color:var(--sc-yellow)}
+.controls p.sub{font-size:.8rem;color:var(--panel-muted);margin-bottom:4px}
+.field-group{display:flex;flex-direction:column;gap:6px}
+.field-group label{font-size:.75rem;font-weight:700;color:var(--panel-muted);letter-spacing:.05em;text-transform:uppercase}
+.field-group input,.field-group textarea,.field-group select{background:#111;border:1px solid var(--panel-border);border-radius:8px;color:#e0e0e0;font-family:var(--font);font-size:.9rem;padding:10px 12px;transition:.2s;resize:vertical;width:100%}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:var(--accent)}
+.field-group textarea{min-height:70px}
+.img-upload{border:2px dashed var(--panel-border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--accent)}
+.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.color-row{display:flex;gap:8px;align-items:center}
+.color-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.2s;flex-shrink:0}
+.color-swatch.active{border-color:#fff;transform:scale(1.15)}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input[type=range]{flex:1;accent-color:var(--accent)}
+.range-val{font-size:.82rem;color:var(--panel-muted);min-width:40px;text-align:right}
+.sticker-grid{display:flex;flex-wrap:wrap;gap:8px}
+.sticker-btn{font-size:1.4rem;cursor:pointer;padding:6px;border-radius:8px;background:#111;border:1px solid var(--panel-border);transition:.2s;line-height:1}
+.sticker-btn:hover{border-color:var(--accent)}
+/* Preview */
+.preview-pane{display:flex;flex-direction:column;align-items:center;padding:40px 24px;gap:32px;background:#060607}
+.preview-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-muted)}
+/* Snapchat phone */
+.sc-phone{width:280px;height:520px;background:#000;border-radius:40px;overflow:hidden;position:relative;border:2px solid #1c1c1e;box-shadow:0 0 80px rgba(255,252,0,.1),0 8px 40px rgba(0,0,0,.8)}
+/* Progress bar */
+.sc-progress{position:absolute;top:12px;left:12px;right:12px;z-index:20;display:flex;gap:3px}
+.sc-progress-seg{height:2px;flex:1;border-radius:2px;background:rgba(255,255,255,.4);overflow:hidden}
+.sc-progress-fill{height:100%;background:#fff;width:60%;border-radius:2px}
+/* Top bar */
+.sc-top{position:absolute;top:20px;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+.sc-user{display:flex;align-items:center;gap:6px}
+.sc-user-avatar{width:28px;height:28px;border-radius:50%;background:var(--sc-yellow);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#000}
+.sc-user-name{font-size:.8rem;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.sc-user-time{font-size:.7rem;color:rgba(255,255,255,.8)}
+.sc-top-actions{display:flex;gap:10px}
+.sc-top-icon{color:#fff;font-size:1.1rem;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+/* Background */
+.sc-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center}
+.sc-bg img{width:100%;height:100%;object-fit:cover}
+.sc-bg-placeholder{text-align:center;color:rgba(255,255,255,.3)}
+/* Text overlay */
+.sc-overlay-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:15;text-align:center;padding:8px 16px;border-radius:8px;font-size:1.1rem;font-weight:700;max-width:90%;word-break:break-word;cursor:move}
+/* Stickers */
+.sc-sticker{position:absolute;font-size:2.5rem;z-index:16;cursor:move;user-select:none}
+/* Bottom actions */
+.sc-bottom{position:absolute;bottom:0;left:0;right:0;z-index:10;padding:12px 12px 16px}
+.sc-reply-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sc-reply-input{flex:1;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:24px;padding:8px 16px;color:#fff;font-size:.8rem;font-family:var(--font)}
+.sc-reply-input::placeholder{color:rgba(255,255,255,.6)}
+.sc-action-row{display:flex;justify-content:space-between;align-items:center}
+.sc-snap-icon{font-size:1.5rem}
+.sc-views{font-size:.75rem;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:4px;font-weight:600}
+.sc-share{font-size:1.3rem}
+/* Info */
+.info-sections{width:100%;max-width:860px;margin:0 auto;padding:60px 24px 80px;display:flex;flex-direction:column;gap:48px}
+.info-section h2{font-family:var(--font-display);font-size:1.6rem;letter-spacing:.02em;color:#fff;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--panel-border)}
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--sc-yellow);color:#000;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h4{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:4px}
+.step-body p{font-size:.875rem;color:var(--panel-muted);line-height:1.65}
+.desc-text p{font-size:.9rem;color:var(--panel-muted);line-height:1.75;margin-bottom:14px}
+.features-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.feat-item{background:#111;border:1px solid var(--panel-border);border-radius:8px;padding:12px 14px;font-size:.83rem;color:var(--panel-muted)}
+.feat-item strong{color:#e0e0e0;display:block;margin-bottom:3px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.controls{border-right:none;border-bottom:1px solid var(--panel-border)}.features-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="./">📱 Website Viewer</a><span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a><span class="breadcrumb-sep">›</span>
+  <span class="page-title">Snapchat Story Preview</span>
+</header>
+<div class="app">
+  <aside class="controls">
+    <div><h2>Snapchat Story Preview</h2><p class="sub">Simulate your story before posting.</p></div>
+    <div class="field-group"><label>Username</label><input type="text" id="scUser" value="yourusername" placeholder="Username"></div>
+    <div class="field-group"><label>Story Background</label><div class="img-upload"><input type="file" id="scImg" accept="image/*"><p style="font-size:.82rem;color:#4a4a4e">👻 Upload story image</p></div></div>
+    <div class="field-group"><label>Text Overlay</label><input type="text" id="scText" value="Living my best life ✨" placeholder="Text on your story"></div>
+    <div class="field-group">
+      <label>Text Style</label>
+      <div class="color-row" id="textColors">
+        <div class="color-swatch active" style="background:#fff" data-color="#fff" data-bg="rgba(0,0,0,.5)" onclick="setTextStyle(this,'#fff','rgba(0,0,0,.5)')"></div>
+        <div class="color-swatch" style="background:#fffc00" data-color="#fffc00" data-bg="rgba(0,0,0,.5)" onclick="setTextStyle(this,'#fffc00','rgba(0,0,0,.5)')"></div>
+        <div class="color-swatch" style="background:#ff4444" data-color="#fff" data-bg="rgba(220,30,30,.85)" onclick="setTextStyle(this,'#fff','rgba(220,30,30,.85)')"></div>
+        <div class="color-swatch" style="background:#00c4ff" data-color="#fff" data-bg="rgba(0,100,200,.85)" onclick="setTextStyle(this,'#fff','rgba(0,100,200,.85)')"></div>
+        <div class="color-swatch" style="background:transparent;border:2px solid rgba(255,255,255,.5)" data-color="#fff" data-bg="transparent" onclick="setTextStyle(this,'#fff','transparent')"></div>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Add Sticker</label>
+      <div class="sticker-grid">
+        <div class="sticker-btn" onclick="addSticker('❤️')">❤️</div>
+        <div class="sticker-btn" onclick="addSticker('🔥')">🔥</div>
+        <div class="sticker-btn" onclick="addSticker('✨')">✨</div>
+        <div class="sticker-btn" onclick="addSticker('👻')">👻</div>
+        <div class="sticker-btn" onclick="addSticker('😂')">😂</div>
+        <div class="sticker-btn" onclick="addSticker('🎉')">🎉</div>
+        <div class="sticker-btn" onclick="addSticker('🌈')">🌈</div>
+        <div class="sticker-btn" onclick="addSticker('💯')">💯</div>
+        <div class="sticker-btn" onclick="addSticker('👆')">👆</div>
+        <div class="sticker-btn" onclick="addSticker('📍')">📍</div>
+      </div>
+    </div>
+    <div class="field-group"><label>View Count</label><div class="range-row"><input type="range" id="scViews" min="0" max="100000" value="2847" step="1"><span class="range-val" id="scViewsVal">2,847</span></div></div>
+    <div class="field-group"><label>Story Age</label><input type="text" id="scAge" value="2h"></div>
+    <button onclick="clearStickers()" style="background:none;border:1px solid #4a4a4e;border-radius:8px;color:#e0e0e0;padding:10px;cursor:pointer;font-family:inherit;font-size:.85rem;width:100%">🗑 Clear Stickers</button>
+  </aside>
+  <main>
+    <div class="preview-pane">
+      <span class="preview-label">Live Preview</span>
+      <div class="sc-phone">
+        <!-- Progress bar -->
+        <div class="sc-progress"><div class="sc-progress-seg"><div class="sc-progress-fill"></div></div><div class="sc-progress-seg"><div class="sc-progress-fill" style="width:0%"></div></div><div class="sc-progress-seg"><div class="sc-progress-fill" style="width:0%"></div></div></div>
+        <!-- Top -->
+        <div class="sc-top">
+          <div class="sc-user">
+            <div class="sc-user-avatar" id="scAvatar">Y</div>
+            <div>
+              <div class="sc-user-name" id="scUserDisp">yourusername</div>
+              <div class="sc-user-time" id="scAgeDisp">2h</div>
+            </div>
+          </div>
+          <div class="sc-top-actions">
+            <span class="sc-top-icon">⋯</span>
+            <span class="sc-top-icon">✕</span>
+          </div>
+        </div>
+        <!-- BG -->
+        <div class="sc-bg" id="scBgArea"><div class="sc-bg-placeholder"><div style="font-size:3rem">👻</div><p style="font-size:.75rem;margin-top:6px">Upload background</p></div></div>
+        <!-- Text overlay -->
+        <div class="sc-overlay-text" id="scOverlayText" style="color:#fff;background:rgba(0,0,0,.5)">Living my best life ✨</div>
+        <!-- Bottom -->
+        <div class="sc-bottom">
+          <div class="sc-reply-bar">
+            <input class="sc-reply-input" placeholder="Send a message..." readonly>
+          </div>
+          <div class="sc-action-row">
+            <span class="sc-snap-icon">👍</span>
+            <div class="sc-views">👁 <span id="scViewsDisp">2,847</span></div>
+            <span class="sc-share">➡</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-sections">
+      <section class="info-section">
+        <h2>How to Use the Snapchat Story Preview Tool</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Enter Your Username</h4><p>Type your Snapchat username. It appears at the top of the story viewer alongside the avatar — just like the real story screen.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Upload a Story Background</h4><p>Upload the image you plan to share as your story background. It fills the phone screen as a full-bleed image behind your overlays.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Add Text Overlay</h4><p>Enter your story text and choose from 5 text style presets — white on dark, yellow, red background, blue background, or transparent — to match your visual.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Add Stickers</h4><p>Click any emoji in the sticker grid to add it to your story. Multiple stickers can be added to simulate a fully decorated snap. Use the Clear button to reset them.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Set View Count and Age</h4><p>Set your story view count with the slider and edit the story age (2h, 10m, etc.) to simulate how the story looks at different points in its 24-hour lifespan.</p></div></div>
+        </div>
+      </section>
+      <section class="info-section">
+        <h2>About This Tool</h2>
+        <div class="desc-text">
+          <p>The <strong style="color:#e0e0e0">Snapchat Story Preview Tool</strong> renders a realistic Snapchat story viewer inside a phone frame — complete with the progress bar, profile header, text overlay, stickers, reply bar, and view counter.</p>
+          <p>Brand marketers, influencers, and social media managers use this tool to plan Story content, validate text overlay placement, and present story mock-ups to clients before designing the final visual asset in a dedicated design tool.</p>
+        </div>
+        <div class="features-list">
+          <div class="feat-item"><strong>Story Phone Frame</strong>Full Snapchat story viewer inside a phone.</div>
+          <div class="feat-item"><strong>Text Style Presets</strong>Five colour and background combinations.</div>
+          <div class="feat-item"><strong>Emoji Stickers</strong>Add up to 10 emoji stickers to your story.</div>
+          <div class="feat-item"><strong>Progress Bar</strong>Three-segment story progress bar at the top.</div>
+          <div class="feat-item"><strong>View Counter</strong>Eye icon with view count in the bottom bar.</div>
+          <div class="feat-item"><strong>Reply Input</strong>Authentic "Send a message" reply bar shown.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
+let stickers=[];
+
+function setTextStyle(el,color,bg){
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  const ot=$('scOverlayText');
+  ot.style.color=color;
+  ot.style.background=bg;
+}
+
+function addSticker(emoji){
+  const phone=document.querySelector('.sc-phone');
+  const s=document.createElement('div');
+  s.className='sc-sticker';
+  s.textContent=emoji;
+  // Random-ish position in safe zone
+  const top=30+Math.random()*55;
+  const left=10+Math.random()*70;
+  s.style.top=top+'%';
+  s.style.left=left+'%';
+  phone.appendChild(s);
+  stickers.push(s);
+  // Make draggable
+  let dragging=false,ox=0,oy=0;
+  s.addEventListener('mousedown',e=>{dragging=true;ox=e.clientX-s.getBoundingClientRect().left;oy=e.clientY-s.getBoundingClientRect().top;e.preventDefault();});
+  document.addEventListener('mousemove',e=>{if(!dragging)return;const rect=phone.getBoundingClientRect();s.style.left=((e.clientX-rect.left-ox)/rect.width*100)+'%';s.style.top=((e.clientY-rect.top-oy)/rect.height*100)+'%';});
+  document.addEventListener('mouseup',()=>{dragging=false;});
+}
+
+function clearStickers(){stickers.forEach(s=>s.remove());stickers=[];}
+
+function update(){
+  const user=$('scUser').value||'username';
+  const text=$('scText').value||'';
+  const views=parseInt($('scViews').value);
+  const age=$('scAge').value||'now';
+  $('scUserDisp').textContent=user;
+  $('scAvatar').textContent=(user[0]||'U').toUpperCase();
+  $('scAgeDisp').textContent=age;
+  $('scOverlayText').textContent=text;
+  $('scOverlayText').style.display=text?'block':'none';
+  $('scViewsDisp').textContent=fmt(views);
+  $('scViewsVal').textContent=fmt(views);
+}
+
+$('scImg').addEventListener('change',function(){
+  const f=this.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{$('scBgArea').innerHTML=`<img src="${e.target.result}">`;};
+  r.readAsDataURL(f);
+});
+['scUser','scText','scAge'].forEach(id=>$(id).addEventListener('input',update));
+$('scViews').addEventListener('input',update);
+update();
+</script>
+</body>
+</html>

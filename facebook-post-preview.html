@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facebook Post Preview Tool – See Your Post Before Publishing</title>
+<meta name="description" content="Preview your Facebook post exactly as it appears on the news feed. Customize text, reactions, comments and shares for a realistic mock-up.">
+<meta name="keywords" content="facebook post preview, facebook mockup, facebook post simulator, social media preview">
+<link rel="canonical" href="https://website-viewer.github.io/facebook-post-preview">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Facebook Post Preview Tool">
+<meta property="og:description" content="See exactly how your Facebook post will look before publishing. Full news feed simulation.">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"Facebook Post Preview Tool",
+  "description":"Preview your Facebook post exactly as it appears on the news feed. Customize text, reactions, comments and shares for a realistic mock-up.",
+  "url":"https://website-viewer.github.io/facebook-post-preview",
+  "applicationCategory":"UtilitiesApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "featureList":["Live Facebook feed preview","Reaction counts","Comment & share simulation","Image upload","Page vs. personal profile toggle"],
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fb-bg:#f0f2f5;--fb-white:#fff;--fb-border:#ccd0d5;--fb-text:#050505;--fb-muted:#65676b;
+  --fb-blue:#1877f2;--fb-hover:#f2f2f2;
+  --panel:#0c0c14;--panel-b:#1a1a2e;--panel-border:#2a2a3e;--panel-text:#e2e2f0;--panel-muted:#666;
+  --accent:#1877f2;--font-ui:'Source Sans 3',sans-serif;--font-display:'Playfair Display',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-ui);background:var(--panel);color:var(--panel-text);min-height:100vh}
+.site-header{background:#080810;border-bottom:1px solid var(--panel-border);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.site-header a{color:var(--panel-text);text-decoration:none;font-size:.85rem;opacity:.6;transition:.2s}
+.site-header a:hover{opacity:1}
+.breadcrumb-sep{opacity:.3}
+.page-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--fb-blue)}
+.app{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 57px)}
+.controls{background:#080810;border-right:1px solid var(--panel-border);padding:28px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:20px}
+.controls h2{font-family:var(--font-display);font-size:1.15rem;font-weight:800;color:#fff}
+.controls p.sub{font-size:.8rem;color:var(--panel-muted);margin-bottom:4px}
+.field-group{display:flex;flex-direction:column;gap:6px}
+.field-group label{font-size:.75rem;font-weight:600;color:var(--panel-muted);letter-spacing:.05em;text-transform:uppercase}
+.field-group input,.field-group textarea,.field-group select{background:#111122;border:1px solid var(--panel-border);border-radius:8px;color:var(--panel-text);font-family:var(--font-ui);font-size:.9rem;padding:10px 12px;transition:.2s;resize:vertical;width:100%}
+.field-group input:focus,.field-group textarea:focus,.field-group select:focus{outline:none;border-color:var(--accent)}
+.field-group textarea{min-height:90px}
+.img-upload{border:2px dashed var(--panel-border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--accent)}
+.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input[type=range]{flex:1;accent-color:var(--accent)}
+.range-val{font-size:.82rem;color:var(--panel-muted);min-width:36px;text-align:right}
+.toggle-row{display:flex;align-items:center;justify-content:space-between}
+.toggle{position:relative;width:40px;height:22px}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#333;border-radius:22px;cursor:pointer;transition:.3s}
+.slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.slider{background:var(--accent)}
+input:checked+.slider:before{transform:translateX(18px)}
+/* Preview */
+.preview-pane{display:flex;flex-direction:column;align-items:center;padding:40px 24px;gap:32px;background:#0e0e1a}
+.preview-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-muted)}
+/* Facebook card */
+.fb-card{background:var(--fb-white);border-radius:8px;width:100%;max-width:500px;box-shadow:0 1px 2px rgba(0,0,0,.1),0 0 0 1px rgba(0,0,0,.08);font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden}
+.fb-post-header{padding:12px 16px;display:flex;align-items:flex-start;gap:10px}
+.fb-avatar{width:40px;height:40px;border-radius:50%;background:var(--fb-blue);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1rem;flex-shrink:0}
+.fb-post-meta{flex:1}
+.fb-author{font-size:.9rem;font-weight:600;color:var(--fb-text);line-height:1.2}
+.fb-author .page-badge{background:var(--fb-blue);color:#fff;font-size:.6rem;padding:1px 4px;border-radius:3px;margin-left:4px;font-weight:700}
+.fb-post-time{font-size:.75rem;color:var(--fb-muted);display:flex;align-items:center;gap:4px;margin-top:2px}
+.fb-more{font-size:1.4rem;color:var(--fb-muted);cursor:pointer;padding:4px;border-radius:50%}
+.fb-more:hover{background:var(--fb-hover)}
+.fb-post-text{padding:0 16px 12px;font-size:.9375rem;color:var(--fb-text);line-height:1.5;white-space:pre-wrap}
+.fb-image-area{width:100%;background:#f0f2f5;display:flex;align-items:center;justify-content:center;min-height:200px;overflow:hidden}
+.fb-image-area img{width:100%;display:block}
+.fb-image-placeholder{padding:60px;text-align:center;color:var(--fb-muted)}
+.fb-reactions-bar{padding:8px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--fb-border)}
+.fb-reactions{display:flex;align-items:center;gap:4px;font-size:.875rem;color:var(--fb-muted)}
+.reaction-emojis{display:flex}
+.reaction-emojis span{width:18px;height:18px;border-radius:50%;border:1.5px solid #fff;margin-left:-4px;font-size:.7rem;display:flex;align-items:center;justify-content:center;background:#fff}
+.fb-actions{display:flex;padding:4px 8px;gap:0}
+.fb-action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:4px;cursor:pointer;font-size:.875rem;font-weight:600;color:var(--fb-muted);border:none;background:none;font-family:inherit;transition:.15s}
+.fb-action-btn:hover{background:var(--fb-hover)}
+.fb-comments-area{padding:8px 16px;border-top:1px solid var(--fb-border)}
+.fb-comment{display:flex;gap:8px;margin-bottom:8px}
+.fb-comment-avatar{width:32px;height:32px;border-radius:50%;background:#e4e6eb;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#65676b;flex-shrink:0}
+.fb-comment-bubble{background:#f0f2f5;border-radius:18px;padding:8px 12px;font-size:.8125rem;color:var(--fb-text)}
+.fb-comment-name{font-weight:700;font-size:.8125rem}
+.fb-input-area{display:flex;gap:8px;align-items:center;padding:8px 16px 12px}
+.fb-input-box{flex:1;background:#f0f2f5;border-radius:20px;padding:8px 14px;font-size:.875rem;color:var(--fb-muted)}
+/* Info */
+.info-sections{width:100%;max-width:860px;margin:0 auto;padding:60px 24px 80px;display:flex;flex-direction:column;gap:48px}
+.info-section h2{font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--panel-border)}
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h4{font-size:.95rem;font-weight:600;color:#fff;margin-bottom:4px}
+.step-body p{font-size:.875rem;color:var(--panel-muted);line-height:1.65}
+.desc-text p{font-size:.9rem;color:var(--panel-muted);line-height:1.75;margin-bottom:14px}
+.features-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.feat-item{background:#111122;border:1px solid var(--panel-border);border-radius:8px;padding:12px 14px;font-size:.83rem;color:var(--panel-muted)}
+.feat-item strong{color:var(--panel-text);display:block;margin-bottom:3px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.controls{border-right:none;border-bottom:1px solid var(--panel-border)}.features-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="./">📱 Website Viewer</a>
+  <span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a>
+  <span class="breadcrumb-sep">›</span>
+  <span class="page-title">Facebook Post Preview</span>
+</header>
+<div class="app">
+  <aside class="controls">
+    <div>
+      <h2>Facebook Post Preview</h2>
+      <p class="sub">Simulate your post on the Facebook news feed.</p>
+    </div>
+    <div class="field-group">
+      <label>Author Name</label>
+      <input type="text" id="authorName" value="Your Name" placeholder="Your Name or Page">
+    </div>
+    <div class="field-group">
+      <label>Profile Type</label>
+      <select id="profileType">
+        <option value="personal">Personal Profile</option>
+        <option value="page">Facebook Page</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Post Text</label>
+      <textarea id="postText">Excited to share some big news with you all! 🎉 We've been working hard behind the scenes and can't wait for you to see what's coming. Stay tuned! 👀</textarea>
+    </div>
+    <div class="field-group">
+      <label>Post Image (optional)</label>
+      <div class="img-upload">
+        <input type="file" id="fbImgUpload" accept="image/*">
+        <p style="font-size:.85rem;color:#666">📷 Click to upload image</p>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Post Visibility</label>
+      <select id="visibility">
+        <option value="public">🌐 Public</option>
+        <option value="friends">👥 Friends</option>
+        <option value="me">🔒 Only me</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Post Time</label>
+      <input type="text" id="fbTime" value="2h" placeholder="e.g. 2h, Just now">
+    </div>
+    <div class="field-group">
+      <label>👍 Like Reactions</label>
+      <div class="range-row">
+        <input type="range" id="fbLikes" min="0" max="50000" value="847" step="1">
+        <span class="range-val" id="fbLikesVal">847</span>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>❤️ Love Reactions</label>
+      <div class="range-row">
+        <input type="range" id="fbLove" min="0" max="20000" value="312" step="1">
+        <span class="range-val" id="fbLoveVal">312</span>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Comments</label>
+      <div class="range-row">
+        <input type="range" id="fbComments" min="0" max="10000" value="94" step="1">
+        <span class="range-val" id="fbCommentsVal">94</span>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Shares</label>
+      <div class="range-row">
+        <input type="range" id="fbShares" min="0" max="10000" value="38" step="1">
+        <span class="range-val" id="fbSharesVal">38</span>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="preview-pane">
+      <span class="preview-label">Live Preview</span>
+      <div class="fb-card">
+        <div class="fb-post-header">
+          <div class="fb-avatar" id="fbAvatar">Y</div>
+          <div class="fb-post-meta">
+            <div class="fb-author" id="fbAuthorDisplay">Your Name <span class="page-badge" id="pageBadge" style="display:none">PAGE</span></div>
+            <div class="fb-post-time"><span id="fbTimeDisplay">2h</span> · <span id="fbVisDisplay">🌐</span></div>
+          </div>
+          <div class="fb-more">···</div>
+        </div>
+        <div class="fb-post-text" id="fbPostDisplay">Excited to share some big news with you all! 🎉 We've been working hard behind the scenes and can't wait for you to see what's coming. Stay tuned! 👀</div>
+        <div class="fb-image-area" id="fbImageArea" style="display:none"></div>
+        <div class="fb-reactions-bar">
+          <div class="fb-reactions">
+            <div class="reaction-emojis">
+              <span>👍</span><span>❤️</span><span>😂</span>
+            </div>
+            <span id="fbTotalReactions">1,159</span>
+          </div>
+          <div style="font-size:.875rem;color:#65676b">
+            <span id="fbCommentsDisplay">94</span> comments · <span id="fbSharesDisplay">38</span> shares
+          </div>
+        </div>
+        <div class="fb-actions">
+          <button class="fb-action-btn">👍 Like</button>
+          <button class="fb-action-btn">💬 Comment</button>
+          <button class="fb-action-btn">↗ Share</button>
+        </div>
+        <div class="fb-comments-area">
+          <div class="fb-comment">
+            <div class="fb-comment-avatar">JD</div>
+            <div>
+              <div class="fb-comment-bubble">
+                <div class="fb-comment-name">Jane Doe</div>
+                This is so exciting! Can't wait! 🙌
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fb-input-area">
+          <div class="fb-avatar" style="width:32px;height:32px;font-size:.8rem">Y</div>
+          <div class="fb-input-box">Write a comment…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-sections">
+      <section class="info-section">
+        <h2>How to Use the Facebook Post Preview Tool</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Set Your Author Name and Type</h4><p>Enter your name or Facebook Page name. Switch between a personal profile and a Page using the dropdown — this controls whether the "Page" badge appears next to your name.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Write Your Post Text</h4><p>Type or paste your post content into the text area. Emojis and line breaks are supported and will render accurately in the preview card below.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Optionally Add an Image</h4><p>Upload a photo that will appear below your post text, just like a standard photo post on the Facebook news feed.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Set Visibility and Time</h4><p>Choose who the post is "visible" to (Public, Friends, Only me) and set how long ago it was posted to complete the authentic look.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Adjust Reactions, Comments & Shares</h4><p>Use the sliders to dial in realistic engagement numbers. Likes and Love reactions are summed into a total reaction count automatically.</p></div></div>
+        </div>
+      </section>
+      <section class="info-section">
+        <h2>About This Tool</h2>
+        <div class="desc-text">
+          <p>The <strong style="color:#fff">Facebook Post Preview Tool</strong> generates a realistic news feed mock-up so you can review your content before publishing. It mirrors the current Facebook post card design including the author header, reaction bar, and action buttons.</p>
+          <p>Social media managers, content teams, and agencies use this tool to get client approval on copy, check emoji rendering, and validate that the post structure looks correct — all without needing to actually publish to Facebook.</p>
+        </div>
+        <div class="features-list">
+          <div class="feat-item"><strong>Reaction Simulation</strong>Like, Love, and total reaction count calculated automatically.</div>
+          <div class="feat-item"><strong>Page/Profile Toggle</strong>Switch between personal profile and Facebook Page appearance.</div>
+          <div class="feat-item"><strong>Image Post Support</strong>Upload a photo to see the full image post layout.</div>
+          <div class="feat-item"><strong>Visibility Icons</strong>Public 🌐, Friends 👥, or Private 🔒 indicators shown.</div>
+          <div class="feat-item"><strong>Real-time Updates</strong>Every input updates the preview instantly as you type.</div>
+          <div class="feat-item"><strong>No Login Required</strong>Works entirely in-browser with no Facebook account needed.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
+function update(){
+  const name=$('authorName').value||'Your Name';
+  const type=$('profileType').value;
+  const text=$('postText').value;
+  const vis=$('visibility').value;
+  const time=$('fbTime').value||'just now';
+  const likes=parseInt($('fbLikes').value);
+  const love=parseInt($('fbLove').value);
+  const cmts=parseInt($('fbComments').value);
+  const shares=parseInt($('fbShares').value);
+
+  $('fbAuthorDisplay').childNodes[0].textContent=name+' ';
+  $('fbAvatar').textContent=(name[0]||'U').toUpperCase();
+  $('pageBadge').style.display=type==='page'?'inline':'none';
+  $('fbPostDisplay').textContent=text;
+  $('fbTimeDisplay').textContent=time;
+  const visMap={public:'🌐',friends:'👥',me:'🔒'};
+  $('fbVisDisplay').textContent=visMap[vis]||'🌐';
+  const total=likes+love;
+  $('fbTotalReactions').textContent=fmt(total);
+  $('fbCommentsDisplay').textContent=fmt(cmts);
+  $('fbSharesDisplay').textContent=fmt(shares);
+  $('fbLikesVal').textContent=fmt(likes);
+  $('fbLoveVal').textContent=fmt(love);
+  $('fbCommentsVal').textContent=fmt(cmts);
+  $('fbSharesVal').textContent=fmt(shares);
+}
+$('fbImgUpload').addEventListener('change',function(){
+  const file=this.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    $('fbImageArea').style.display='block';
+    $('fbImageArea').innerHTML=`<img src="${e.target.result}" style="width:100%;display:block">`;
+  };
+  r.readAsDataURL(file);
+});
+['authorName','profileType','postText','visibility','fbTime'].forEach(id=>$(id).addEventListener('input',update));
+['fbLikes','fbLove','fbComments','fbShares'].forEach(id=>$(id).addEventListener('input',update));
+update();
+</script>
+</body>
+</html>

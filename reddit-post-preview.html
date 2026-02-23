@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reddit Post Preview Tool – Subreddit Post Simulator</title>
+<meta name="description" content="Preview your Reddit post before submitting. Simulate the post card with subreddit, flair, upvotes, and comment count in both light and dark themes.">
+<meta name="keywords" content="reddit post preview, reddit mockup, subreddit post simulator, reddit upvote preview">
+<link rel="canonical" href="https://website-viewer.github.io/reddit-post-preview">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"Reddit Post Preview Tool",
+  "description":"Preview your Reddit post before submitting. Simulate the post card with subreddit, flair, upvotes, and comment count.",
+  "url":"https://website-viewer.github.io/reddit-post-preview",
+  "applicationCategory":"UtilitiesApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "featureList":["Reddit post card simulation","Subreddit and flair support","Upvote counter","Awards display","Light and dark theme"],
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:wght@700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rd-orange:#ff4500;--rd-blue:#0079d3;--rd-bg:#dae0e6;--rd-card:#fff;--rd-border:#ccc;--rd-text:#1c1c1c;--rd-muted:#878a8c;
+  --rd-dark-bg:#1a1a1b;--rd-dark-card:#272729;--rd-dark-border:#343536;--rd-dark-text:#d7dadc;--rd-dark-muted:#818384;
+  --panel:#0a0a0a;--panel-border:#1e1e1e;--panel-muted:#555;--accent:#ff4500;
+  --font:'Noto Sans',sans-serif;--font-display:'Ibarra Real Nova',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--panel);color:#e0e0e0;min-height:100vh}
+.site-header{background:#060606;border-bottom:1px solid var(--panel-border);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.site-header a{color:#e0e0e0;text-decoration:none;font-size:.85rem;opacity:.6}
+.breadcrumb-sep{opacity:.3}
+.page-title{font-family:var(--font-display);font-size:1.05rem;color:var(--rd-orange)}
+.app{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 57px)}
+.controls{background:#060606;border-right:1px solid var(--panel-border);padding:26px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+.controls h2{font-family:var(--font-display);font-size:1.2rem;color:var(--rd-orange)}
+.controls p.sub{font-size:.8rem;color:var(--panel-muted);margin-bottom:4px}
+.field-group{display:flex;flex-direction:column;gap:6px}
+.field-group label{font-size:.75rem;font-weight:700;color:var(--panel-muted);letter-spacing:.05em;text-transform:uppercase}
+.field-group input,.field-group textarea,.field-group select{background:#111;border:1px solid var(--panel-border);border-radius:8px;color:#e0e0e0;font-family:var(--font);font-size:.9rem;padding:10px 12px;transition:.2s;resize:vertical;width:100%}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:var(--accent)}
+.field-group textarea{min-height:90px}
+.img-upload{border:2px dashed var(--panel-border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--accent)}
+.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input[type=range]{flex:1;accent-color:var(--accent)}
+.range-val{font-size:.82rem;color:var(--panel-muted);min-width:40px;text-align:right}
+.flair-row{display:flex;gap:8px;align-items:center}
+.flair-color{width:30px;height:30px;border-radius:6px;border:1px solid var(--panel-border);cursor:pointer;padding:0;background:none}
+.toggle-row{display:flex;align-items:center;justify-content:space-between}
+.toggle{position:relative;width:40px;height:22px}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#333;border-radius:22px;cursor:pointer;transition:.3s}
+.slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.slider{background:var(--accent)}
+input:checked+.slider:before{transform:translateX(18px)}
+/* Preview */
+.preview-pane{display:flex;flex-direction:column;align-items:center;padding:40px 24px;gap:32px;background:#0c0c0c}
+.preview-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-muted)}
+/* Reddit card */
+.rd-card{width:100%;max-width:620px;border-radius:4px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden;display:flex}
+.rd-card.light{background:var(--rd-card);border:1px solid var(--rd-border);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.rd-card.dark{background:var(--rd-dark-card);border:1px solid var(--rd-dark-border)}
+/* Vote column */
+.rd-vote{width:40px;background:rgba(0,0,0,.05);display:flex;flex-direction:column;align-items:center;padding:8px 4px;gap:4px;flex-shrink:0}
+.rd-card.dark .rd-vote{background:rgba(255,255,255,.03)}
+.rd-upbtn,.rd-downbtn{background:none;border:none;cursor:pointer;font-size:1.1rem;line-height:1;color:#878a8c;padding:2px}
+.rd-upbtn:hover{color:var(--rd-orange)}
+.rd-downbtn:hover{color:#7193ff}
+.rd-upbtn.active{color:var(--rd-orange)}
+.rd-score{font-size:.7rem;font-weight:700;color:#1c1c1c;text-align:center}
+.rd-card.dark .rd-score{color:var(--rd-dark-text)}
+/* Main content */
+.rd-main{flex:1;padding:8px 8px 8px 0;min-width:0}
+.rd-header{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.rd-sub-avatar{width:16px;height:16px;border-radius:50%;background:var(--rd-orange);display:inline-block;flex-shrink:0}
+.rd-sub{font-size:.75rem;font-weight:700;color:var(--rd-text)}
+.rd-card.dark .rd-sub{color:var(--rd-dark-text)}
+.rd-dot{color:var(--rd-muted);font-size:.75rem}
+.rd-user{font-size:.75rem;color:var(--rd-muted)}
+.rd-time{font-size:.75rem;color:var(--rd-muted)}
+.rd-flair{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap}
+.rd-title{font-size:1.05rem;font-weight:600;color:var(--rd-text);line-height:1.35;margin-bottom:6px}
+.rd-card.dark .rd-title{color:var(--rd-dark-text)}
+.rd-awards{display:flex;gap:4px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+.rd-award{font-size:.75rem;display:flex;align-items:center;gap:2px;background:rgba(0,0,0,.06);border-radius:12px;padding:2px 6px}
+.rd-card.dark .rd-award{background:rgba(255,255,255,.06);color:var(--rd-dark-muted)}
+.rd-body{font-size:.875rem;color:var(--rd-muted);line-height:1.5;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.rd-card.dark .rd-body{color:var(--rd-dark-muted)}
+.rd-image{width:100%;max-height:320px;object-fit:cover;border-radius:4px;display:block;margin-bottom:8px}
+.rd-actions{display:flex;gap:4px;flex-wrap:wrap}
+.rd-action-btn{display:flex;align-items:center;gap:4px;padding:6px 8px;border-radius:2px;border:none;background:none;cursor:pointer;font-size:.75rem;font-weight:700;color:var(--rd-muted);font-family:inherit;transition:.15s}
+.rd-action-btn:hover{background:rgba(0,0,0,.06);color:var(--rd-text)}
+.rd-card.dark .rd-action-btn:hover{background:rgba(255,255,255,.06);color:var(--rd-dark-text)}
+/* Info */
+.info-sections{width:100%;max-width:860px;margin:0 auto;padding:60px 24px 80px;display:flex;flex-direction:column;gap:48px}
+.info-section h2{font-family:var(--font-display);font-size:1.55rem;color:#fff;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--panel-border)}
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h4{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:4px}
+.step-body p{font-size:.875rem;color:var(--panel-muted);line-height:1.65}
+.desc-text p{font-size:.9rem;color:var(--panel-muted);line-height:1.75;margin-bottom:14px}
+.features-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.feat-item{background:#111;border:1px solid var(--panel-border);border-radius:8px;padding:12px 14px;font-size:.83rem;color:var(--panel-muted)}
+.feat-item strong{color:#e0e0e0;display:block;margin-bottom:3px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.controls{border-right:none;border-bottom:1px solid var(--panel-border)}.features-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="./">📱 Website Viewer</a><span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a><span class="breadcrumb-sep">›</span>
+  <span class="page-title">Reddit Post Preview</span>
+</header>
+<div class="app">
+  <aside class="controls">
+    <div><h2>Reddit Post Preview</h2><p class="sub">Simulate your post on any subreddit.</p></div>
+    <div class="field-group"><label>Subreddit</label><input type="text" id="rdSub" value="r/programming" placeholder="r/subreddit"></div>
+    <div class="field-group"><label>Username</label><input type="text" id="rdUser" value="u/techbuilder" placeholder="u/username"></div>
+    <div class="field-group"><label>Post Age</label><input type="text" id="rdTime" value="6 hours ago"></div>
+    <div class="field-group"><label>Post Title</label><textarea id="rdTitle" rows="2">I built an open-source tool to preview social media posts before publishing – what do you think?</textarea></div>
+    <div class="field-group"><label>Post Body (optional)</label><textarea id="rdBody" placeholder="Self-post text content...">After months of building, I'm finally sharing this side project. It lets you preview Instagram, Twitter, LinkedIn and 6 other platforms without posting anything. All client-side, no data stored. Feedback welcome!</textarea></div>
+    <div class="field-group"><label>Post Image (optional)</label><div class="img-upload"><input type="file" id="rdImg" accept="image/*"><p style="font-size:.82rem;color:#555">🖼 Click to upload</p></div></div>
+    <div class="field-group">
+      <label>Post Flair</label>
+      <div class="flair-row">
+        <input type="text" id="rdFlair" value="Open Source" placeholder="Flair text" style="flex:1">
+        <input type="color" id="rdFlairColor" value="#ff6314" class="flair-color">
+      </div>
+    </div>
+    <div class="field-group"><label>Awards</label><input type="text" id="rdAwards" value="🥇 15 · 🏆 3 · 💎 1" placeholder="e.g. 🥇 42 · 🏆 5"></div>
+    <div class="field-group"><label>Upvotes</label><div class="range-row"><input type="range" id="rdUpvotes" min="0" max="100000" value="12400" step="1"><span class="range-val" id="rdUpvotesVal">12.4k</span></div></div>
+    <div class="field-group"><label>Comments</label><div class="range-row"><input type="range" id="rdComments" min="0" max="10000" value="847" step="1"><span class="range-val" id="rdCommentsVal">847</span></div></div>
+    <div class="field-group"><label>Theme</label>
+      <div class="toggle-row"><span style="font-size:.85rem;color:#555">Dark mode</span><label class="toggle"><input type="checkbox" id="rdDark" checked><span class="slider"></span></label></div>
+    </div>
+  </aside>
+  <main>
+    <div class="preview-pane">
+      <span class="preview-label">Live Preview</span>
+      <div class="rd-card dark" id="rdCard">
+        <div class="rd-vote">
+          <button class="rd-upbtn active">▲</button>
+          <div class="rd-score" id="rdScoreDisp">12.4k</div>
+          <button class="rd-downbtn">▼</button>
+        </div>
+        <div class="rd-main">
+          <div class="rd-header">
+            <span class="rd-sub-avatar"></span>
+            <span class="rd-sub" id="rdSubDisp">r/programming</span>
+            <span class="rd-dot">•</span>
+            <span class="rd-user" id="rdUserDisp">u/techbuilder</span>
+            <span class="rd-dot">•</span>
+            <span class="rd-time" id="rdTimeDisp">6 hours ago</span>
+            <span class="rd-flair" id="rdFlairDisp" style="background:#ff6314;color:#fff">Open Source</span>
+          </div>
+          <div class="rd-title" id="rdTitleDisp">I built an open-source tool to preview social media posts before publishing – what do you think?</div>
+          <div class="rd-awards" id="rdAwardsDisp"><span class="rd-award">🥇 15</span><span class="rd-award">🏆 3</span><span class="rd-award">💎 1</span></div>
+          <div id="rdImgDisp"></div>
+          <div class="rd-body" id="rdBodyDisp">After months of building, I'm finally sharing this side project. It lets you preview Instagram, Twitter, LinkedIn and 6 other platforms without posting anything. All client-side, no data stored. Feedback welcome!</div>
+          <div class="rd-actions">
+            <button class="rd-action-btn">💬 <span id="rdCommentsDisp">847</span> Comments</button>
+            <button class="rd-action-btn">🔗 Share</button>
+            <button class="rd-action-btn">🔖 Save</button>
+            <button class="rd-action-btn">••• More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-sections">
+      <section class="info-section">
+        <h2>How to Use the Reddit Post Preview Tool</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Set Subreddit and Username</h4><p>Enter the subreddit name (e.g. r/programming) and your Reddit username. These appear in the post header as they do on the live platform.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Write Your Title and Body</h4><p>Enter your post title — this is the most critical element on Reddit. Optionally add body text for a self-post. Both render accurately in the preview card.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Set a Flair with Custom Colour</h4><p>Add post flair text and pick a colour using the colour picker. The flair badge appears next to the subreddit in the header, styled with your chosen colour.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Add Awards and Engagement</h4><p>Type emoji award combinations (e.g. 🥇 42 · 🏆 5) and use the upvote and comment sliders to simulate engagement levels for your mock-up.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Toggle Dark / Light Mode</h4><p>Switch between Reddit's dark and light themes to see how your post looks in both. Dark mode is Reddit's default for most users today.</p></div></div>
+        </div>
+      </section>
+      <section class="info-section">
+        <h2>About This Tool</h2>
+        <div class="desc-text">
+          <p>The <strong style="color:#e0e0e0">Reddit Post Preview Tool</strong> generates a realistic Reddit post card mock-up with full subreddit branding, vote column, flair, awards, and action buttons — in both dark and light themes.</p>
+          <p>Reddit is a text-heavy platform where titles make or break a post's performance. This tool lets content strategists, community managers, and power users craft and A/B test different title formulations and flair options before committing to a submission.</p>
+        </div>
+        <div class="features-list">
+          <div class="feat-item"><strong>Custom Flair</strong>Text flair with any colour via colour picker.</div>
+          <div class="feat-item"><strong>Award Emojis</strong>Custom award combinations rendered as badges.</div>
+          <div class="feat-item"><strong>Dark & Light Themes</strong>Preview in both Reddit colour modes.</div>
+          <div class="feat-item"><strong>Vote Column</strong>Accurate upvote/downvote layout with score.</div>
+          <div class="feat-item"><strong>Image Post</strong>Upload an image for a media post simulation.</div>
+          <div class="feat-item"><strong>Upvote & Comment Counts</strong>Sliders for both engagement metrics.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
+function parseAwards(str){
+  if(!str.trim())return'';
+  return str.split('·').map(a=>a.trim()).filter(Boolean).map(a=>`<span class="rd-award">${a}</span>`).join('');
+}
+function update(){
+  const sub=$('rdSub').value||'r/subreddit';
+  const user=$('rdUser').value||'u/user';
+  const time=$('rdTime').value||'just now';
+  const title=$('rdTitle').value||'Post Title';
+  const body=$('rdBody').value;
+  const flair=$('rdFlair').value;
+  const flairColor=$('rdFlairColor').value;
+  const awards=$('rdAwards').value;
+  const upvotes=parseInt($('rdUpvotes').value);
+  const cmts=parseInt($('rdComments').value);
+  const dark=$('rdDark').checked;
+  $('rdSubDisp').textContent=sub;
+  $('rdUserDisp').textContent=user;
+  $('rdTimeDisp').textContent=time;
+  $('rdTitleDisp').textContent=title;
+  $('rdBodyDisp').textContent=body;
+  $('rdBodyDisp').style.display=body?'block':'none';
+  const flairEl=$('rdFlairDisp');
+  if(flair){flairEl.textContent=flair;flairEl.style.display='inline';flairEl.style.background=flairColor;flairEl.style.color='#fff';}else{flairEl.style.display='none'}
+  $('rdAwardsDisp').innerHTML=parseAwards(awards);
+  $('rdScoreDisp').textContent=fmt(upvotes);
+  $('rdUpvotesVal').textContent=fmt(upvotes);
+  $('rdCommentsDisp').textContent=fmt(cmts);
+  $('rdCommentsVal').textContent=fmt(cmts);
+  $('rdCard').className='rd-card '+(dark?'dark':'light');
+}
+$('rdImg').addEventListener('change',function(){
+  const f=this.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{$('rdImgDisp').innerHTML=`<img class="rd-image" src="${e.target.result}">`;};
+  r.readAsDataURL(f);
+});
+['rdSub','rdUser','rdTime','rdTitle','rdBody','rdFlair','rdFlairColor','rdAwards'].forEach(id=>$(id).addEventListener('input',update));
+['rdUpvotes','rdComments'].forEach(id=>$(id).addEventListener('input',update));
+$('rdDark').addEventListener('change',update);
+update();
+</script>
+</body>
+</html>

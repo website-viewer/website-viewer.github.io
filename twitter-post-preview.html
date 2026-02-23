@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twitter / X Post Preview Tool – Tweet Simulator</title>
+<meta name="description" content="Preview your tweet exactly as it appears on Twitter/X. Simulate character count, engagement stats, and verified badge before posting.">
+<meta name="keywords" content="twitter post preview, tweet preview, X post simulator, tweet mockup, twitter card preview">
+<link rel="canonical" href="https://website-viewer.github.io/twitter-post-preview">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"Twitter / X Post Preview Tool",
+  "description":"Preview your tweet exactly as it appears on Twitter/X before posting. Simulate character count, retweets, likes, and bookmarks.",
+  "url":"https://website-viewer.github.io/twitter-post-preview",
+  "applicationCategory":"UtilitiesApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "featureList":["280-character counter","Live tweet preview","Verified badge toggle","X / Twitter theme toggle","Image upload"],
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --x-bg:#000;--x-border:#2f3336;--x-text:#e7e9ea;--x-muted:#71767b;--x-blue:#1d9bf0;--x-accent:#1d9bf0;
+  --x-hover:rgba(255,255,255,.03);--x-gold:#ffd700;
+  --panel:#09090b;--panel-border:#1c1c1f;--panel-muted:#52525b;--accent:#1d9bf0;
+  --font:'Space Grotesk',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--panel);color:#e4e4e7;min-height:100vh}
+.site-header{background:#050507;border-bottom:1px solid var(--panel-border);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.site-header a{color:#e4e4e7;text-decoration:none;font-size:.85rem;opacity:.6;transition:.2s}
+.site-header a:hover{opacity:1}
+.breadcrumb-sep{opacity:.3}
+.page-title{font-size:1rem;font-weight:700;color:var(--x-blue)}
+.app{display:grid;grid-template-columns:350px 1fr;min-height:calc(100vh - 57px)}
+.controls{background:#050507;border-right:1px solid var(--panel-border);padding:26px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+.controls h2{font-size:1.1rem;font-weight:700;color:#fff}
+.controls p.sub{font-size:.8rem;color:var(--panel-muted);margin-bottom:4px}
+.field-group{display:flex;flex-direction:column;gap:6px}
+.field-group label{font-size:.75rem;font-weight:600;color:var(--panel-muted);letter-spacing:.05em;text-transform:uppercase}
+.field-group input,.field-group textarea,.field-group select{background:#111113;border:1px solid var(--panel-border);border-radius:8px;color:#e4e4e7;font-family:var(--font);font-size:.9rem;padding:10px 12px;transition:.2s;resize:vertical;width:100%}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:var(--accent)}
+.field-group textarea{min-height:80px}
+.char-counter{text-align:right;font-size:.78rem;color:var(--panel-muted);margin-top:2px}
+.char-counter.warn{color:#f4a116}
+.char-counter.over{color:#f4212e}
+.img-upload{border:2px dashed var(--panel-border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--accent)}
+.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input[type=range]{flex:1;accent-color:var(--accent)}
+.range-val{font-size:.82rem;color:var(--panel-muted);min-width:36px;text-align:right}
+.toggle-row{display:flex;align-items:center;justify-content:space-between}
+.toggle{position:relative;width:40px;height:22px}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#333;border-radius:22px;cursor:pointer;transition:.3s}
+.slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.slider{background:var(--accent)}
+input:checked+.slider:before{transform:translateX(18px)}
+.theme-toggle{display:flex;gap:8px;margin-top:4px}
+.theme-btn{flex:1;padding:8px;border:1px solid var(--panel-border);border-radius:8px;background:none;color:#e4e4e7;cursor:pointer;font-size:.82rem;font-weight:600;font-family:var(--font);transition:.2s}
+.theme-btn.active{background:var(--accent);border-color:var(--accent);color:#000}
+/* Preview */
+.preview-pane{display:flex;flex-direction:column;align-items:center;padding:40px 24px;gap:32px;background:#060609}
+.preview-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-muted)}
+/* Tweet card */
+.tweet-card{width:100%;max-width:598px;border:1px solid var(--x-border);border-radius:16px;padding:16px;background:var(--x-bg);font-family:-apple-system,'Segoe UI',Roboto,sans-serif}
+.tweet-card.light{background:#fff;border-color:#eff3f4;--x-text:#0f1419;--x-muted:#536471;--x-border:#eff3f4;--x-hover:rgba(0,0,0,.03)}
+.tweet-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.tweet-avatar{width:48px;height:48px;border-radius:50%;background:var(--x-blue);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.1rem;flex-shrink:0;overflow:hidden}
+.tweet-avatar img{width:100%;height:100%;object-fit:cover}
+.tweet-names{flex:1}
+.tweet-display-name{font-size:.9375rem;font-weight:700;color:var(--x-text);display:flex;align-items:center;gap:4px}
+.tweet-handle{font-size:.875rem;color:var(--x-muted)}
+.verified-blue{color:var(--x-blue);font-size:1rem}
+.verified-gold{color:var(--x-gold);font-size:1rem}
+.tweet-more{color:var(--x-muted);font-size:1.2rem;cursor:pointer;padding:4px;border-radius:50%;transition:.2s}
+.tweet-more:hover{background:var(--x-hover)}
+.tweet-text{font-size:.9375rem;color:var(--x-text);line-height:1.5;margin-bottom:12px;white-space:pre-wrap}
+.tweet-link{color:var(--x-blue)}
+.tweet-image{width:100%;border-radius:16px;overflow:hidden;margin-bottom:12px;background:#191919;min-height:200px;display:flex;align-items:center;justify-content:center}
+.tweet-image img{width:100%;display:block}
+.tweet-image.empty{min-height:0;margin-bottom:0}
+.tweet-time{font-size:.875rem;color:var(--x-muted);margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--x-border)}
+.tweet-stats{display:flex;gap:16px;font-size:.875rem;color:var(--x-text);padding-bottom:12px;border-bottom:1px solid var(--x-border);margin-bottom:4px}
+.tweet-stats span span{color:var(--x-muted);margin-left:2px}
+.tweet-actions{display:flex;justify-content:space-between;padding-top:4px}
+.tweet-action{display:flex;align-items:center;gap:6px;color:var(--x-muted);font-size:.875rem;cursor:pointer;padding:8px 12px;border-radius:999px;transition:.2s}
+.tweet-action:hover{color:var(--x-blue);background:rgba(29,155,240,.1)}
+.tweet-action svg{width:18px;height:18px}
+/* Info */
+.info-sections{width:100%;max-width:860px;margin:0 auto;padding:60px 24px 80px;display:flex;flex-direction:column;gap:48px}
+.info-section h2{font-size:1.55rem;font-weight:700;color:#fff;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--panel-border)}
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#000;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h4{font-size:.95rem;font-weight:600;color:#fff;margin-bottom:4px}
+.step-body p{font-size:.875rem;color:var(--panel-muted);line-height:1.65}
+.desc-text p{font-size:.9rem;color:var(--panel-muted);line-height:1.75;margin-bottom:14px}
+.features-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.feat-item{background:#111113;border:1px solid var(--panel-border);border-radius:8px;padding:12px 14px;font-size:.83rem;color:var(--panel-muted)}
+.feat-item strong{color:#e4e4e7;display:block;margin-bottom:3px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.controls{border-right:none;border-bottom:1px solid var(--panel-border)}.features-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="./">📱 Website Viewer</a>
+  <span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a>
+  <span class="breadcrumb-sep">›</span>
+  <span class="page-title">Twitter / X Post Preview</span>
+</header>
+<div class="app">
+  <aside class="controls">
+    <div>
+      <h2>Twitter / X Post Preview</h2>
+      <p class="sub">See your tweet before you post it.</p>
+    </div>
+    <div class="field-group">
+      <label>Display Name</label>
+      <input type="text" id="displayName" value="Your Name" placeholder="Display Name">
+    </div>
+    <div class="field-group">
+      <label>@Handle</label>
+      <input type="text" id="handle" value="yourhandle" placeholder="handle (no @)">
+    </div>
+    <div class="field-group">
+      <label>Tweet Text (280 chars)</label>
+      <textarea id="tweetText" maxlength="280">Just shipped something I'm really proud of. It's been months of late nights and early mornings, but the result is exactly what I envisioned. The best projects are the ones that push you to grow. 🚀 #buildinpublic</textarea>
+      <div class="char-counter" id="charCounter">217 / 280</div>
+    </div>
+    <div class="field-group">
+      <label>Tweet Image (optional)</label>
+      <div class="img-upload">
+        <input type="file" id="tweetImg" accept="image/*">
+        <p style="font-size:.82rem;color:#52525b">🖼 Click to upload</p>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Post Time</label>
+      <input type="text" id="tweetTime" value="3:42 PM · Jan 15, 2025">
+    </div>
+    <div class="field-group">
+      <label>Verified Badge</label>
+      <select id="verifiedType">
+        <option value="none">No badge</option>
+        <option value="blue">✓ Blue (Subscriber)</option>
+        <option value="gold">✓ Gold (Organisation)</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Replies</label>
+      <div class="range-row"><input type="range" id="replies" min="0" max="10000" value="142"><span class="range-val" id="repliesVal">142</span></div>
+    </div>
+    <div class="field-group">
+      <label>Reposts</label>
+      <div class="range-row"><input type="range" id="reposts" min="0" max="50000" value="1834"><span class="range-val" id="repostsVal">1.8k</span></div>
+    </div>
+    <div class="field-group">
+      <label>Likes</label>
+      <div class="range-row"><input type="range" id="xlikes" min="0" max="100000" value="12400"><span class="range-val" id="xlikesVal">12.4k</span></div>
+    </div>
+    <div class="field-group">
+      <label>Bookmarks</label>
+      <div class="range-row"><input type="range" id="bookmarks" min="0" max="20000" value="487"><span class="range-val" id="bookmarksVal">487</span></div>
+    </div>
+    <div class="field-group">
+      <label>Theme</label>
+      <div class="theme-toggle">
+        <button class="theme-btn active" id="darkBtn" onclick="setTheme('dark')">🌙 Dark</button>
+        <button class="theme-btn" id="lightBtn" onclick="setTheme('light')">☀️ Light</button>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="preview-pane">
+      <span class="preview-label">Live Preview</span>
+      <div class="tweet-card" id="tweetCard">
+        <div class="tweet-header">
+          <div class="tweet-avatar" id="tweetAvatar">Y</div>
+          <div class="tweet-names">
+            <div class="tweet-display-name">
+              <span id="previewDisplayName">Your Name</span>
+              <span id="verifiedIcon" style="display:none">✓</span>
+            </div>
+            <div class="tweet-handle">@<span id="previewHandle">yourhandle</span></div>
+          </div>
+          <div class="tweet-more">···</div>
+        </div>
+        <div class="tweet-text" id="previewText">Just shipped something I'm really proud of. It's been months of late nights and early mornings, but the result is exactly what I envisioned. The best projects are the ones that push you to grow. 🚀 <span class="tweet-link">#buildinpublic</span></div>
+        <div class="tweet-image empty" id="tweetImageArea"></div>
+        <div class="tweet-time" id="previewTime">3:42 PM · Jan 15, 2025 · <span style="font-weight:700">2.4M</span> <span style="color:var(--x-muted)">Views</span></div>
+        <div class="tweet-stats">
+          <span><strong id="statReplies">142</strong> <span>Replies</span></span>
+          <span><strong id="statReposts">1,834</strong> <span>Reposts</span></span>
+          <span><strong id="statLikes">12,400</strong> <span>Likes</span></span>
+          <span><strong id="statBookmarks">487</strong> <span>Bookmarks</span></span>
+        </div>
+        <div class="tweet-actions">
+          <div class="tweet-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 7.501 3.58 7.501 8 0 4.419-3.011 8-7.5 8h-4.368C5.335 18 1.75 14.42 1.75 10zm8.005-6C5.42 4 3.75 6.98 3.75 10s1.67 6 6.006 6h4.367c3.309 0 5.5-2.985 5.5-6s-2.191-6-5.501-6H9.756z"/><path d="M7.653 9.5a.9.9 0 01.9-.9h5.9a.9.9 0 010 1.8h-5.9a.9.9 0 01-.9-.9zm0 3a.9.9 0 01.9-.9h3.9a.9.9 0 010 1.8h-3.9a.9.9 0 01-.9-.9z"/></svg></div>
+          <div class="tweet-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg></div>
+          <div class="tweet-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"/></svg></div>
+          <div class="tweet-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"/></svg></div>
+          <div class="tweet-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.12 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-sections">
+      <section class="info-section">
+        <h2>How to Use the Twitter / X Post Preview Tool</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Enter Your Display Name and Handle</h4><p>Fill in the name shown on the tweet and your @handle. These populate the tweet header exactly as they appear on Twitter/X.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Write Your Tweet</h4><p>The text area is limited to 280 characters — the same limit as Twitter. A live counter below the textarea turns orange at 240 characters and red if you approach the limit.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Add an Optional Image</h4><p>Upload a photo to simulate a tweet with media. The image renders with rounded corners just like on Twitter/X.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Choose Your Verified Badge</h4><p>Select none, Blue (Twitter Blue subscriber) or Gold (organisation). The badge colour updates in real time next to your display name.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Set Engagement & Theme</h4><p>Dial in reply, repost, like, and bookmark counts. Toggle between Dark (OLED black) and Light themes to preview across both appearances.</p></div></div>
+        </div>
+      </section>
+      <section class="info-section">
+        <h2>About This Tool</h2>
+        <div class="desc-text">
+          <p>The <strong style="color:#e4e4e7">Twitter / X Post Preview Tool</strong> provides a precise simulation of the current Twitter/X tweet card — including the dark OLED and light themes, verified badge variants, and engagement metrics bar.</p>
+          <p>Content creators, growth marketers, and community managers use this tool to draft high-impact tweets, verify character limits, and ensure that copy, hashtags, and images look exactly right before going live to potentially millions of followers.</p>
+        </div>
+        <div class="features-list">
+          <div class="feat-item"><strong>280-Char Counter</strong>Live character count with colour-coded warnings.</div>
+          <div class="feat-item"><strong>Verified Badges</strong>Blue subscriber or Gold organisation badge options.</div>
+          <div class="feat-item"><strong>Dark & Light Themes</strong>Preview your tweet in both Twitter/X colour schemes.</div>
+          <div class="feat-item"><strong>Engagement Metrics</strong>Set replies, reposts, likes, and bookmarks individually.</div>
+          <div class="feat-item"><strong>Image Upload</strong>Attach a photo and see it in the tweet image container.</div>
+          <div class="feat-item"><strong>No Data Stored</strong>Everything runs client-side — your content stays private.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>n>=1000000?(n/1000000).toFixed(1).replace(/\.0$/,'')+'M':n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
+let theme='dark';
+function setTheme(t){
+  theme=t;
+  $('tweetCard').classList.toggle('light',t==='light');
+  $('darkBtn').classList.toggle('active',t==='dark');
+  $('lightBtn').classList.toggle('active',t==='light');
+}
+function update(){
+  const dn=$('displayName').value||'Your Name';
+  const h=$('handle').value.replace('@','')||'yourhandle';
+  const text=$('tweetText').value;
+  const time=$('tweetTime').value;
+  const vtype=$('verifiedType').value;
+  const replies=parseInt($('replies').value);
+  const reposts=parseInt($('reposts').value);
+  const likes=parseInt($('xlikes').value);
+  const bks=parseInt($('bookmarks').value);
+
+  $('previewDisplayName').textContent=dn;
+  $('previewHandle').textContent=h;
+  $('tweetAvatar').textContent=(dn[0]||'U').toUpperCase();
+  // Process text: highlight hashtags and @mentions
+  const processed=text.replace(/(#\w+|@\w+)/g,'<span class="tweet-link">$1</span>');
+  $('previewText').innerHTML=processed;
+  $('previewTime').innerHTML=time+' · <span style="font-weight:700">2.4M</span> <span style="color:var(--x-muted)">Views</span>';
+  const vIcon=$('verifiedIcon');
+  if(vtype==='blue'){vIcon.style.display='inline';vIcon.style.color='#1d9bf0';vIcon.textContent='✓'}
+  else if(vtype==='gold'){vIcon.style.display='inline';vIcon.style.color='#ffd700';vIcon.textContent='✓'}
+  else{vIcon.style.display='none'}
+  $('statReplies').textContent=fmt(replies);
+  $('statReposts').textContent=fmt(reposts);
+  $('statLikes').textContent=fmt(likes);
+  $('statBookmarks').textContent=fmt(bks);
+  $('repliesVal').textContent=fmt(replies);
+  $('repostsVal').textContent=fmt(reposts);
+  $('xlikesVal').textContent=fmt(likes);
+  $('bookmarksVal').textContent=fmt(bks);
+  // Char counter
+  const len=text.length;
+  const cc=$('charCounter');
+  cc.textContent=`${len} / 280`;
+  cc.className='char-counter'+(len>=260?' over':len>=230?' warn':'');
+}
+$('tweetImg').addEventListener('change',function(){
+  const f=this.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    const ia=$('tweetImageArea');
+    ia.classList.remove('empty');
+    ia.innerHTML=`<img src="${e.target.result}" style="width:100%;display:block;border-radius:16px">`;
+  };
+  r.readAsDataURL(f);
+});
+['displayName','handle','tweetText','tweetTime','verifiedType'].forEach(id=>$(id).addEventListener('input',update));
+['replies','reposts','xlikes','bookmarks'].forEach(id=>$(id).addEventListener('input',update));
+update();
+</script>
+</body>
+</html>

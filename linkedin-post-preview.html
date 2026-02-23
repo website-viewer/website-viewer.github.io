@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn Post Preview Tool – Professional Post Simulator</title>
+<meta name="description" content="Preview your LinkedIn post before publishing. Simulate the professional feed with reactions, comments, title, and company details.">
+<meta name="keywords" content="linkedin post preview, linkedin mockup, linkedin post simulator, professional post preview">
+<link rel="canonical" href="https://website-viewer.github.io/linkedin-post-preview">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"LinkedIn Post Preview Tool",
+  "description":"Preview your LinkedIn post before publishing. Simulate the professional feed with reactions, comments, title, and company details.",
+  "url":"https://website-viewer.github.io/linkedin-post-preview",
+  "applicationCategory":"UtilitiesApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "featureList":["LinkedIn feed simulation","Reaction types","See more / less toggle","Job title and company","Image upload"],
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --li-bg:#f3f2ef;--li-white:#fff;--li-border:#e0dfdc;--li-text:#191919;--li-muted:#666;
+  --li-blue:#0a66c2;--li-hover:#f3f2ef;
+  --panel:#0b0b0d;--panel-border:#1e1e22;--panel-muted:#555;--accent:#0a66c2;
+  --font:'IBM Plex Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--panel);color:#dde;min-height:100vh}
+.site-header{background:#07070a;border-bottom:1px solid var(--panel-border);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.site-header a{color:#dde;text-decoration:none;font-size:.85rem;opacity:.6;transition:.2s}
+.site-header a:hover{opacity:1}
+.breadcrumb-sep{opacity:.3}
+.page-title{font-size:1rem;font-weight:700;color:var(--li-blue)}
+.app{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 57px)}
+.controls{background:#07070a;border-right:1px solid var(--panel-border);padding:26px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+.controls h2{font-size:1.1rem;font-weight:700;color:#fff}
+.controls p.sub{font-size:.8rem;color:var(--panel-muted);margin-bottom:4px}
+.field-group{display:flex;flex-direction:column;gap:6px}
+.field-group label{font-size:.75rem;font-weight:600;color:var(--panel-muted);letter-spacing:.05em;text-transform:uppercase}
+.field-group input,.field-group textarea,.field-group select{background:#111116;border:1px solid var(--panel-border);border-radius:8px;color:#dde;font-family:var(--font);font-size:.9rem;padding:10px 12px;transition:.2s;resize:vertical;width:100%}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:var(--accent)}
+.field-group textarea{min-height:100px}
+.img-upload{border:2px dashed var(--panel-border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--accent)}
+.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input[type=range]{flex:1;accent-color:var(--accent)}
+.range-val{font-size:.82rem;color:var(--panel-muted);min-width:36px;text-align:right}
+/* Preview */
+.preview-pane{display:flex;flex-direction:column;align-items:center;padding:40px 24px;gap:32px;background:#0e0e12}
+.preview-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-muted)}
+/* LinkedIn card */
+.li-card{background:var(--li-white);border:1px solid var(--li-border);border-radius:8px;width:100%;max-width:554px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.06)}
+.li-header{padding:12px 16px;display:flex;gap:10px;align-items:flex-start}
+.li-avatar{width:48px;height:48px;border-radius:50%;background:var(--li-blue);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.1rem;flex-shrink:0;overflow:hidden}
+.li-avatar img{width:100%;height:100%;object-fit:cover}
+.li-author-info{flex:1}
+.li-name{font-size:.9375rem;font-weight:600;color:var(--li-text);display:flex;align-items:center;gap:6px}
+.li-premium{color:#b77a13;font-size:.75rem;border:1px solid #b77a13;padding:1px 4px;border-radius:3px;font-weight:600}
+.li-headline{font-size:.8rem;color:var(--li-muted);line-height:1.4;margin-top:1px}
+.li-post-time{font-size:.75rem;color:var(--li-muted);display:flex;align-items:center;gap:4px;margin-top:2px}
+.li-more{color:var(--li-muted);font-size:1.4rem;cursor:pointer;padding:4px;border-radius:4px}
+.li-follow-btn{border:1px solid var(--li-blue);color:var(--li-blue);background:none;border-radius:16px;padding:5px 14px;font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap}
+.li-follow-btn:hover{background:rgba(10,102,194,.1)}
+.li-post-text{padding:0 16px 12px;font-size:.9375rem;color:var(--li-text);line-height:1.5;white-space:pre-wrap}
+.li-see-more{color:var(--li-blue);cursor:pointer;font-size:.9rem}
+.li-image-area{width:100%;background:#f3f2ef;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.li-image-area img{width:100%;display:block}
+.li-reactions-bar{padding:8px 16px;display:flex;align-items:center;justify-content:space-between;color:var(--li-muted);font-size:.8125rem}
+.li-reactions{display:flex;align-items:center;gap:6px}
+.reaction-stack{display:flex}
+.reaction-stack span{width:18px;height:18px;border-radius:50%;border:1.5px solid #fff;margin-left:-5px;font-size:.65rem;display:flex;align-items:center;justify-content:center;background:#f0f0f0}
+.reaction-stack span:first-child{margin-left:0}
+.li-action-bar{border-top:1px solid var(--li-border);display:flex;padding:4px 0}
+.li-action{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 4px;color:var(--li-muted);font-size:.875rem;font-weight:600;cursor:pointer;border-radius:4px;transition:.15s;border:none;background:none;font-family:inherit}
+.li-action:hover{background:var(--li-hover);color:var(--li-text)}
+.li-action svg{width:18px;height:18px}
+/* Info */
+.info-sections{width:100%;max-width:860px;margin:0 auto;padding:60px 24px 80px;display:flex;flex-direction:column;gap:48px}
+.info-section h2{font-size:1.55rem;font-weight:700;color:#fff;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--panel-border)}
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h4{font-size:.95rem;font-weight:600;color:#fff;margin-bottom:4px}
+.step-body p{font-size:.875rem;color:var(--panel-muted);line-height:1.65}
+.desc-text p{font-size:.9rem;color:var(--panel-muted);line-height:1.75;margin-bottom:14px}
+.features-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.feat-item{background:#111116;border:1px solid var(--panel-border);border-radius:8px;padding:12px 14px;font-size:.83rem;color:var(--panel-muted)}
+.feat-item strong{color:#dde;display:block;margin-bottom:3px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.controls{border-right:none;border-bottom:1px solid var(--panel-border)}.features-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="./">📱 Website Viewer</a><span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a><span class="breadcrumb-sep">›</span>
+  <span class="page-title">LinkedIn Post Preview</span>
+</header>
+<div class="app">
+  <aside class="controls">
+    <div><h2>LinkedIn Post Preview</h2><p class="sub">Simulate your professional feed post.</p></div>
+    <div class="field-group"><label>Full Name</label><input type="text" id="liName" value="Alex Johnson" placeholder="Your Name"></div>
+    <div class="field-group"><label>Professional Headline</label><input type="text" id="liHeadline" value="Senior Product Manager @ TechCorp | Building the future" placeholder="Job title and company"></div>
+    <div class="field-group"><label>Post Age</label><input type="text" id="liTime" value="3h" placeholder="e.g. 2d, 1w, just now"></div>
+    <div class="field-group"><label>Post Text</label><textarea id="liText">Thrilled to share that I've just crossed a major milestone in my career! 🎉
+
+After 5 years of learning, growing, and sometimes failing, I can finally say that the effort was worth it.
+
+Here's what I learned along the way:
+→ Consistency beats talent
+→ Your network IS your net worth  
+→ Failure is just feedback
+
+What milestone are YOU working towards? Drop it in the comments. 👇
+
+#Leadership #GrowthMindset #Career</textarea></div>
+    <div class="field-group"><label>Post Image (optional)</label><div class="img-upload"><input type="file" id="liImg" accept="image/*"><p style="font-size:.82rem;color:#555">📷 Click to upload image</p></div></div>
+    <div class="field-group"><label>LinkedIn Premium</label><select id="liPremium"><option value="none">No badge</option><option value="premium">⭐ LinkedIn Premium</option></select></div>
+    <div class="field-group"><label>👍 Reactions</label><div class="range-row"><input type="range" id="liReactions" min="0" max="50000" value="2847" step="1"><span class="range-val" id="liReactionsVal">2,847</span></div></div>
+    <div class="field-group"><label>Comments</label><div class="range-row"><input type="range" id="liComments" min="0" max="5000" value="184" step="1"><span class="range-val" id="liCommentsVal">184</span></div></div>
+    <div class="field-group"><label>Reposts</label><div class="range-row"><input type="range" id="liReposts" min="0" max="5000" value="96" step="1"><span class="range-val" id="liRepostsVal">96</span></div></div>
+  </aside>
+  <main>
+    <div class="preview-pane">
+      <span class="preview-label">Live Preview</span>
+      <div class="li-card">
+        <div class="li-header">
+          <div class="li-avatar" id="liAvatar">A</div>
+          <div class="li-author-info">
+            <div class="li-name"><span id="liNameDisplay">Alex Johnson</span><span id="liPremiumBadge" style="display:none" class="li-premium">Premium</span></div>
+            <div class="li-headline" id="liHeadlineDisplay">Senior Product Manager @ TechCorp | Building the future</div>
+            <div class="li-post-time"><span id="liTimeDisplay">3h</span> · 🌐</div>
+          </div>
+          <button class="li-follow-btn">+ Follow</button>
+        </div>
+        <div class="li-post-text" id="liPostDisplay"></div>
+        <div class="li-image-area" id="liImageArea" style="display:none"></div>
+        <div class="li-reactions-bar">
+          <div class="li-reactions">
+            <div class="reaction-stack"><span>👍</span><span>❤️</span><span>💡</span><span>🎉</span></div>
+            <span id="liReactionsDisplay">2,847</span>
+          </div>
+          <div><span id="liCommentsDisplay">184</span> comments · <span id="liRepostsDisplay">96</span> reposts</div>
+        </div>
+        <div class="li-action-bar">
+          <button class="li-action">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.46 11l-3.91-3.91a7 7 0 00-9.9 0 6.98 6.98 0 000 9.9A6.95 6.95 0 0010.61 19a6.95 6.95 0 004.95-2l3.9-3.91a1 1 0 000-1.41l.01.01zM13.17 17a5 5 0 01-7.07 0 5 5 0 010-7.07 5 5 0 017.07 0l3.54 3.54-3.54 3.53z"/></svg>
+            Like
+          </button>
+          <button class="li-action">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 9h10v1H7zm0 4h7v-1H7zm16-2a6.99 6.99 0 01-2.81 5.62L22 22l-5.62-1.81A7 7 0 118 4.69 7.06 7.06 0 0123 11zm-2 0a5 5 0 10-8.55 3.51l.42.39L10 17.11l2.22-.71.39.17A5 5 0 0021 11z"/></svg>
+            Comment
+          </button>
+          <button class="li-action">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3v1.5l-9 4.5V23l-3-1.5V9L2 4.5V3l21-1 .02 1zM5.26 5.35l7.74 3.87 7.74-3.87L13 3.48 5.26 5.35z"/></svg>
+            Repost
+          </button>
+          <button class="li-action">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3L0 10l7.66 4.26L16 8l-6.26 8.34L14 24l7-21z"/></svg>
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="info-sections">
+      <section class="info-section">
+        <h2>How to Use the LinkedIn Post Preview Tool</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Enter Your Name and Headline</h4><p>Type your LinkedIn display name and professional headline — these appear in the post header just as they do on the real platform.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Write Your Post Content</h4><p>Paste your full LinkedIn post into the text area. Line breaks, emojis, arrows (→), and hashtags are all supported and render accurately.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Add an Optional Image</h4><p>Upload a photo, infographic, or banner to simulate a post with media — common for engagement-driving LinkedIn content.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Toggle LinkedIn Premium</h4><p>Switch on the Premium badge if you have a Premium account. This adds the gold star icon next to your name.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Set Reactions, Comments & Reposts</h4><p>Use sliders to dial in engagement numbers. The total appears in the reactions bar with stacked emoji icons, just like the real feed.</p></div></div>
+        </div>
+      </section>
+      <section class="info-section">
+        <h2>About This Tool</h2>
+        <div class="desc-text">
+          <p>The <strong style="color:#fff">LinkedIn Post Preview Tool</strong> simulates the current LinkedIn feed post card so you can check formatting, review copy, and present content to clients or stakeholders before publication.</p>
+          <p>LinkedIn has specific quirks — long posts are truncated with a "See more" button, line breaks matter greatly for readability, and emoji use is common despite the professional context. This tool helps you nail all of those details before you go live.</p>
+        </div>
+        <div class="features-list">
+          <div class="feat-item"><strong>Authentic Layout</strong>Matches current LinkedIn post card design precisely.</div>
+          <div class="feat-item"><strong>Premium Badge</strong>Toggle the LinkedIn Premium gold badge on/off.</div>
+          <div class="feat-item"><strong>Reaction Stack</strong>Four reaction emojis stack visually like on LinkedIn.</div>
+          <div class="feat-item"><strong>Full Engagement Bar</strong>Reactions, comments, and reposts shown accurately.</div>
+          <div class="feat-item"><strong>Hashtag Formatting</strong>Hashtags render naturally in the post body.</div>
+          <div class="feat-item"><strong>Image Post Support</strong>Upload any media to simulate a rich media post.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
+function update(){
+  const name=$('liName').value||'Your Name';
+  const headline=$('liHeadline').value;
+  const time=$('liTime').value||'just now';
+  const text=$('liText').value;
+  const premium=$('liPremium').value;
+  const reactions=parseInt($('liReactions').value);
+  const cmts=parseInt($('liComments').value);
+  const reposts=parseInt($('liReposts').value);
+  $('liNameDisplay').textContent=name;
+  $('liAvatar').textContent=(name[0]||'U').toUpperCase();
+  $('liHeadlineDisplay').textContent=headline;
+  $('liTimeDisplay').textContent=time;
+  $('liPostDisplay').textContent=text;
+  $('liPremiumBadge').style.display=premium==='premium'?'inline':'none';
+  $('liReactionsDisplay').textContent=fmt(reactions);
+  $('liCommentsDisplay').textContent=fmt(cmts);
+  $('liRepostsDisplay').textContent=fmt(reposts);
+  $('liReactionsVal').textContent=fmt(reactions);
+  $('liCommentsVal').textContent=fmt(cmts);
+  $('liRepostsVal').textContent=fmt(reposts);
+}
+$('liImg').addEventListener('change',function(){
+  const f=this.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{$('liImageArea').style.display='block';$('liImageArea').innerHTML=`<img src="${e.target.result}">`;};
+  r.readAsDataURL(f);
+});
+['liName','liHeadline','liTime','liText','liPremium'].forEach(id=>$(id).addEventListener('input',update));
+['liReactions','liComments','liReposts'].forEach(id=>$(id).addEventListener('input',update));
+update();
+</script>
+</body>
+</html>

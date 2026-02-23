@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Video Preview Tool – Post Simulator</title>
+<meta name="description" content="Preview your TikTok post before uploading. Simulate the TikTok For You Page with caption, sounds, hashtags, and engagement stats.">
+<meta name="keywords" content="tiktok post preview, tiktok mockup, tiktok video preview, tiktok simulator, fyp preview">
+<link rel="canonical" href="https://website-viewer.github.io/tiktok-video-preview">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"TikTok Video Preview Tool",
+  "description":"Preview your TikTok post before uploading. Simulate the TikTok For You Page with caption, sounds, hashtags, and engagement stats.",
+  "url":"https://website-viewer.github.io/tiktok-video-preview",
+  "applicationCategory":"UtilitiesApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "featureList":["TikTok FYP simulation","Caption and hashtag preview","Sound name display","Engagement stats","Video thumbnail upload"],
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tk-bg:#000;--tk-text:#fff;--tk-muted:rgba(255,255,255,.7);--tk-pink:#fe2c55;--tk-cyan:#25f4ee;
+  --panel:#080808;--panel-border:#1a1a1a;--panel-muted:#555;--accent:#fe2c55;
+  --font-ui:'DM Sans',sans-serif;--font-display:'Bebas Neue',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-ui);background:var(--panel);color:#e8e8e8;min-height:100vh}
+.site-header{background:#030303;border-bottom:1px solid var(--panel-border);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.site-header a{color:#e8e8e8;text-decoration:none;font-size:.85rem;opacity:.6}
+.breadcrumb-sep{opacity:.3}
+.page-title{font-family:var(--font-display);font-size:1.1rem;letter-spacing:.05em;background:linear-gradient(90deg,var(--tk-pink),var(--tk-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.app{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 57px)}
+.controls{background:#030303;border-right:1px solid var(--panel-border);padding:26px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+.controls h2{font-family:var(--font-display);font-size:1.3rem;letter-spacing:.05em;background:linear-gradient(90deg,var(--tk-pink),var(--tk-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.controls p.sub{font-size:.8rem;color:var(--panel-muted);margin-bottom:4px}
+.field-group{display:flex;flex-direction:column;gap:6px}
+.field-group label{font-size:.75rem;font-weight:600;color:var(--panel-muted);letter-spacing:.05em;text-transform:uppercase}
+.field-group input,.field-group textarea{background:#111;border:1px solid var(--panel-border);border-radius:8px;color:#e8e8e8;font-family:var(--font-ui);font-size:.9rem;padding:10px 12px;transition:.2s;resize:vertical;width:100%}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:var(--accent)}
+.field-group textarea{min-height:80px}
+.img-upload{border:2px dashed var(--panel-border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden;background:#0a0a0a}
+.img-upload:hover{border-color:var(--accent)}
+.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input[type=range]{flex:1;accent-color:var(--accent)}
+.range-val{font-size:.82rem;color:var(--panel-muted);min-width:40px;text-align:right}
+/* Preview */
+.preview-pane{display:flex;flex-direction:column;align-items:center;padding:40px 24px;gap:32px;background:#050505}
+.preview-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-muted)}
+/* TikTok phone */
+.tk-phone{width:310px;height:580px;background:#000;border-radius:32px;overflow:hidden;position:relative;border:2px solid #1a1a1a;box-shadow:0 0 60px rgba(254,44,85,.15),0 0 120px rgba(37,244,238,.05)}
+.tk-video-bg{position:absolute;inset:0;background:linear-gradient(180deg,#1a0a0d 0%,#0a1a1d 50%,#0d0a1a 100%);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tk-video-bg img{width:100%;height:100%;object-fit:cover}
+.tk-video-placeholder{text-align:center;color:rgba(255,255,255,.3)}
+.tk-video-placeholder .icon{font-size:3rem;margin-bottom:8px}
+/* Top bar */
+.tk-top{position:absolute;top:0;left:0;right:0;padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent);z-index:10}
+.tk-tabs{display:flex;gap:16px;font-size:.85rem;font-weight:600}
+.tk-tab{color:rgba(255,255,255,.6)}
+.tk-tab.active{color:#fff;border-bottom:2px solid #fff}
+/* Right sidebar actions */
+.tk-sidebar{position:absolute;right:10px;bottom:110px;display:flex;flex-direction:column;align-items:center;gap:18px;z-index:10}
+.tk-action{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tk-action-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.tk-avatar-action{position:relative}
+.tk-avatar-action .tk-action-icon{background:linear-gradient(135deg,var(--tk-pink),var(--tk-cyan));font-weight:700;font-size:.9rem}
+.tk-avatar-action::after{content:'+';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);background:var(--tk-pink);color:#fff;width:18px;height:18px;border-radius:50%;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.tk-action-label{font-size:.65rem;color:#fff;font-weight:600;text-align:center}
+/* Bottom info */
+.tk-bottom{position:absolute;bottom:0;left:0;right:55px;padding:12px 12px 16px;z-index:10;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.tk-username{font-size:.85rem;font-weight:700;color:#fff;margin-bottom:4px}
+.tk-caption{font-size:.78rem;color:rgba(255,255,255,.9);line-height:1.4;margin-bottom:6px}
+.tk-hashtags{font-size:.78rem;font-weight:700;color:#fff}
+.tk-sound{display:flex;align-items:center;gap:6px;font-size:.72rem;color:rgba(255,255,255,.8);margin-top:6px}
+.tk-sound-icon{animation:spin 3s linear infinite;display:inline-block;font-size:.9rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Bottom nav */
+.tk-nav{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.8);padding:8px 0;display:flex;justify-content:space-around;backdrop-filter:blur(8px);z-index:20}
+.tk-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.55rem;color:rgba(255,255,255,.7)}
+.tk-nav-item.active{color:#fff}
+.tk-nav-icon{font-size:1.1rem}
+.tk-plus{background:linear-gradient(90deg,var(--tk-cyan) 0%,#fff 40%,var(--tk-pink) 100%);border-radius:8px;padding:4px 10px;font-size:1.2rem;display:flex;align-items:center;justify-content:center}
+/* Info */
+.info-sections{width:100%;max-width:860px;margin:0 auto;padding:60px 24px 80px;display:flex;flex-direction:column;gap:48px}
+.info-section h2{font-family:var(--font-display);font-size:1.8rem;letter-spacing:.03em;color:#fff;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--panel-border)}
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h4{font-size:.95rem;font-weight:600;color:#fff;margin-bottom:4px}
+.step-body p{font-size:.875rem;color:var(--panel-muted);line-height:1.65}
+.desc-text p{font-size:.9rem;color:var(--panel-muted);line-height:1.75;margin-bottom:14px}
+.features-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.feat-item{background:#111;border:1px solid var(--panel-border);border-radius:8px;padding:12px 14px;font-size:.83rem;color:var(--panel-muted)}
+.feat-item strong{color:#e8e8e8;display:block;margin-bottom:3px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.controls{border-right:none;border-bottom:1px solid var(--panel-border)}.features-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="./">📱 Website Viewer</a><span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a><span class="breadcrumb-sep">›</span>
+  <span class="page-title">TikTok Video Preview</span>
+</header>
+<div class="app">
+  <aside class="controls">
+    <div><h2>TikTok Preview</h2><p class="sub">Simulate your TikTok on the For You Page.</p></div>
+    <div class="field-group"><label>@Username</label><input type="text" id="tkUser" value="yourusername" placeholder="username (no @)"></div>
+    <div class="field-group"><label>Video Thumbnail</label><div class="img-upload"><input type="file" id="tkThumb" accept="image/*,video/*"><p style="font-size:.82rem;color:#555">🎬 Upload thumbnail or image</p></div></div>
+    <div class="field-group"><label>Caption</label><textarea id="tkCaption">POV: you finally shipped the feature you've been building for 3 months 🚀✨</textarea></div>
+    <div class="field-group"><label>Hashtags</label><input type="text" id="tkTags" value="#fyp #buildinpublic #tech #coding"></div>
+    <div class="field-group"><label>Sound Name</label><input type="text" id="tkSound" value="original sound - yourusername"></div>
+    <div class="field-group"><label>❤️ Likes</label><div class="range-row"><input type="range" id="tkLikes" min="0" max="1000000" value="48200" step="100"><span class="range-val" id="tkLikesVal">48.2k</span></div></div>
+    <div class="field-group"><label>💬 Comments</label><div class="range-row"><input type="range" id="tkComments" min="0" max="100000" value="1247" step="10"><span class="range-val" id="tkCommentsVal">1.2k</span></div></div>
+    <div class="field-group"><label>🔖 Saves</label><div class="range-row"><input type="range" id="tkSaves" min="0" max="100000" value="3841" step="10"><span class="range-val" id="tkSavesVal">3.8k</span></div></div>
+    <div class="field-group"><label>➡️ Shares</label><div class="range-row"><input type="range" id="tkShares" min="0" max="100000" value="892" step="10"><span class="range-val" id="tkSharesVal">892</span></div></div>
+  </aside>
+  <main>
+    <div class="preview-pane">
+      <span class="preview-label">Live Preview — For You Page</span>
+      <div class="tk-phone">
+        <div class="tk-video-bg" id="tkVideoBg">
+          <div class="tk-video-placeholder"><div class="icon">🎬</div><p style="font-size:.75rem">Upload thumbnail<br>to preview</p></div>
+        </div>
+        <!-- Top bar -->
+        <div class="tk-top">
+          <div class="tk-tabs"><span class="tk-tab">Following</span><span class="tk-tab active">For You</span></div>
+          <span style="font-size:1.2rem">🔍</span>
+        </div>
+        <!-- Sidebar -->
+        <div class="tk-sidebar">
+          <div class="tk-action tk-avatar-action">
+            <div class="tk-action-icon" id="tkAvatarIcon">Y</div>
+          </div>
+          <div class="tk-action">
+            <div class="tk-action-icon">❤️</div>
+            <span class="tk-action-label" id="tkLikesDisp">48.2k</span>
+          </div>
+          <div class="tk-action">
+            <div class="tk-action-icon">💬</div>
+            <span class="tk-action-label" id="tkCommentsDisp">1.2k</span>
+          </div>
+          <div class="tk-action">
+            <div class="tk-action-icon">🔖</div>
+            <span class="tk-action-label" id="tkSavesDisp">3.8k</span>
+          </div>
+          <div class="tk-action">
+            <div class="tk-action-icon">➡️</div>
+            <span class="tk-action-label" id="tkSharesDisp">892</span>
+          </div>
+          <div class="tk-action">
+            <div class="tk-action-icon" style="font-size:.75rem;color:#fff">•••</div>
+          </div>
+        </div>
+        <!-- Bottom info -->
+        <div class="tk-bottom">
+          <div class="tk-username">@<span id="tkUserDisp">yourusername</span></div>
+          <div class="tk-caption" id="tkCaptionDisp">POV: you finally shipped the feature you've been building for 3 months 🚀✨</div>
+          <div class="tk-hashtags" id="tkTagsDisp">#fyp #buildinpublic #tech #coding</div>
+          <div class="tk-sound"><span class="tk-sound-icon">💿</span><span id="tkSoundDisp">original sound - yourusername</span></div>
+        </div>
+        <!-- Bottom nav -->
+        <div class="tk-nav">
+          <div class="tk-nav-item active"><div class="tk-nav-icon">🏠</div>Home</div>
+          <div class="tk-nav-item"><div class="tk-nav-icon">🔍</div>Discover</div>
+          <div class="tk-nav-item"><div class="tk-plus">＋</div></div>
+          <div class="tk-nav-item"><div class="tk-nav-icon">📩</div>Inbox</div>
+          <div class="tk-nav-item"><div class="tk-nav-icon">👤</div>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-sections">
+      <section class="info-section">
+        <h2>How to Use the TikTok Video Preview Tool</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Set Your Username</h4><p>Enter your TikTok @handle. This appears at the bottom of the video overlay and on the avatar button in the sidebar.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Upload a Video Thumbnail</h4><p>Upload any image or video screenshot to use as the video background. This fills the phone screen exactly as a real TikTok would look.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Write Your Caption and Hashtags</h4><p>Add your caption text and hashtags in separate fields. Both appear at the bottom of the video in the native TikTok overlay style.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Set Sound Name</h4><p>Enter the name of the sound or original audio for your video. The spinning disc animation with sound name is shown at the bottom.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Adjust Engagement Numbers</h4><p>Use the sliders to set likes, comments, saves, and shares on the right sidebar — exactly how they appear on the TikTok For You Page.</p></div></div>
+        </div>
+      </section>
+      <section class="info-section">
+        <h2>About This Tool</h2>
+        <div class="desc-text">
+          <p>The <strong style="color:#e8e8e8">TikTok Video Preview Tool</strong> renders a realistic TikTok For You Page experience inside a phone frame — including the overlay UI, right sidebar action buttons, and bottom navigation bar.</p>
+          <p>TikTok creators, brand managers, and agencies use this tool to preview how captions, hashtags, and thumbnails will look before posting. It's especially useful for planning content series or presenting video concepts to clients.</p>
+        </div>
+        <div class="features-list">
+          <div class="feat-item"><strong>FYP Phone Frame</strong>Full TikTok For You Page simulation inside a phone.</div>
+          <div class="feat-item"><strong>Sidebar Actions</strong>Likes, comments, saves and shares in the right sidebar.</div>
+          <div class="feat-item"><strong>Spinning Sound Disc</strong>Animated sound disc with custom sound name.</div>
+          <div class="feat-item"><strong>Caption & Hashtags</strong>Bottom overlay text with authentic TikTok styling.</div>
+          <div class="feat-item"><strong>Thumbnail Upload</strong>Upload any image as the video background.</div>
+          <div class="feat-item"><strong>Bottom Navigation</strong>Full TikTok bottom nav bar included in preview.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>n>=1000000?(n/1000000).toFixed(1).replace(/\.0$/,'')+'M':n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
+function update(){
+  const user=$('tkUser').value||'yourusername';
+  const cap=$('tkCaption').value;
+  const tags=$('tkTags').value;
+  const sound=$('tkSound').value;
+  const likes=parseInt($('tkLikes').value);
+  const cmts=parseInt($('tkComments').value);
+  const saves=parseInt($('tkSaves').value);
+  const shares=parseInt($('tkShares').value);
+  $('tkUserDisp').textContent=user;
+  $('tkAvatarIcon').textContent=(user[0]||'U').toUpperCase();
+  $('tkCaptionDisp').textContent=cap;
+  $('tkTagsDisp').textContent=tags;
+  $('tkSoundDisp').textContent=sound;
+  $('tkLikesDisp').textContent=fmt(likes);$('tkLikesVal').textContent=fmt(likes);
+  $('tkCommentsDisp').textContent=fmt(cmts);$('tkCommentsVal').textContent=fmt(cmts);
+  $('tkSavesDisp').textContent=fmt(saves);$('tkSavesVal').textContent=fmt(saves);
+  $('tkSharesDisp').textContent=fmt(shares);$('tkSharesVal').textContent=fmt(shares);
+}
+$('tkThumb').addEventListener('change',function(){
+  const f=this.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{$('tkVideoBg').innerHTML=`<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover">`;};
+  r.readAsDataURL(f);
+});
+['tkUser','tkCaption','tkTags','tkSound'].forEach(id=>$(id).addEventListener('input',update));
+['tkLikes','tkComments','tkSaves','tkShares'].forEach(id=>$(id).addEventListener('input',update));
+update();
+</script>
+</body>
+</html>

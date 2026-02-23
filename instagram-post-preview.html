@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Post Preview Tool – See Your Post Before Publishing</title>
+<meta name="description" content="Preview your Instagram post exactly as it will appear on the feed. Add caption, hashtags, and profile details for a realistic mock-up before you publish.">
+<meta name="keywords" content="instagram post preview, instagram mockup, instagram caption preview, social media preview tool">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://website-viewer.github.io/instagram-post-preview">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Instagram Post Preview Tool">
+<meta property="og:description" content="Preview your Instagram post before publishing. Realistic feed mock-up with caption, hashtags and likes.">
+<meta property="og:url" content="https://website-viewer.github.io/instagram-post-preview">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="Instagram Post Preview Tool">
+<meta property="twitter:description" content="See exactly how your Instagram post will look before you hit publish.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Instagram Post Preview Tool",
+  "description": "Preview your Instagram post exactly as it will appear on the feed. Add caption, hashtags, and profile details for a realistic mock-up before you publish.",
+  "url": "https://website-viewer.github.io/instagram-post-preview",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "browserRequirements": "Requires JavaScript",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "featureList": ["Live Instagram feed preview", "Caption & hashtag support", "Like & comment count simulation", "Image upload support"],
+  "author": { "@type": "Organization", "name": "Website Viewer" }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ig-bg:#fafafa;--ig-white:#fff;--ig-border:#dbdbdb;--ig-text:#262626;--ig-muted:#8e8e8e;
+  --ig-blue:#0095f6;--ig-gradient:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+  --panel-bg:#0f0f0f;--panel-border:#1e1e1e;--panel-text:#e8e8e8;--panel-muted:#777;
+  --accent:#e1306c;--radius:12px;--font-ui:'DM Sans',sans-serif;--font-display:'Syne',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-ui);background:var(--panel-bg);color:var(--panel-text);min-height:100vh}
+/* Header */
+.site-header{background:#0a0a0a;border-bottom:1px solid var(--panel-border);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.site-header a{color:var(--panel-text);text-decoration:none;font-size:.85rem;opacity:.6;transition:.2s}
+.site-header a:hover{opacity:1}
+.breadcrumb-sep{opacity:.3}
+.page-title{font-family:var(--font-display);font-size:1rem;font-weight:700;background:var(--ig-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+/* Layout */
+.app{display:grid;grid-template-columns:380px 1fr;min-height:calc(100vh - 57px);gap:0}
+/* Controls Panel */
+.controls{background:#0a0a0a;border-right:1px solid var(--panel-border);padding:28px 24px;overflow-y:auto;display:flex;flex-direction:column;gap:22px}
+.controls h2{font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:4px}
+.controls p.sub{font-size:.8rem;color:var(--panel-muted);margin-bottom:8px}
+.field-group{display:flex;flex-direction:column;gap:6px}
+.field-group label{font-size:.78rem;font-weight:600;color:var(--panel-muted);letter-spacing:.05em;text-transform:uppercase}
+.field-group input,.field-group textarea,.field-group select{
+  background:#181818;border:1px solid var(--panel-border);border-radius:8px;
+  color:var(--panel-text);font-family:var(--font-ui);font-size:.9rem;
+  padding:10px 12px;transition:.2s;resize:vertical;width:100%
+}
+.field-group input:focus,.field-group textarea:focus,.field-group select:focus{outline:none;border-color:var(--accent)}
+.field-group textarea{min-height:80px}
+.img-upload{border:2px dashed var(--panel-border);border-radius:8px;padding:24px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--accent)}
+.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.img-upload-icon{font-size:2rem;margin-bottom:6px}
+.img-upload p{font-size:.8rem;color:var(--panel-muted)}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input[type=range]{flex:1;accent-color:var(--accent)}
+.range-val{font-size:.82rem;color:var(--panel-muted);min-width:36px;text-align:right}
+.toggle-row{display:flex;align-items:center;justify-content:space-between}
+.toggle{position:relative;width:40px;height:22px}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#333;border-radius:22px;cursor:pointer;transition:.3s}
+.slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.slider{background:var(--accent)}
+input:checked+.slider:before{transform:translateX(18px)}
+/* Preview pane */
+.preview-pane{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 24px;gap:32px;background:#141414}
+.preview-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-muted)}
+/* Instagram card */
+.ig-card{background:var(--ig-white);border:1px solid var(--ig-border);border-radius:3px;width:100%;max-width:468px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.4)}
+.ig-header{display:flex;align-items:center;padding:14px 16px;gap:10px;border-bottom:1px solid var(--ig-border)}
+.ig-avatar-wrap{position:relative;width:36px;height:36px}
+.ig-avatar-ring{position:absolute;inset:-2px;border-radius:50%;background:var(--ig-gradient);padding:2px}
+.ig-avatar-ring-inner{background:#fff;border-radius:50%;width:100%;height:100%;overflow:hidden}
+.ig-avatar{width:100%;height:100%;object-fit:cover;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff}
+.ig-avatar-bg{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;font-weight:700}
+.ig-user-info{flex:1}
+.ig-username{font-size:.85rem;font-weight:600;color:var(--ig-text);line-height:1.2}
+.ig-location{font-size:.72rem;color:var(--ig-text)}
+.ig-more{font-size:1.4rem;color:var(--ig-text);cursor:pointer;line-height:1}
+.ig-image-area{width:100%;aspect-ratio:1;background:linear-gradient(135deg,#667eea22,#764ba222);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.ig-image-area img{width:100%;height:100%;object-fit:cover;display:block}
+.ig-image-placeholder{text-align:center;color:var(--ig-muted)}
+.ig-image-placeholder .icon{font-size:3rem;margin-bottom:8px}
+.ig-actions{padding:8px 16px 4px;display:flex;align-items:center;gap:16px}
+.ig-action-btn{background:none;border:none;cursor:pointer;padding:4px;line-height:1;transition:.15s}
+.ig-action-btn:hover{opacity:.6}
+.ig-action-btn svg{width:24px;height:24px}
+.ig-save{margin-left:auto}
+.ig-likes{padding:0 16px 6px;font-size:.85rem;font-weight:600;color:var(--ig-text)}
+.ig-caption{padding:0 16px 10px;font-size:.85rem;color:var(--ig-text);line-height:1.5}
+.ig-caption .ig-name{font-weight:600;margin-right:4px}
+.ig-hashtags{color:var(--ig-blue)}
+.ig-comments{padding:0 16px 4px;font-size:.85rem;color:var(--ig-muted);cursor:pointer}
+.ig-timestamp{padding:0 16px 14px;font-size:.7rem;color:var(--ig-muted);text-transform:uppercase;letter-spacing:.02em}
+.ig-add-comment{padding:8px 16px;border-top:1px solid var(--ig-border);display:flex;align-items:center;gap:10px}
+.ig-add-comment span{font-size:.85rem;color:var(--ig-muted);flex:1}
+/* How To & Description */
+.info-sections{width:100%;max-width:860px;margin:0 auto;padding:60px 24px 80px;display:flex;flex-direction:column;gap:48px}
+.info-section h2{font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--panel-border)}
+.steps{display:flex;flex-direction:column;gap:16px;counter-reset:steps}
+.step{display:flex;gap:16px;align-items:flex-start;counter-increment:steps}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h4{font-size:.95rem;font-weight:600;color:#fff;margin-bottom:4px}
+.step-body p{font-size:.875rem;color:var(--panel-muted);line-height:1.65}
+.desc-text{font-size:.9rem;color:var(--panel-muted);line-height:1.75}
+.desc-text p{margin-bottom:14px}
+.features-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.feat-item{background:#181818;border:1px solid var(--panel-border);border-radius:8px;padding:12px 14px;font-size:.83rem;color:var(--panel-muted)}
+.feat-item strong{color:var(--panel-text);display:block;margin-bottom:3px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.controls{border-right:none;border-bottom:1px solid var(--panel-border)}.features-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="./">📱 Website Viewer</a>
+  <span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a>
+  <span class="breadcrumb-sep">›</span>
+  <span class="page-title">Instagram Post Preview</span>
+</header>
+
+<div class="app">
+  <!-- Controls -->
+  <aside class="controls">
+    <div>
+      <h2>Instagram Post Preview</h2>
+      <p class="sub">Fill in the details to see your post mock-up live.</p>
+    </div>
+
+    <div class="field-group">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="your.username" value="your.username">
+    </div>
+    <div class="field-group">
+      <label>Display Name</label>
+      <input type="text" id="displayname" placeholder="Your Name" value="Your Name">
+    </div>
+    <div class="field-group">
+      <label>Location Tag</label>
+      <input type="text" id="location" placeholder="City, Country">
+    </div>
+    <div class="field-group">
+      <label>Post Image</label>
+      <div class="img-upload" id="imgUploadArea">
+        <input type="file" id="imgUpload" accept="image/*">
+        <div class="img-upload-icon">🖼️</div>
+        <p>Click to upload or drag & drop<br><small>JPG, PNG, GIF – Square recommended</small></p>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Caption</label>
+      <textarea id="caption" placeholder="Write your caption here... ✨">Loving this moment! ✨ Life is beautiful when you stop and appreciate what's around you. 🌿</textarea>
+    </div>
+    <div class="field-group">
+      <label>Hashtags</label>
+      <input type="text" id="hashtags" placeholder="#photography #lifestyle" value="#photography #lifestyle #instagood">
+    </div>
+    <div class="field-group">
+      <label>Likes Count</label>
+      <div class="range-row">
+        <input type="range" id="likes" min="0" max="100000" value="1284" step="1">
+        <span class="range-val" id="likesVal">1,284</span>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Comment Count</label>
+      <div class="range-row">
+        <input type="range" id="comments" min="0" max="10000" value="48" step="1">
+        <span class="range-val" id="commentsVal">48</span>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Verified Account</label>
+      <div class="toggle-row">
+        <span style="font-size:.85rem;color:var(--panel-muted)">Show verified badge</span>
+        <label class="toggle"><input type="checkbox" id="verified"><span class="slider"></span></label>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Post Time</label>
+      <input type="text" id="posttime" placeholder="e.g. 2 hours ago" value="2 hours ago">
+    </div>
+  </aside>
+
+  <!-- Preview + Info -->
+  <main>
+    <div class="preview-pane">
+      <span class="preview-label">Live Preview</span>
+      <div class="ig-card" id="igCard">
+        <!-- Header -->
+        <div class="ig-header">
+          <div class="ig-avatar-wrap">
+            <div class="ig-avatar-ring">
+              <div class="ig-avatar-ring-inner">
+                <div class="ig-avatar-bg" id="avatarBg">Y</div>
+              </div>
+            </div>
+          </div>
+          <div class="ig-user-info">
+            <div class="ig-username" id="previewUsername">your.username <span id="verifiedBadge" style="display:none">✅</span></div>
+            <div class="ig-location" id="previewLocation" style="display:none"></div>
+          </div>
+          <div class="ig-more">···</div>
+        </div>
+
+        <!-- Image -->
+        <div class="ig-image-area" id="imageArea">
+          <div class="ig-image-placeholder">
+            <div class="icon">📷</div>
+            <p style="font-size:.8rem">Upload an image<br>to preview</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="ig-actions">
+          <button class="ig-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+          <button class="ig-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <button class="ig-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+          <button class="ig-action-btn ig-save">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><polygon points="19 21 12 16 5 21 5 3 19 3 19 21"/></svg>
+          </button>
+        </div>
+
+        <div class="ig-likes" id="previewLikes">1,284 likes</div>
+        <div class="ig-caption">
+          <span class="ig-name" id="captionName">your.username</span>
+          <span id="previewCaption">Loving this moment! ✨ Life is beautiful when you stop and appreciate what's around you. 🌿</span>
+          <span class="ig-hashtags" id="previewHashtags"> #photography #lifestyle #instagood</span>
+        </div>
+        <div class="ig-comments" id="previewComments">View all 48 comments</div>
+        <div class="ig-timestamp" id="previewTime">2 hours ago</div>
+        <div class="ig-add-comment">
+          <span>🙂</span>
+          <span>Add a comment…</span>
+          <span style="color:#0095f6;font-size:.8rem;font-weight:600">Post</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Sections -->
+    <div class="info-sections">
+      <section class="info-section">
+        <h2>How to Use the Instagram Post Preview Tool</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Enter Your Profile Details</h4><p>Type your Instagram username, display name, and optional location tag in the left panel. These appear exactly as they would in the post header.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Upload Your Post Image</h4><p>Click the image upload area or drag and drop a photo. Supports JPG, PNG, and GIF. Square images (1:1) are recommended for a true Instagram look.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Write Your Caption & Hashtags</h4><p>Add your caption text and hashtags in the respective fields. Hashtags are highlighted in blue automatically in the preview, just like the real app.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Adjust Engagement Numbers</h4><p>Use the sliders to set realistic-looking like and comment counts. This helps you visualise how popular posts appear on the feed.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Review and Screenshot</h4><p>Once satisfied, take a screenshot of the preview card to share with your team, client, or for content planning purposes.</p></div></div>
+        </div>
+      </section>
+
+      <section class="info-section">
+        <h2>About This Tool</h2>
+        <div class="desc-text">
+          <p>The <strong style="color:#fff">Instagram Post Preview Tool</strong> lets you create a pixel-accurate mock-up of an Instagram feed post directly in your browser — no account needed, no data sent to any server.</p>
+          <p>Content creators, social media managers, and marketing agencies use this tool to plan and approve posts before they go live. By previewing the full composition — image, caption, hashtags, and engagement stats — you can catch formatting issues, caption typos, or hashtag errors before they reach your audience.</p>
+          <p>The tool simulates the real Instagram web interface including the gradient story ring around the avatar, the action bar with heart, comment, share and save icons, and the accurate typography and spacing used by Instagram.</p>
+        </div>
+        <div class="features-list">
+          <div class="feat-item"><strong>Live Preview</strong>Every field updates the mock-up in real time as you type.</div>
+          <div class="feat-item"><strong>Image Upload</strong>Upload any image and see it rendered in a square crop frame.</div>
+          <div class="feat-item"><strong>Hashtag Highlighting</strong>Hashtags are auto-styled in Instagram blue in the preview.</div>
+          <div class="feat-item"><strong>Verified Badge</strong>Toggle the blue verified checkmark on or off for your profile.</div>
+          <div class="feat-item"><strong>Engagement Sliders</strong>Set likes and comments to simulate any level of post popularity.</div>
+          <div class="feat-item"><strong>100% Private</strong>All processing is local — no data leaves your browser.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmt = n => n >= 1000 ? (n/1000).toFixed(1).replace(/\.0$/,'')+'k' : n.toLocaleString();
+
+function update(){
+  const un = $('username').value||'username';
+  const dn = $('displayname').value||'username';
+  const loc = $('location').value;
+  const cap = $('caption').value;
+  const tags = $('hashtags').value;
+  const likes = parseInt($('likes').value);
+  const cmts = parseInt($('comments').value);
+  const verified = $('verified').checked;
+  const time = $('posttime').value||'just now';
+
+  $('previewUsername').innerHTML = un + (verified?' <span style="color:#3897f0">✓</span>':'');
+  $('captionName').textContent = un;
+  const locEl = $('previewLocation');
+  if(loc){locEl.textContent=loc;locEl.style.display='block'}else{locEl.style.display='none'}
+  $('previewCaption').textContent = cap;
+  $('previewHashtags').textContent = tags?' '+tags:'';
+  $('previewLikes').textContent = fmt(likes)+' likes';
+  $('previewComments').textContent = cmts>0?'View all '+fmt(cmts)+' comments':'No comments yet';
+  $('previewTime').textContent = time;
+  $('likesVal').textContent = fmt(likes);
+  $('commentsVal').textContent = fmt(cmts);
+  $('avatarBg').textContent = (un[0]||'U').toUpperCase();
+}
+
+$('imgUpload').addEventListener('change',function(){
+  const file = this.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    $('imageArea').innerHTML = `<img src="${e.target.result}" alt="post image">`;
+  };
+  reader.readAsDataURL(file);
+});
+
+['username','displayname','location','caption','hashtags','posttime'].forEach(id=>{
+  $(id).addEventListener('input',update);
+});
+['likes','comments'].forEach(id=>{
+  $(id).addEventListener('input',update);
+});
+$('verified').addEventListener('change',update);
+update();
+</script>
+</body>
+</html>

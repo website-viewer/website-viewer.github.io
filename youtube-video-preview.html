@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Video Preview Tool – Thumbnail & Title Simulator</title>
+<meta name="description" content="Preview your YouTube video as it appears on the homepage, search results, and watch page. Simulate thumbnail, title, views, and channel details.">
+<meta name="keywords" content="youtube video preview, youtube thumbnail preview, youtube mockup, youtube title preview">
+<link rel="canonical" href="https://website-viewer.github.io/youtube-video-preview">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"YouTube Video Preview Tool",
+  "description":"Preview your YouTube video as it appears on the homepage, search results and watch page. Simulate thumbnail, title, views, and channel details.",
+  "url":"https://website-viewer.github.io/youtube-video-preview",
+  "applicationCategory":"UtilitiesApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "featureList":["Thumbnail preview","Title length validation","Channel art simulation","View and subscriber count","Watch page preview"],
+  "author":{"@type":"Organization","name":"Website Viewer"}
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Anton&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yt-red:#ff0000;--yt-bg:#0f0f0f;--yt-surface:#272727;--yt-border:#3f3f3f;--yt-text:#f1f1f1;--yt-muted:#aaa;
+  --panel:#080808;--panel-border:#1c1c1c;--panel-muted:#555;--accent:#ff0000;
+  --font:'Roboto',sans-serif;--font-display:'Anton',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--panel);color:#e0e0e0;min-height:100vh}
+.site-header{background:#030303;border-bottom:1px solid var(--panel-border);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.site-header a{color:#e0e0e0;text-decoration:none;font-size:.85rem;opacity:.6}
+.breadcrumb-sep{opacity:.3}
+.page-title{font-family:var(--font-display);font-size:1.1rem;letter-spacing:.04em;color:var(--yt-red)}
+.app{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 57px)}
+.controls{background:#030303;border-right:1px solid var(--panel-border);padding:26px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+.controls h2{font-family:var(--font-display);font-size:1.3rem;letter-spacing:.04em;color:var(--yt-red)}
+.controls p.sub{font-size:.8rem;color:var(--panel-muted);margin-bottom:4px}
+.field-group{display:flex;flex-direction:column;gap:6px}
+.field-group label{font-size:.75rem;font-weight:700;color:var(--panel-muted);letter-spacing:.05em;text-transform:uppercase}
+.field-group input,.field-group textarea,.field-group select{background:#111;border:1px solid var(--panel-border);border-radius:6px;color:#e0e0e0;font-family:var(--font);font-size:.9rem;padding:10px 12px;transition:.2s;resize:vertical;width:100%}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:var(--accent)}
+.field-group textarea{min-height:70px}
+.char-line{display:flex;justify-content:space-between;font-size:.75rem;color:var(--panel-muted);margin-top:2px}
+.char-line span.warn{color:#f90}
+.char-line span.over{color:var(--yt-red)}
+.img-upload{border:2px dashed var(--panel-border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--accent)}
+.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input[type=range]{flex:1;accent-color:var(--accent)}
+.range-val{font-size:.82rem;color:var(--panel-muted);min-width:48px;text-align:right}
+.view-tabs{display:flex;gap:8px;margin-bottom:4px}
+.view-tab{flex:1;padding:8px;border:1px solid var(--panel-border);border-radius:8px;background:none;color:#e0e0e0;cursor:pointer;font-size:.78rem;font-weight:700;font-family:var(--font);transition:.2s;text-align:center}
+.view-tab.active{background:var(--yt-red);border-color:var(--yt-red);color:#fff}
+/* Preview */
+.preview-pane{display:flex;flex-direction:column;align-items:center;padding:40px 24px;gap:32px;background:#0a0a0a}
+.preview-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-muted)}
+/* YouTube card views */
+.yt-card-view{display:none}
+.yt-card-view.active{display:block}
+/* Grid card */
+.yt-grid-card{width:320px;cursor:pointer}
+.yt-thumb{width:320px;height:180px;background:#272727;border-radius:12px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.yt-thumb img{width:100%;height:100%;object-fit:cover}
+.yt-thumb-placeholder{font-size:3rem;text-align:center}
+.yt-duration{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.8);color:#fff;font-size:.75rem;font-weight:700;padding:2px 6px;border-radius:4px}
+.yt-grid-meta{display:flex;gap:10px;margin-top:10px}
+.yt-channel-avatar{width:36px;height:36px;border-radius:50%;background:var(--yt-red);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.yt-grid-info{flex:1}
+.yt-video-title{font-size:.9rem;font-weight:700;color:var(--yt-text);line-height:1.35;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.yt-channel-name{font-size:.78rem;color:var(--yt-muted);margin-bottom:2px;display:flex;align-items:center;gap:4px}
+.yt-stats{font-size:.78rem;color:var(--yt-muted)}
+/* Watch page */
+.yt-watch{background:var(--yt-bg);border-radius:12px;width:600px;padding:0;overflow:hidden}
+.yt-watch-thumb{width:100%;aspect-ratio:16/9;background:#000;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.yt-watch-thumb img{width:100%;height:100%;object-fit:cover}
+.yt-play-overlay{position:absolute;width:64px;height:44px;background:rgba(0,0,0,.8);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.yt-watch-info{padding:12px 16px}
+.yt-watch-title{font-size:1.05rem;font-weight:700;color:var(--yt-text);line-height:1.35;margin-bottom:10px}
+.yt-watch-channel{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.yt-watch-avatar{width:40px;height:40px;border-radius:50%;background:var(--yt-red);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.yt-watch-channel-info{flex:1}
+.yt-watch-channel-name{font-size:.9rem;font-weight:600;color:var(--yt-text);display:flex;align-items:center;gap:6px}
+.yt-verified{color:var(--yt-muted);font-size:.8rem}
+.yt-subs{font-size:.78rem;color:var(--yt-muted)}
+.yt-subscribe{background:var(--yt-text);color:#0f0f0f;border:none;border-radius:999px;padding:8px 18px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:var(--font)}
+.yt-actions{display:flex;gap:8px;flex-wrap:wrap}
+.yt-action-pill{background:var(--yt-surface);border:none;border-radius:999px;padding:8px 14px;font-size:.8125rem;font-weight:600;color:var(--yt-text);cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px}
+.yt-watch-stats{font-size:.85rem;color:var(--yt-muted);margin-top:10px}
+/* Info */
+.info-sections{width:100%;max-width:860px;margin:0 auto;padding:60px 24px 80px;display:flex;flex-direction:column;gap:48px}
+.info-section h2{font-family:var(--font-display);font-size:1.7rem;letter-spacing:.03em;color:#fff;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--panel-border)}
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body h4{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:4px}
+.step-body p{font-size:.875rem;color:var(--panel-muted);line-height:1.65}
+.desc-text p{font-size:.9rem;color:var(--panel-muted);line-height:1.75;margin-bottom:14px}
+.features-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.feat-item{background:#111;border:1px solid var(--panel-border);border-radius:8px;padding:12px 14px;font-size:.83rem;color:var(--panel-muted)}
+.feat-item strong{color:#e0e0e0;display:block;margin-bottom:3px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.controls{border-right:none;border-bottom:1px solid var(--panel-border)}.features-list{grid-template-columns:1fr}.yt-watch{width:100%;max-width:500px}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="./">📱 Website Viewer</a><span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a><span class="breadcrumb-sep">›</span>
+  <span class="page-title">YouTube Video Preview</span>
+</header>
+<div class="app">
+  <aside class="controls">
+    <div><h2>YouTube Preview</h2><p class="sub">See your video before uploading.</p></div>
+    <div class="field-group">
+      <label>Preview View</label>
+      <div class="view-tabs">
+        <button class="view-tab active" onclick="switchView('grid')">Grid Card</button>
+        <button class="view-tab" onclick="switchView('watch')">Watch Page</button>
+      </div>
+    </div>
+    <div class="field-group"><label>Video Title</label><textarea id="ytTitle" rows="2">I Spent 3 Months Building This App... Here's What Happened</textarea><div class="char-line"><span>Title</span><span id="ytTitleCount">55 / 100</span></div></div>
+    <div class="field-group"><label>Thumbnail Image</label><div class="img-upload"><input type="file" id="ytThumb" accept="image/*"><p style="font-size:.82rem;color:#555">🖼 Upload thumbnail (1280×720 recommended)</p></div></div>
+    <div class="field-group"><label>Channel Name</label><input type="text" id="ytChannel" value="TechBuilder"></div>
+    <div class="field-group"><label>Verified Channel</label><select id="ytVerified"><option value="none">Not verified</option><option value="yes">✓ Verified</option></select></div>
+    <div class="field-group"><label>Subscribers</label><input type="text" id="ytSubs" value="142K subscribers"></div>
+    <div class="field-group"><label>Duration (mm:ss)</label><input type="text" id="ytDuration" value="14:27" placeholder="e.g. 10:32"></div>
+    <div class="field-group"><label>Views</label><div class="range-row"><input type="range" id="ytViews" min="0" max="10000000" value="284700" step="100"><span class="range-val" id="ytViewsVal">284.7k</span></div></div>
+    <div class="field-group"><label>Likes</label><div class="range-row"><input type="range" id="ytLikes" min="0" max="500000" value="18400" step="100"><span class="range-val" id="ytLikesVal">18.4k</span></div></div>
+    <div class="field-group"><label>Upload Time</label><input type="text" id="ytTime" value="3 days ago"></div>
+  </aside>
+  <main>
+    <div class="preview-pane">
+      <span class="preview-label">Live Preview</span>
+      <!-- Grid card view -->
+      <div class="yt-card-view active" id="gridView">
+        <div class="yt-grid-card">
+          <div class="yt-thumb" id="gridThumb">
+            <div class="yt-thumb-placeholder">🎬</div>
+            <div class="yt-duration" id="gridDuration">14:27</div>
+          </div>
+          <div class="yt-grid-meta">
+            <div class="yt-channel-avatar" id="gridAvatar">T</div>
+            <div class="yt-grid-info">
+              <div class="yt-video-title" id="gridTitle">I Spent 3 Months Building This App... Here's What Happened</div>
+              <div class="yt-channel-name"><span id="gridChannel">TechBuilder</span><span id="gridVerifiedG" style="display:none;color:#aaa">✓</span></div>
+              <div class="yt-stats"><span id="gridViews">284K views</span> · <span id="gridTime">3 days ago</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Watch page view -->
+      <div class="yt-card-view" id="watchView">
+        <div class="yt-watch">
+          <div class="yt-watch-thumb" id="watchThumb">
+            <div class="yt-thumb-placeholder" style="font-size:4rem">🎬</div>
+            <div class="yt-play-overlay">▶</div>
+          </div>
+          <div class="yt-watch-info">
+            <div class="yt-watch-title" id="watchTitle">I Spent 3 Months Building This App... Here's What Happened</div>
+            <div class="yt-watch-channel">
+              <div class="yt-watch-avatar" id="watchAvatar">T</div>
+              <div class="yt-watch-channel-info">
+                <div class="yt-watch-channel-name"><span id="watchChannel">TechBuilder</span><span id="watchVerified" class="yt-verified" style="display:none">✓</span></div>
+                <div class="yt-subs" id="watchSubs">142K subscribers</div>
+              </div>
+              <button class="yt-subscribe">Subscribe</button>
+            </div>
+            <div class="yt-actions">
+              <button class="yt-action-pill">👍 <span id="watchLikes">18K</span></button>
+              <button class="yt-action-pill">👎</button>
+              <button class="yt-action-pill">➡ Share</button>
+              <button class="yt-action-pill">✂ Clip</button>
+              <button class="yt-action-pill">🔖 Save</button>
+            </div>
+            <div class="yt-watch-stats"><span id="watchViews">284,700 views</span> · <span id="watchTime">3 days ago</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-sections">
+      <section class="info-section">
+        <h2>How to Use the YouTube Video Preview Tool</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Choose Your Preview Mode</h4><p>Switch between Grid Card (how your video looks on the YouTube homepage or search results) and Watch Page (the full player + metadata layout).</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Enter Your Video Title</h4><p>Type your video title and watch the character counter. YouTube shows roughly 60-70 characters before truncating, so this helps you write click-worthy titles that don't get cut off.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Upload Your Thumbnail</h4><p>Upload your 1280×720px thumbnail image. It renders in both the grid card and watch page views so you can check it looks compelling in both contexts.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Set Channel Details</h4><p>Enter your channel name, subscriber count, and whether your channel is verified. These populate both preview modes accurately.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Adjust Views, Likes & Duration</h4><p>Set the video duration (appears on thumbnail corner), view count, and like count using sliders and text fields to complete the realistic mock-up.</p></div></div>
+        </div>
+      </section>
+      <section class="info-section">
+        <h2>About This Tool</h2>
+        <div class="desc-text">
+          <p>The <strong style="color:#e0e0e0">YouTube Video Preview Tool</strong> helps creators, marketers, and editors see exactly how a video listing will appear on YouTube — before uploading. Both the grid card (homepage/search) and full watch page layouts are simulated.</p>
+          <p>Your thumbnail and title are among the most critical factors in a video's click-through rate. Testing different combinations before publishing gives you a significant advantage. You can also use this tool to present video concepts and planned thumbnails to clients for approval.</p>
+        </div>
+        <div class="features-list">
+          <div class="feat-item"><strong>Dual Preview Modes</strong>Grid card and full watch page layouts.</div>
+          <div class="feat-item"><strong>Title Truncation Check</strong>See how long titles are cut off in the feed.</div>
+          <div class="feat-item"><strong>Thumbnail Upload</strong>Check your thumbnail in both preview contexts.</div>
+          <div class="feat-item"><strong>Duration Badge</strong>Video length badge shown on the thumbnail corner.</div>
+          <div class="feat-item"><strong>Verified Badge</strong>Toggle channel verification checkmark.</div>
+          <div class="feat-item"><strong>Real-time Updates</strong>All fields update the preview as you type.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>n>=1000000?(n/1000000).toFixed(1).replace(/\.0$/,'')+'M':n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':n.toLocaleString();
+let thumbSrc=null;
+function switchView(v){
+  document.querySelectorAll('.yt-card-view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.view-tab').forEach(el=>el.classList.remove('active'));
+  $(v==='grid'?'gridView':'watchView').classList.add('active');
+  document.querySelectorAll('.view-tab')[v==='grid'?0:1].classList.add('active');
+}
+function update(){
+  const title=$('ytTitle').value||'Untitled Video';
+  const channel=$('ytChannel').value||'Channel';
+  const verified=$('ytVerified').value==='yes';
+  const subs=$('ytSubs').value||'0 subscribers';
+  const dur=$('ytDuration').value||'0:00';
+  const views=parseInt($('ytViews').value);
+  const likes=parseInt($('ytLikes').value);
+  const time=$('ytTime').value||'just now';
+  // Title counter
+  const len=title.length;
+  const tc=$('ytTitleCount');
+  tc.textContent=`${len} / 100`;
+  tc.className=len>90?'over':len>70?'warn':'';
+  // Grid
+  $('gridTitle').textContent=title;
+  $('gridChannel').textContent=channel;
+  $('gridAvatar').textContent=(channel[0]||'Y').toUpperCase();
+  $('gridVerifiedG').style.display=verified?'inline':'none';
+  $('gridDuration').textContent=dur;
+  $('gridViews').textContent=fmt(views)+' views';
+  $('gridTime').textContent=time;
+  // Watch
+  $('watchTitle').textContent=title;
+  $('watchChannel').textContent=channel;
+  $('watchAvatar').textContent=(channel[0]||'Y').toUpperCase();
+  $('watchVerified').style.display=verified?'inline':'none';
+  $('watchSubs').textContent=subs;
+  $('watchViews').textContent=views.toLocaleString()+' views';
+  $('watchTime').textContent=time;
+  $('watchLikes').textContent=fmt(likes);
+  $('ytViewsVal').textContent=fmt(views);
+  $('ytLikesVal').textContent=fmt(likes);
+}
+$('ytThumb').addEventListener('change',function(){
+  const f=this.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    thumbSrc=e.target.result;
+    $('gridThumb').innerHTML=`<img src="${thumbSrc}"><div class="yt-duration" id="gridDuration">${$('ytDuration').value||'0:00'}</div>`;
+    $('watchThumb').innerHTML=`<img src="${thumbSrc}" style="width:100%;height:100%;object-fit:cover"><div class="yt-play-overlay">▶</div>`;
+  };
+  r.readAsDataURL(f);
+});
+['ytTitle','ytChannel','ytVerified','ytSubs','ytDuration','ytTime'].forEach(id=>$(id).addEventListener('input',update));
+['ytViews','ytLikes'].forEach(id=>$(id).addEventListener('input',update));
+update();
+</script>
+</body>
+</html>
