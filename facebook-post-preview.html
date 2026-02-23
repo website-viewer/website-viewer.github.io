@@ -9,8 +9,8 @@
 <link rel="canonical" href="https://website-viewer.github.io/facebook-post-preview">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Facebook Post Preview Tool">
-<meta property="og:description" content="See exactly how your Facebook post will look before publishing. Full news feed simulation.">  
-<script type="application/ld+json">  
+<meta property="og:description" content="See exactly how your Facebook post will look before publishing. Full news feed simulation.">
+<script type="application/ld+json">
 {
   "@context":"https://schema.org","@type":"WebApplication",
   "name":"Facebook Post Preview Tool",
@@ -23,7 +23,6 @@
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
 <style>
 :root{
   --fb-bg:#f0f2f5;--fb-white:#fff;--fb-border:#ccd0d5;--fb-text:#050505;--fb-muted:#65676b;
@@ -106,10 +105,14 @@ input:checked+.slider:before{transform:translateX(18px)}
 @media(max-width:900px){.app{grid-template-columns:1fr}.controls{border-right:none;border-bottom:1px solid var(--panel-border)}.features-list{grid-template-columns:1fr}}
 </style>
 </head>
-<body> 
-  
-<header id="header-component"></header>
-
+<body>
+<header class="site-header">
+  <a href="./">📱 Website Viewer</a>
+  <span class="breadcrumb-sep">›</span>
+  <a href="#">Social Media</a>
+  <span class="breadcrumb-sep">›</span>
+  <span class="page-title">Facebook Post Preview</span>
+</header>
 <div class="app">
   <aside class="controls">
     <div>
@@ -300,6 +303,5 @@ $('fbImgUpload').addEventListener('change',function(){
 ['fbLikes','fbLove','fbComments','fbShares'].forEach(id=>$(id).addEventListener('input',update));
 update();
 </script>
-<script src="script.js"></script>  
 </body>
 </html>
