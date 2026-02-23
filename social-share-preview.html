@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Share Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your website link appears across all major social platforms at once — Facebook, Twitter, LinkedIn, Pinterest, Discord, Slack, and WhatsApp side by side.">
+<meta name="keywords" content="social share preview, multi-platform link preview, all social media preview, social media share checker, link preview tool">
+<meta property="og:title" content="Social Share Preview Tool — Website Viewer">
+<meta property="og:description" content="Preview your link across all social platforms simultaneously — Facebook, Twitter/X, LinkedIn, Pinterest, Discord, Slack, and WhatsApp.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/social-share-preview">
+<link rel="canonical" href="https://website-viewer.github.io/social-share-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Social Share Preview Tool",
+  "url": "https://website-viewer.github.io/social-share-preview",
+  "description": "Preview how your URL appears when shared across all major social platforms simultaneously — Facebook, Twitter/X, LinkedIn, Pinterest, Discord, Slack, and WhatsApp.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Organization", "name": "Website Viewer" },
+  "featureList": ["Multi-platform simultaneous preview", "7 social network simulations", "Complete meta tag code generator", "WhatsApp link preview", "Discord embed preview", "Slack unfurl preview"]
+}
+</script>
+<style>
+/* Layout */
+.multi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; }
+.platform-preview-wrap { border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; background:#111827; }
+.platform-header { display:flex; align-items:center; gap:0.6rem; padding:0.75rem 1rem; border-bottom:1px solid var(--color-border); }
+.platform-header .ph-icon { font-size:1.1rem; }
+.platform-header .ph-name { font-size:0.78rem; font-weight:700; color:var(--color-text-light); }
+.platform-header .ph-badge { margin-left:auto; font-size:0.65rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:999px; }
+.ph-badge.good { background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.25); }
+.ph-badge.warn { background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.25); }
+.platform-body { padding:1rem; min-height:120px; display:flex; align-items:flex-start; justify-content:center; }
+
+/* Facebook mini */
+.fb-mini { background:#fff; border-radius:4px; overflow:hidden; width:100%; font-family:'Helvetica Neue',Arial,sans-serif; }
+.fb-mini .fm-img { width:100%; height:140px; object-fit:cover; display:block; background:#e4e6eb; display:flex;align-items:center;justify-content:center;color:#65676b;font-size:0.75rem; }
+.fb-mini .fm-img img { width:100%;height:140px;object-fit:cover;display:block; }
+.fb-mini .fm-body { padding:8px 10px; background:#f0f2f5; border-top:1px solid #dddfe2; }
+.fb-mini .fm-domain { font-size:11px; color:#65676b; text-transform:uppercase; }
+.fb-mini .fm-title { font-size:14px; font-weight:600; color:#1c1e21; line-height:1.3; }
+.fb-mini .fm-desc { font-size:12px; color:#65676b; display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden; }
+
+/* Twitter mini */
+.tw-mini { background:#16181c; border:1px solid #2f3336; border-radius:12px; overflow:hidden; width:100%; font-family:-apple-system,system-ui,sans-serif; }
+.tw-mini .tm-img { width:100%; height:140px; object-fit:cover; display:block; background:#2f3336; display:flex;align-items:center;justify-content:center;color:#71767b;font-size:0.75rem; }
+.tw-mini .tm-img img { width:100%;height:140px;object-fit:cover;display:block; }
+.tw-mini .tm-body { padding:8px 12px; background:#1d1f23; }
+.tw-mini .tm-domain { font-size:12px; color:#71767b; }
+.tw-mini .tm-title { font-size:14px; font-weight:700; color:#e7e9ea; line-height:1.3; }
+.tw-mini .tm-desc { font-size:12px; color:#71767b; display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden; }
+
+/* LinkedIn mini */
+.li-mini { background:#fff; border:1px solid #e0e0e0; border-radius:2px; overflow:hidden; width:100%; font-family:-apple-system,system-ui,sans-serif; }
+.li-mini .lm-img { width:100%; height:140px; object-fit:cover; display:block; background:#eef3f8; display:flex;align-items:center;justify-content:center;color:#8c8c8c;font-size:0.75rem; }
+.li-mini .lm-img img { width:100%;height:140px;object-fit:cover;display:block; }
+.li-mini .lm-body { padding:8px 10px; background:#f3f6f8; border-top:1px solid #e0e0e0; }
+.li-mini .lm-title { font-size:13px; font-weight:600; color:#000; }
+.li-mini .lm-domain { font-size:11px; color:#666; margin-top:2px; }
+
+/* Pinterest mini */
+.pin-mini { background:#fff; border-radius:12px; overflow:hidden; width:100%; font-family:-apple-system,system-ui,sans-serif; box-shadow:0 1px 6px rgba(0,0,0,.1); }
+.pin-mini .pm-img { width:100%; height:180px; object-fit:cover; display:block; background:#fce4e4; display:flex;align-items:center;justify-content:center;color:#c09090;font-size:0.75rem; }
+.pin-mini .pm-img img { width:100%;height:180px;object-fit:cover;display:block; }
+.pin-mini .pm-body { padding:8px 10px; }
+.pin-mini .pm-title { font-size:13px; font-weight:600; color:#111; }
+.pin-mini .pm-domain { font-size:11px; color:#767676; margin-top:2px; }
+
+/* Discord mini */
+.dc-mini { background:#2f3136; border-left:4px solid #5865f2; border-radius:4px; overflow:hidden; width:100%; font-family:'gg sans','Noto Sans',sans-serif; padding:8px 12px; }
+.dc-mini .dm-site { font-size:12px; color:#5865f2; font-weight:600; margin-bottom:3px; }
+.dc-mini .dm-title { font-size:14px; font-weight:600; color:#fff; margin-bottom:3px; }
+.dc-mini .dm-desc { font-size:13px; color:#b9bbbe; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; margin-bottom:6px; }
+.dc-mini .dm-img { border-radius:4px; overflow:hidden; }
+.dc-mini .dm-img img { width:100%; max-height:120px; object-fit:cover; display:block; }
+
+/* Slack mini */
+.slack-mini { background:#fff; border-left:3px solid #e8c353; border-radius:4px; overflow:hidden; width:100%; font-family:Slack-Lato,Lato,system-ui,sans-serif; padding:8px 10px; box-shadow:0 1px 3px rgba(0,0,0,.1); }
+.slack-mini .sm-site { font-size:11px; font-weight:700; color:#1264a3; margin-bottom:3px; }
+.slack-mini .sm-title { font-size:13px; font-weight:700; color:#1264a3; margin-bottom:3px; }
+.slack-mini .sm-desc { font-size:12px; color:#1d1c1d; margin-bottom:6px; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+.slack-mini .sm-img img { width:100%; max-height:100px; object-fit:cover; display:block; border-radius:2px; }
+
+/* WhatsApp mini */
+.wa-mini { background:#d9fdd3; border-radius:8px 8px 8px 0; overflow:hidden; max-width:280px; font-family:-apple-system,system-ui,sans-serif; }
+.wa-mini .wm-img { width:100%; height:120px; object-fit:cover; display:block; background:#25d366; display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7);font-size:0.75rem; }
+.wa-mini .wm-img img { width:100%;height:120px;object-fit:cover;display:block; }
+.wa-mini .wm-body { padding:8px 10px; background:#d9fdd3; }
+.wa-mini .wm-site { font-size:11px; color:#25d366; font-weight:600; }
+.wa-mini .wm-title { font-size:13px; font-weight:600; color:#111; line-height:1.3; }
+.wa-mini .wm-desc { font-size:12px; color:#667781; display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+
+/* Score panel */
+.score-panel { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.75rem; margin-bottom:1.5rem; }
+.score-item { background:var(--color-bg-darker); border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:1rem; text-align:center; }
+.score-label { font-size:0.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--color-text-muted); margin-bottom:0.25rem; }
+.score-value { font-size:1.5rem; font-weight:800; }
+.score-value.ok { color:var(--color-success); }
+.score-value.warn { color:var(--color-warn); }
+.score-value.bad { color:var(--color-error); }
+
+.code-output { background:#0d1117; border:1px solid var(--color-border); border-radius:var(--radius); padding:1rem; font-family:var(--font-mono); font-size:0.78rem; color:#c9d1d9; line-height:1.7; white-space:pre-wrap; word-break:break-all; margin-top:1rem; max-height:300px; overflow-y:auto; }
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+<main>
+<div class="tool-page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Link Share Previews</a><span>/</span>
+    <span style="color:var(--color-text-light)">Social Share Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge">🌐 All Platforms</div>
+    <h1>Social Share Preview Tool</h1>
+    <p>Enter your link details once — preview simultaneously across Facebook, Twitter/X, LinkedIn, Pinterest, Discord, Slack, and WhatsApp.</p>
+  </div>
+
+  <!-- INPUT -->
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Universal Link Details</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Page Title (og:title)</label>
+        <input id="uTitle" type="text" class="form-control" placeholder="Your page title — keep under 65 characters" maxlength="150" oninput="liveUp();cc('uTitle','tcnt',65)">
+        <div class="char-counter" id="tcnt">0 / 65</div>
+      </div>
+      <div class="form-group">
+        <label>Domain</label>
+        <input id="uDomain" type="text" class="form-control" placeholder="yoursite.com" oninput="liveUp()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Description (og:description)</label>
+        <textarea id="uDesc" class="form-control" rows="3" placeholder="A compelling description of your page content (120–160 characters recommended)…" maxlength="300" oninput="liveUp();cc('uDesc','dcnt',160)"></textarea>
+        <div class="char-counter" id="dcnt">0 / 160</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Image URL (og:image — 1200×630px recommended)</label>
+        <input id="uImage" type="url" class="form-control" placeholder="https://yoursite.com/share-image.jpg" oninput="liveUp()">
+      </div>
+      <div class="form-group">
+        <label>Content Type (og:type)</label>
+        <select id="uType" class="form-control" onchange="liveUp()">
+          <option value="website">website</option>
+          <option value="article">article</option>
+          <option value="product">product</option>
+        </select>
+      </div>
+    </div>
+    <div class="action-bar" style="margin-top:0">
+      <button class="btn btn-primary btn-sm" onclick="liveUp()">▶ Preview All Platforms</button>
+      <button class="btn btn-secondary btn-sm" onclick="resetAll()">↺ Reset</button>
+    </div>
+  </div>
+
+  <!-- SCORE -->
+  <div id="scorePanel" style="display:none">
+    <div class="tool-card-title" style="margin-bottom:1rem;font-size:0.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-text-muted);">📊 Tag Quality Score</div>
+    <div class="score-panel">
+      <div class="score-item"><div class="score-label">Title</div><div class="score-value" id="sTitleScore">—</div></div>
+      <div class="score-item"><div class="score-label">Description</div><div class="score-value" id="sDescScore">—</div></div>
+      <div class="score-item"><div class="score-label">Image</div><div class="score-value" id="sImgScore">—</div></div>
+      <div class="score-item"><div class="score-label">Overall</div><div class="score-value" id="sOverallScore">—</div></div>
+    </div>
+  </div>
+
+  <!-- PREVIEWS GRID -->
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ All Platform Previews</div>
+    <div id="multiGrid" class="multi-grid">
+      <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--color-text-muted);flex-direction:column;gap:0.5rem">
+        <span style="font-size:2.5rem;opacity:.3">🌐</span>
+        <span>Fill in the fields above and click Preview to see all platforms at once</span>
+      </div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="copyAllTags()">📋 Copy All Meta Tags</button>
+    </div>
+    <div id="codeOut" class="code-output" style="display:none"></div>
+  </div>
+
+  <!-- HOW TO -->
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the Social Share Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box"><div class="step-num">Step 01</div><h4>Enter Once</h4><p>Fill in your title, description, image URL, and domain — one set of fields for all platforms.</p></div>
+      <div class="step-box"><div class="step-num">Step 02</div><h4>Preview All</h4><p>Click Preview to instantly see how your link renders on all 7 major platforms simultaneously.</p></div>
+      <div class="step-box"><div class="step-num">Step 03</div><h4>Check Scores</h4><p>Review the quality score panel to spot missing or too-short fields that will hurt your preview.</p></div>
+      <div class="step-box"><div class="step-num">Step 04</div><h4>Copy & Deploy</h4><p>Copy the complete set of meta tags and paste them into your HTML <code>&lt;head&gt;</code>.</p></div>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Universal Social Sharing</h2>
+    <p>Every major social platform — from Facebook and Twitter to Discord and WhatsApp — reads OpenGraph meta tags to generate link preview cards. While each platform has subtle differences in how it renders cards (image ratios, text truncation, layout), they all share the same core set of OG tags. This means optimizing a single set of meta tags benefits every platform your content gets shared on.</p>
+    <p>This tool lets you validate all platforms in one shot, so you can spot issues before they reach your audience. A missing image means a boring text-only link on every platform. A title that's too long gets cut off differently by each platform — see all truncations at once here.</p>
+    <p><strong>Universal best practices:</strong></p>
+    <ul>
+      <li><strong>Title:</strong> 55–65 characters — works well on all platforms without truncation</li>
+      <li><strong>Description:</strong> 120–155 characters — enough context without being cut off</li>
+      <li><strong>Image:</strong> 1200×630px JPEG or PNG — the universal safe ratio for all platforms</li>
+      <li><strong>Image file size:</strong> Under 5MB — some platforms (Twitter) enforce this limit strictly</li>
+      <li>Always include <code>og:url</code> — prevents platforms from canonicalizing the wrong URL</li>
+      <li>Use absolute URLs for images — relative URLs are not supported by any platform's crawlers</li>
+      <li>After deploying, clear platform caches using each platform's debugging tool (Facebook Debugger, Twitter Card Validator, LinkedIn Post Inspector)</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+<footer id="footer-component"></footer>
+<script src="../script.js"></script>
+<script>
+function cc(id,cid,max){const v=document.getElementById(id).value.length;const el=document.getElementById(cid);el.textContent=`${v} / ${max}`;el.className='char-counter'+(v>max*.9?' warn':'')+(v>=max?' over':'');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function getV(){return{title:document.getElementById('uTitle').value.trim()||'Your Page Title',desc:document.getElementById('uDesc').value.trim()||'',domain:document.getElementById('uDomain').value.trim()||'yoursite.com',image:document.getElementById('uImage').value.trim(),type:document.getElementById('uType').value};}
+
+function imgEl(src,h,fb){if(src)return`<img src="${src}" alt="" style="width:100%;height:${h}px;object-fit:cover;display:block" onerror="this.parentElement.innerHTML='🖼️ Failed to load image'">`;return fb||'🖼️ No image';}
+
+function buildCards(v){
+  const domain = v.domain.replace(/^https?:\/\//,'').split('/')[0];
+  const platforms = [
+    {
+      icon:'📘',name:'Facebook',badge:'good',color:'#4267B2',
+      html:`<div class="fb-mini"><div class="fb-mini fm-img">${v.image?`<img src="${v.image}" alt="" style="width:100%;height:140px;object-fit:cover;display:block" onerror="this.parentElement.innerHTML='🖼️'">`:'🖼️ No image'}</div><div class="fm-body"><div class="fm-domain">${esc(domain)}</div><div class="fm-title">${esc(v.title)}</div>${v.desc?`<div class="fm-desc">${esc(v.desc)}</div>`:''}</div></div>`
+    },
+    {
+      icon:'𝕏',name:'Twitter / X',badge:'good',color:'#000',
+      html:`<div class="tw-mini"><div class="tw-mini tm-img">${v.image?`<img src="${v.image}" alt="" style="width:100%;height:140px;object-fit:cover;display:block" onerror="this.parentElement.innerHTML='🖼️'">`:'🖼️ No image'}</div><div class="tm-body"><div class="tm-domain">${esc(domain)}</div><div class="tm-title">${esc(v.title)}</div>${v.desc?`<div class="tm-desc">${esc(v.desc)}</div>`:''}</div></div>`
+    },
+    {
+      icon:'💼',name:'LinkedIn',badge:'good',color:'#0077b5',
+      html:`<div class="li-mini"><div class="li-mini lm-img">${v.image?`<img src="${v.image}" alt="" style="width:100%;height:140px;object-fit:cover;display:block" onerror="this.parentElement.innerHTML='🖼️'">`:'🖼️ No image'}</div><div class="lm-body"><div class="lm-title">${esc(v.title)}</div><div class="lm-domain">${esc(domain)}</div></div></div>`
+    },
+    {
+      icon:'📌',name:'Pinterest',badge:'warn',color:'#e60023',
+      html:`<div class="pin-mini"><div class="pin-mini pm-img">${v.image?`<img src="${v.image}" alt="" style="width:100%;height:180px;object-fit:cover;display:block" onerror="this.parentElement.innerHTML='📌'">`:'📌 No image — critical for Pinterest'}</div><div class="pm-body"><div class="pm-title">${esc(v.title)}</div><div class="pm-domain">${esc(domain)}</div></div></div>`
+    },
+    {
+      icon:'🎮',name:'Discord',badge:'good',color:'#5865f2',
+      html:`<div class="dc-mini"><div class="dm-site">${esc(v.domain)}</div><div class="dm-title">${esc(v.title)}</div>${v.desc?`<div class="dm-desc">${esc(v.desc)}</div>`:''}</div>`
+    },
+    {
+      icon:'💬',name:'Slack',badge:'good',color:'#4a154b',
+      html:`<div class="slack-mini"><div class="sm-site">${esc(v.domain)}</div><div class="sm-title">${esc(v.title)}</div>${v.desc?`<div class="sm-desc">${esc(v.desc)}</div>`:''}</div>`
+    },
+    {
+      icon:'📱',name:'WhatsApp',badge:'good',color:'#25d366',
+      html:`<div class="wa-mini"><div class="wa-mini wm-img">${v.image?`<img src="${v.image}" alt="" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.parentElement.innerHTML='🖼️'">`:'🖼️ No image'}</div><div class="wm-body"><div class="wm-site">${esc(domain)}</div><div class="wm-title">${esc(v.title)}</div>${v.desc?`<div class="wm-desc">${esc(v.desc)}</div>`:''}</div></div>`
+    }
+  ];
+  return platforms.map(p=>`
+    <div class="platform-preview-wrap">
+      <div class="platform-header" style="border-bottom-color:${p.color}22">
+        <span class="ph-icon">${p.icon}</span>
+        <span class="ph-name">${p.name}</span>
+        <span class="ph-badge ${v.image?'good':'warn'}">${v.image?'✓ Image':'! No image'}</span>
+      </div>
+      <div class="platform-body">${p.html}</div>
+    </div>`).join('');
+}
+
+function updateScores(v){
+  document.getElementById('scorePanel').style.display='block';
+  const titleLen = document.getElementById('uTitle').value.trim().length;
+  const descLen = document.getElementById('uDesc').value.trim().length;
+  const hasImg = !!v.image;
+
+  const tScore = titleLen===0?'—':titleLen<=65?'✓':'⚠';
+  const dScore = descLen===0?'—':descLen>=100&&descLen<=160?'✓':descLen>0?'⚠':'—';
+  const iScore = hasImg?'✓':'✗';
+  const overall = (titleLen>0&&descLen>0&&hasImg)?'✓':(titleLen>0||descLen>0)?'⚠':'—';
+
+  const map={'✓':'ok','⚠':'warn','✗':'bad','—':''};
+  [['sTitleScore',tScore],['sDescScore',dScore],['sImgScore',iScore],['sOverallScore',overall]].forEach(([id,val])=>{
+    const el=document.getElementById(id);el.textContent=val;el.className='score-value '+(map[val]||'');
+  });
+}
+
+function liveUp(){
+  const v=getV();const grid=document.getElementById('multiGrid');
+  const hasContent=document.getElementById('uTitle').value.trim()||document.getElementById('uImage').value.trim();
+  if(!hasContent){grid.innerHTML='<div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--color-text-muted);flex-direction:column;gap:0.5rem"><span style="font-size:2.5rem;opacity:.3">🌐</span><span>Fill in the fields above and click Preview to see all platforms at once</span></div>';document.getElementById('scorePanel').style.display='none';return;}
+  grid.innerHTML=buildCards(v);
+  updateScores(v);
+  const el=document.getElementById('codeOut');el.style.display='block';
+  el.textContent=[`<!-- Universal Social Share Meta Tags -->`,`<!-- OpenGraph (Facebook, LinkedIn, Pinterest, Discord, Slack, WhatsApp) -->`,`<meta property="og:title" content="${v.title}" />`,`<meta property="og:description" content="${v.desc}" />`,`<meta property="og:image" content="${v.image}" />`,`<meta property="og:image:width" content="1200" />`,`<meta property="og:image:height" content="630" />`,`<meta property="og:type" content="${v.type}" />`,`<meta property="og:url" content="https://${v.domain}" />`,`<meta property="og:site_name" content="${v.domain}" />`,``,`<!-- Twitter / X -->`,`<meta name="twitter:card" content="summary_large_image" />`,`<meta name="twitter:title" content="${v.title}" />`,`<meta name="twitter:description" content="${v.desc}" />`,`<meta name="twitter:image" content="${v.image}" />`,``,`<!-- Pinterest -->`,`<meta name="pinterest-rich-pin" content="true" />`].join('\n');
+}
+
+function copyAllTags(){const el=document.getElementById('codeOut');if(!el.textContent||el.style.display==='none'){alert('Preview first!');return;}navigator.clipboard.writeText(el.textContent).then(()=>{const b=event.target;b.textContent='✅ Copied!';setTimeout(()=>b.textContent='📋 Copy All Meta Tags',2000);});}
+function resetAll(){['uTitle','uDesc','uDomain','uImage'].forEach(id=>document.getElementById(id).value='');document.getElementById('uType').value='website';document.getElementById('codeOut').style.display='none';document.getElementById('scorePanel').style.display='none';['tcnt','dcnt'].forEach((id,i)=>document.getElementById(id).textContent=`0 / ${[65,160][i]}`);document.getElementById('multiGrid').innerHTML='<div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--color-text-muted);flex-direction:column;gap:0.5rem"><span style="font-size:2.5rem;opacity:.3">🌐</span><span>Fill in the fields above and click Preview to see all platforms at once</span></div>';}
+document.addEventListener('DOMContentLoaded',()=>{renderHeader();renderFooter();});
+</script>
+</body>
+</html>
