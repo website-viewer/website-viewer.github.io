@@ -47,7 +47,7 @@ function renderFooter() {
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; ${currentYear} Website Viewer. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+                <p>&copy; ${currentYear} Website Viewer. All rights reserved.</p>
             </div>
         </div>
     `;
