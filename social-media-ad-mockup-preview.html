@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Media Ad Mockup Tool — Website Viewer</title>
+<meta name="description" content="Create professional ad mockups for Facebook and Instagram. Preview your headlines, primary text, and CTA buttons in a realistic sponsored post simulation.">
+<meta name="keywords" content="ad mockup, social media ad preview, facebook ad generator, instagram ad mockup, sponsored post preview, digital marketing tool">
+<meta property="og:title" content="Social Media Ad Mockup Tool — Website Viewer">
+<meta property="og:description" content="Instantly visualize your social media campaigns. Switch between Facebook and Instagram layouts to test your ad creative and copy.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/social-media-ad-mockup-preview">
+<link rel="canonical" href="https://website-viewer.github.io/social-media-ad-mockup-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Social Media Ad Mockup Tool",
+  "url": "https://website-viewer.github.io/social-media-ad-mockup-preview",
+  "description": "A cross-platform advertising simulator for Facebook and Instagram sponsored posts, featuring real-time copy editing and image uploads.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Platform Mockup Styles */
+.mockup-wrapper {
+    background: #f0f2f5;
+    padding: 40px 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    min-height: 600px;
+}
+
+/* Facebook Specific */
+.fb-ad {
+    background: #fff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    font-family: Helvetica, Arial, sans-serif;
+    display: none;
+}
+
+.fb-ad.active { display: block; }
+
+.fb-header { padding: 12px 16px; display: flex; gap: 10px; align-items: center; }
+.fb-logo-placeholder { width: 40px; height: 40px; background: #ddd; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#666; }
+.fb-meta { flex: 1; }
+.fb-name { font-weight: 700; font-size: 15px; color: #050505; display: block; }
+.fb-sponsored { font-size: 12px; color: #65676b; display: flex; align-items: center; gap: 4px; }
+
+.fb-body { padding: 4px 16px 12px; font-size: 15px; line-height: 1.33; color: #050505; white-space: pre-wrap; }
+.fb-media { background: #f0f2f5; width: 100%; aspect-ratio: 1.91 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.fb-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.fb-footer { padding: 10px 16px; background: #f0f2f5; display: flex; justify-content: space-between; align-items: center; }
+.fb-footer-text { flex: 1; }
+.fb-headline { font-weight: 700; font-size: 14px; display: block; color: #050505; }
+.fb-link { font-size: 12px; color: #65676b; text-transform: uppercase; }
+.fb-cta-btn { background: #e4e6eb; color: #050505; padding: 8px 12px; border-radius: 6px; font-weight: 600; font-size: 14px; }
+
+/* Instagram Specific */
+.ig-ad {
+    background: #fff;
+    width: 100%;
+    max-width: 450px;
+    border: 1px solid #dbdbdb;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: none;
+}
+
+.ig-ad.active { display: block; }
+
+.ig-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+.ig-user { display: flex; align-items: center; gap: 10px; }
+.ig-avatar { width: 32px; height: 32px; background: #ddd; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; }
+.ig-name { font-weight: 600; font-size: 14px; }
+.ig-sponsored { font-size: 12px; display: block; margin-top: -2px; }
+
+.ig-media { width: 100%; aspect-ratio: 1/1; background: #fafafa; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.ig-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.ig-cta-strip { background: #0095f6; color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px; cursor: pointer; }
+.ig-actions { padding: 12px 16px 8px; font-size: 24px; display: flex; gap: 16px; }
+.ig-caption { padding: 0 16px 12px; font-size: 14px; line-height: 1.5; }
+.ig-caption b { margin-right: 5px; }
+
+.platform-toggle {
+    display: flex;
+    background: #e2e8f0;
+    padding: 4px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.toggle-btn.active {
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: var(--color-primary);
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Ads</a><span>/</span>
+            <span style="color:var(--color-text-light)">Social Ad Mockup</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(99, 102, 241, 0.1); color:var(--color-primary);">📢 Multi-Platform</div>
+            <h1>Social Media Ad Mockup Tool</h1>
+            <p>Design and preview your sponsored posts for Facebook and Instagram in one place. Test how your creative assets and copy perform across different social ecosystems.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="tool-card">
+                <div class="tool-card-title">🎨 Ad Creative Editor</div>
+                
+                <label>Target Platform</label>
+                <div class="platform-toggle">
+                    <button class="toggle-btn active" onclick="switchPlatform('fb', this)">Facebook</button>
+                    <button class="toggle-btn" onclick="switchPlatform('ig', this)">Instagram</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Brand Name</label>
+                    <input type="text" id="brandName" class="form-control" placeholder="My Awesome Brand" oninput="updateMockup()">
+                </div>
+
+                <div class="form-group">
+                    <label>Primary Text / Caption</label>
+                    <textarea id="adText" class="form-control" rows="4" placeholder="Write your ad copy here..." oninput="updateMockup()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Ad Image</label>
+                    <input type="file" id="adImage" class="form-control" accept="image/*" onchange="previewMedia(this)">
+                </div>
+
+                <div class="form-group fb-only">
+                    <label>Headline</label>
+                    <input type="text" id="adHeadline" class="form-control" placeholder="Get 20% Off Today!" oninput="updateMockup()">
+                </div>
+
+                <div class="form-group">
+                    <label>Call to Action (CTA)</label>
+                    <select id="adCta" class="form-control" onchange="updateMockup()">
+                        <option value="Shop Now">Shop Now</option>
+                        <option value="Learn More">Learn More</option>
+                        <option value="Sign Up">Sign Up</option>
+                        <option value="Book Now">Book Now</option>
+                        <option value="Download">Download</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mockup-wrapper">
+                <div class="fb-ad active" id="fbMockup">
+                    <div class="fb-header">
+                        <div class="fb-logo-placeholder" id="fbLogo">M</div>
+                        <div class="fb-meta">
+                            <span class="fb-name" id="fbBrandDisplay">My Awesome Brand</span>
+                            <span class="fb-sponsored">Sponsored · 🌐</span>
+                        </div>
+                        <div style="color:#65676b; font-weight:bold;">...</div>
+                    </div>
+                    <div class="fb-body" id="fbTextDisplay">Your ad's primary text will appear here. Focus on the value proposition in the first two lines.</div>
+                    <div class="fb-media" id="fbMediaDisplay">1.91:1 Image Preview</div>
+                    <div class="fb-footer">
+                        <div class="fb-footer-text">
+                            <span class="fb-link">WEBSITE.COM</span>
+                            <span class="fb-headline" id="fbHeadDisplay">Get 20% Off Today!</span>
+                        </div>
+                        <div class="fb-cta-btn" id="fbCtaDisplay">Shop Now</div>
+                    </div>
+                </div>
+
+                <div class="ig-ad" id="igMockup">
+                    <div class="ig-header">
+                        <div class="ig-user">
+                            <div class="ig-avatar" id="igLogo">M</div>
+                            <div>
+                                <span class="ig-name" id="igBrandDisplay">myawesomebrand</span>
+                                <span class="ig-sponsored">Sponsored</span>
+                            </div>
+                        </div>
+                        <div style="font-weight:bold;">...</div>
+                    </div>
+                    <div class="ig-media" id="igMediaDisplay">1:1 Square Preview</div>
+                    <div class="ig-cta-strip">
+                        <span id="igCtaDisplay">Shop Now</span>
+                        <span>&rsaquo;</span>
+                    </div>
+                    <div class="ig-actions">
+                        <span>♡</span> <span>💬</span> <span>➡️</span>
+                    </div>
+                    <div class="ig-caption">
+                        <b id="igBrandCap">myawesomebrand</b> <span id="igTextDisplay">Your caption appears here...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Create High-Converting Mockups</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>The Visual First Rule</h4>
+                    <p>On Instagram, the image is 90% of the ad. Ensure your media is eye-catching before users even read the caption.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Mobile Optimization</h4>
+                    <p>Most social users are on mobile. Keep your Facebook headlines short to prevent them from being cut off on smaller screens.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Direct CTA Match</h4>
+                    <p>Ensure your "Call to Action" button matches the intent of your copy. Use "Download" for lead magnets and "Shop Now" for products.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Branding Consistency</h4>
+                    <p>Use your actual brand name and logo style to see how your colors clash or complement the platform's native UI.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> Ad Specification Guide</h2>
+            <p>Meta's advertising ecosystem uses different ratios for different placements. Use this tool to check vertical and horizontal alignments.</p>
+            <ul>
+                <li><strong>Facebook Feed:</strong> Best with 1.91:1 or 1:1 ratios. Primary text appears above the image.</li>
+                <li><strong>Instagram Feed:</strong> Best with 1:1 or 4:5 ratios. The CTA button is a prominent blue/action strip below the media.</li>
+                <li><strong>Text Limits:</strong> While Meta removed the 20% text rule for images, keeping text minimal in images still improves delivery.</li>
+                <li><strong>Headlines:</strong> Limited to 27 characters on some mobile views before truncation occurs.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function switchPlatform(type, btn) {
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const fbMock = document.getElementById('fbMockup');
+    const igMock = document.getElementById('igMockup');
+    const fbFields = document.querySelectorAll('.fb-only');
+
+    if(type === 'fb') {
+        fbMock.classList.add('active');
+        igMock.classList.remove('active');
+        fbFields.forEach(f => f.style.display = 'block');
+    } else {
+        fbMock.classList.remove('active');
+        igMock.classList.add('active');
+        fbFields.forEach(f => f.style.display = 'none');
+    }
+}
+
+function updateMockup() {
+    const brand = document.getElementById('brandName').value || "My Awesome Brand";
+    const text = document.getElementById('adText').value || "Your ad copy goes here...";
+    const head = document.getElementById('adHeadline').value || "Get 20% Off Today!";
+    const cta = document.getElementById('adCta').value;
+
+    // Facebook
+    document.getElementById('fbBrandDisplay').innerText = brand;
+    document.getElementById('fbTextDisplay').innerText = text;
+    document.getElementById('fbHeadDisplay').innerText = head;
+    document.getElementById('fbCtaDisplay').innerText = cta;
+    document.getElementById('fbLogo').innerText = brand.charAt(0).toUpperCase();
+
+    // Instagram
+    const igBrand = brand.toLowerCase().replace(/\s+/g, '');
+    document.getElementById('igBrandDisplay').innerText = igBrand;
+    document.getElementById('igBrandCap').innerText = igBrand;
+    document.getElementById('igTextDisplay').innerText = text;
+    document.getElementById('igCtaDisplay').innerText = cta;
+    document.getElementById('igLogo').innerText = brand.charAt(0).toUpperCase();
+}
+
+function previewMedia(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgHtml = `<img src="${e.target.result}" alt="Ad Creative">`;
+            document.getElementById('fbMediaDisplay').innerHTML = imgHtml;
+            document.getElementById('igMediaDisplay').innerHTML = imgHtml;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+window.onload = updateMockup;
+</script>
+</body>
+</html>
