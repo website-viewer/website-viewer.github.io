@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facebook Ad Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview your Facebook Ads before they go live. Test primary text, headlines, and call-to-action buttons with our realistic Facebook Ad mockup tool to ensure high engagement.">
+<meta name="keywords" content="facebook ad preview, fb ad mockup, facebook ad simulator, meta ads preview, social media ad tester, facebook ad copy tool">
+<meta property="og:title" content="Facebook Ad Preview Tool — Website Viewer">
+<meta property="og:description" content="Visualize your Facebook and Meta campaigns. Check character counts and see how your images and copy look in a realistic mobile news feed environment.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/facebook-ad-preview">
+<link rel="canonical" href="https://website-viewer.github.io/facebook-ad-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Facebook Ad Preview Tool",
+  "url": "https://website-viewer.github.io/facebook-ad-preview",
+  "description": "A comprehensive preview tool for Meta/Facebook advertisers to visualize primary text, headlines, and CTAs in a mobile feed simulation.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Facebook Ad Specific Styles */
+.fb-ad-mockup {
+    background: #fff;
+    border: 1px solid #dddfe2;
+    border-radius: 8px;
+    max-width: 500px;
+    margin: 0 auto;
+    font-family: Helvetica, Arial, sans-serif;
+    color: #1c1e21;
+    overflow: hidden;
+}
+
+.fb-ad-header {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fb-avatar {
+    width: 40px;
+    height: 40px;
+    background: #e4e6eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #65676b;
+}
+
+.fb-page-info {
+    flex: 1;
+}
+
+.fb-page-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.fb-sponsored {
+    font-size: 12px;
+    color: #65676b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.fb-primary-text {
+    padding: 0 12px 12px;
+    font-size: 15px;
+    line-height: 1.33;
+    white-space: pre-wrap;
+}
+
+.fb-media-area {
+    background: #f0f2f5;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.fb-media-area img {
+    width: 100%;
+    display: block;
+}
+
+.fb-footer-info {
+    background: #f0f2f5;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #dddfe2;
+}
+
+.fb-text-meta {
+    flex: 1;
+    padding-right: 10px;
+}
+
+.fb-display-url {
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #65676b;
+    margin-bottom: 2px;
+}
+
+.fb-headline {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.fb-desc {
+    font-size: 14px;
+    color: #65676b;
+}
+
+.fb-cta-btn {
+    background: #e4e6eb;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.char-counter {
+    font-size: 11px;
+    text-align: right;
+    margin-top: 2px;
+    color: var(--color-text-muted);
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Social Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Facebook Ad Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(24, 119, 242, 0.1); color:#1877f2; border-color:#1877f2;">📱 Meta Ads</div>
+            <h1>Facebook Ad Preview Tool</h1>
+            <p>Design your Facebook News Feed ads with precision. Test your primary text, headlines, and visuals in a realistic mobile environment.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="tool-card">
+                <div class="tool-card-title">✍️ Ad Creative Editor</div>
+                
+                <div class="form-group">
+                    <label>Page Name</label>
+                    <input type="text" id="pageName" class="form-control" placeholder="Your Brand Name" oninput="updateFbAd()">
+                </div>
+
+                <div class="form-group">
+                    <label>Primary Text</label>
+                    <textarea id="primaryText" class="form-control" rows="3" placeholder="Tell people what your ad is about..." oninput="updateFbAd()"></textarea>
+                    <div class="char-counter" id="primaryCount">0 characters</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ad Image</label>
+                    <input type="file" id="adImage" class="form-control" accept="image/*" onchange="handleImage(this)">
+                </div>
+
+                <div class="form-group">
+                    <label>Headline</label>
+                    <input type="text" id="headline" class="form-control" placeholder="Catchy Headline" oninput="updateFbAd()">
+                    <div class="char-counter" id="headCount">0 / 40</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description (Optional)</label>
+                    <input type="text" id="description" class="form-control" placeholder="Additional details..." oninput="updateFbAd()">
+                </div>
+
+                <div class="form-group">
+                    <label>Call to Action (CTA)</label>
+                    <select id="ctaSelect" class="form-control" onchange="updateFbAd()">
+                        <option value="Learn More">Learn More</option>
+                        <option value="Shop Now">Shop Now</option>
+                        <option value="Sign Up">Sign Up</option>
+                        <option value="Book Now">Book Now</option>
+                        <option value="Contact Us">Contact Us</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-card-title">👁️ Mobile Feed Preview</div>
+                <div style="background:#f0f2f5; padding:20px; border-radius:8px;">
+                    <div class="fb-ad-mockup">
+                        <div class="fb-ad-header">
+                            <div class="fb-avatar" id="prevAvatar">B</div>
+                            <div class="fb-page-info">
+                                <div class="fb-page-name" id="prevPageName">Your Brand Name</div>
+                                <div class="fb-sponsored">Sponsored · 🌐</div>
+                            </div>
+                        </div>
+                        <div class="fb-primary-text" id="prevPrimary">This is where your primary ad text will appear to your target audience.</div>
+                        <div class="fb-media-area" id="imagePreview">
+                            <span style="color:#65676b">Image Preview (1080 x 1080)</span>
+                        </div>
+                        <div class="fb-footer-info">
+                            <div class="fb-text-meta">
+                                <div class="fb-display-url">WWW.EXAMPLE.COM</div>
+                                <div class="fb-headline" id="prevHeadline">Your Catchy Headline</div>
+                                <div class="fb-desc" id="prevDesc">Optional description text.</div>
+                            </div>
+                            <div class="fb-cta-btn" id="prevCta">Learn More</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Optimize Facebook Ads</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>The "Three Line" Rule</h4>
+                    <p>On mobile, Facebook truncates primary text after 3 lines. Put your most important hook or offer at the very beginning.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Eye-Catching Visuals</h4>
+                    <p>Use high-contrast images. Square (1:1) or Vertical (4:5) ratios occupy the most screen real estate in the news feed.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Strong Headlines</h4>
+                    <p>Keep headlines under 40 characters. Longer headlines may be cut off, especially on smaller mobile devices.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Relevant CTAs</h4>
+                    <p>Match your button to your goal. "Shop Now" works best for e-commerce, while "Learn More" is better for high-ticket services.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> Meta Ad Specs & Best Practices</h2>
+            <p>Meta (Facebook & Instagram) ads are highly visual. Our preview tool helps you ensure that your text and images work together without being cluttered.</p>
+            <ul>
+                <li><strong>Aspect Ratio:</strong> 1:1 (Square) is recommended for Feed ads. 9:16 is recommended for Stories and Reels.</li>
+                <li><strong>Text Overlay:</strong> While the "20% text rule" is no longer strictly enforced, ads with less text on the image itself generally perform better.</li>
+                <li><strong>Character Limits:</strong> Primary Text: 125 characters (recommended); Headline: 40 characters; Description: 30 characters.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updateFbAd() {
+    const page = document.getElementById('pageName').value || 'Your Brand Name';
+    const primary = document.getElementById('primaryText').value || 'This is where your primary ad text will appear...';
+    const head = document.getElementById('headline').value || 'Your Catchy Headline';
+    const desc = document.getElementById('description').value || 'Optional description text.';
+    const cta = document.getElementById('ctaSelect').value;
+
+    document.getElementById('prevPageName').innerText = page;
+    document.getElementById('prevAvatar').innerText = page.charAt(0).toUpperCase();
+    document.getElementById('prevPrimary').innerText = primary;
+    document.getElementById('prevHeadline').innerText = head;
+    document.getElementById('prevDesc').innerText = desc;
+    document.getElementById('prevCta').innerText = cta;
+
+    // Validation
+    document.getElementById('primaryCount').innerText = primary.length + ' characters';
+    const hCount = document.getElementById('headCount');
+    hCount.innerText = head.length + ' / 40';
+    hCount.style.color = head.length > 40 ? 'var(--color-error)' : 'var(--color-text-muted)';
+}
+
+function handleImage(input) {
+    const preview = document.getElementById('imagePreview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Ad Preview">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+window.onload = updateFbAd;
+</script>
+</body>
+</html>
