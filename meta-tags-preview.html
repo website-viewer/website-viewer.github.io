@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meta Tags Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your meta tags appear on Google, Facebook, and X. Test your SEO titles, descriptions, and Open Graph images with our real-time snippet simulator.">
+<meta name="keywords" content="meta tags preview, seo checker, social media preview, google snippet simulator, open graph tester, twitter card preview">
+<meta property="og:title" content="Meta Tags Preview Tool — Website Viewer">
+<meta property="og:description" content="Optimize your website's search and social presence. See exactly how your meta tags render across the web's biggest platforms.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/meta-tags-preview">
+<link rel="canonical" href="https://website-viewer.github.io/meta-tags-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Meta Tags Preview Tool",
+  "url": "https://website-viewer.github.io/meta-tags-preview",
+  "description": "An all-in-one SEO and Social Media preview tool to visualize meta tags for Google Search, Facebook Open Graph, and X Cards.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Meta Tag Specific Styles */
+.preview-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.preview-box {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--color-border);
+}
+
+.platform-label {
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--color-primary);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+}
+
+/* Google Result */
+.google-result {
+    font-family: arial, sans-serif;
+    max-width: 600px;
+}
+.google-url { color: #202124; font-size: 14px; margin-bottom: 4px; display: block; }
+.google-title { color: #1a0dab; font-size: 20px; text-decoration: none; display: block; margin-bottom: 3px; cursor: pointer; }
+.google-title:hover { text-decoration: underline; }
+.google-desc { color: #4d5156; font-size: 14px; line-height: 1.58; }
+
+/* Facebook Card */
+.fb-card {
+    border: 1px solid #dddfe2;
+    max-width: 500px;
+    font-family: Helvetica, Arial, sans-serif;
+}
+.fb-img { width: 100%; height: 260px; background: #f0f2f5; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.fb-img img { width: 100%; height: 100%; object-fit: cover; }
+.fb-text { padding: 10px 12px; background: #f0f2f5; border-top: 1px solid #dddfe2; }
+.fb-domain { color: #606770; font-size: 12px; text-transform: uppercase; }
+.fb-title { color: #1d2129; font-weight: 600; font-size: 16px; display: block; margin: 4px 0; }
+.fb-desc { color: #606770; font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* X Card */
+.x-card {
+    border: 1px solid #2f3336;
+    border-radius: 16px;
+    max-width: 500px;
+    overflow: hidden;
+    background: #000;
+    color: #e7e9ea;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+.x-img { width: 100%; height: 250px; background: #202327; display: flex; align-items: center; justify-content: center; }
+.x-img img { width: 100%; height: 100%; object-fit: cover; }
+.x-content { padding: 12px; }
+.x-domain { color: #71767b; font-size: 13px; }
+.x-title { font-weight: 400; font-size: 15px; margin-top: 2px; }
+
+.char-indicator {
+    font-size: 11px;
+    float: right;
+    margin-top: 4px;
+}
+.status-good { color: var(--color-success); }
+.status-warn { color: var(--color-error); }
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">SEO Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Meta Tags Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(16, 185, 129, 0.1); color:var(--color-success);">🔍 SEO Optimizer</div>
+            <h1>Meta Tags Preview Tool</h1>
+            <p>Ensure your website looks professional across the web. Edit your title, description, and image to visualize your brand's search and social presence instantly.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="tool-card">
+                <div class="tool-card-title">📝 Meta Content Editor</div>
+                
+                <div class="form-group">
+                    <label>Page Title</label>
+                    <input type="text" id="mTitle" class="form-control" placeholder="The Best Tool for SEO..." oninput="updateAll()">
+                    <div id="titleCount" class="char-indicator">0 / 60</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Meta Description</label>
+                    <textarea id="mDesc" class="form-control" rows="4" placeholder="Briefly describe your page content for search engines..." oninput="updateAll()"></textarea>
+                    <div id="descCount" class="char-indicator">0 / 160</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Canonical URL</label>
+                    <input type="text" id="mUrl" class="form-control" placeholder="https://example.com/page" oninput="updateAll()">
+                </div>
+
+                <div class="form-group">
+                    <label>OG Image (1200x630 Recommended)</label>
+                    <input type="file" id="mImage" class="form-control" accept="image/*" onchange="previewImage(this)">
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <div class="preview-box">
+                    <div class="platform-label">🌐 Google Search Result</div>
+                    <div class="google-result">
+                        <span class="google-url" id="gPrevUrl">https://example.com › page</span>
+                        <span class="google-title" id="gPrevTitle">Page Title Example</span>
+                        <p class="google-desc" id="gPrevDesc">Your meta description will appear here. Google typically displays up to 155-160 characters before truncating.</p>
+                    </div>
+                </div>
+
+                <div class="preview-box">
+                    <div class="platform-label">🔵 Facebook Share Preview</div>
+                    <div class="fb-card">
+                        <div class="fb-img" id="fbImgPrev"><span>No Image Selected</span></div>
+                        <div class="fb-text">
+                            <div class="fb-domain" id="fbDomainPrev">EXAMPLE.COM</div>
+                            <div class="fb-title" id="fbTitlePrev">Page Title Example</div>
+                            <div class="fb-desc" id="fbDescPrev">Meta description for social sharing.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-box">
+                    <div class="platform-label">𝕏 Post Preview</div>
+                    <div class="x-card">
+                        <div class="x-img" id="xImgPrev"><span>No Image Selected</span></div>
+                        <div class="x-content">
+                            <div class="x-domain" id="xDomainPrev">example.com</div>
+                            <div class="x-title" id="xTitlePrev">Page Title Example</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> Why Meta Tags Matter for SEO</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Click-Through Rate</h4>
+                    <p>Meta titles and descriptions are your "sales pitch" in search results. A well-optimized snippet can increase organic clicks significantly.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Social Engagement</h4>
+                    <p>Open Graph (OG) tags control how your links look on social media. Without them, platforms might pull irrelevant images or text from your site.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Search Ranking</h4>
+                    <p>While meta descriptions aren't a direct ranking factor, the CTR they generate tells Google your page is relevant to the user's query.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Branding</h4>
+                    <p>Consistent meta tags ensure that your brand voice and visual identity are preserved across Google, Facebook, X, and LinkedIn.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> Character Limit Best Practices</h2>
+            <ul>
+                <li><strong>Title Tags:</strong> Keep between 50-60 characters. This ensures the title isn't cut off in search results on most devices.</li>
+                <li><strong>Meta Descriptions:</strong> Aim for 120-155 characters. This range provides enough detail to be useful while remaining fully visible.</li>
+                <li><strong>OG Images:</strong> Use 1200 x 630 pixels. This aspect ratio (1.91:1) is the standard for high-resolution previews on social feeds.</li>
+                <li><strong>Canonical URL:</strong> Always include a canonical tag to prevent duplicate content issues if your page can be accessed via multiple URLs.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updateAll() {
+    const title = document.getElementById('mTitle').value || "Page Title Example";
+    const desc = document.getElementById('mDesc').value || "Your meta description will appear here. Google typically displays up to 155-160 characters before truncating.";
+    const rawUrl = document.getElementById('mUrl').value || "https://example.com/page";
+    
+    let domain = "example.com";
+    try {
+        const urlObj = new URL(rawUrl);
+        domain = urlObj.hostname;
+    } catch(e) {}
+
+    // Character Counts
+    const tCount = document.getElementById('titleCount');
+    tCount.innerText = `${title.length} / 60`;
+    tCount.className = `char-indicator ${title.length > 60 ? 'status-warn' : 'status-good'}`;
+
+    const dCount = document.getElementById('descCount');
+    dCount.innerText = `${desc.length} / 160`;
+    dCount.className = `char-indicator ${desc.length > 160 ? 'status-warn' : 'status-good'}`;
+
+    // Google Preview
+    document.getElementById('gPrevTitle').innerText = title;
+    document.getElementById('gPrevDesc').innerText = desc;
+    document.getElementById('gPrevUrl').innerText = rawUrl.replace('https://', '').replace(/\//g, ' › ');
+
+    // FB Preview
+    document.getElementById('fbTitlePrev').innerText = title;
+    document.getElementById('fbDescPrev').innerText = desc;
+    document.getElementById('fbDomainPrev').innerText = domain.toUpperCase();
+
+    // X Preview
+    document.getElementById('xTitlePrev').innerText = title;
+    document.getElementById('xDomainPrev').innerText = domain.toLowerCase();
+}
+
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fb = document.getElementById('fbImgPrev');
+            const x = document.getElementById('xImgPrev');
+            fb.innerHTML = `<img src="${e.target.result}" alt="OG Image">`;
+            x.innerHTML = `<img src="${e.target.result}" alt="X Card Image">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+window.onload = updateAll;
+</script>
+</body>
+</html>
