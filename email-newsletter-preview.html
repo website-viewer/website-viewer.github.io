@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Newsletter Preview Tool — Website Viewer</title>
+<meta name="description" content="Test your email newsletter before sending. Preview your subject line, preheader text, and sender name across desktop and mobile devices to optimize open rates.">
+<meta name="keywords" content="email newsletter preview, email marketing tool, subject line tester, preheader preview, newsletter mockup, email open rate optimization">
+<meta property="og:title" content="Email Newsletter Preview Tool — Website Viewer">
+<meta property="og:description" content="Visualize your email newsletter appearance. Test your subject and snippet across multiple devices to ensure a professional look.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/email-newsletter-preview">
+<link rel="canonical" href="https://website-viewer.github.io/email-newsletter-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Email Newsletter Preview Tool",
+  "url": "https://website-viewer.github.io/email-newsletter-preview",
+  "description": "A comprehensive preview tool for email marketers to visualize their newsletter's metadata and content across various screen sizes and inbox styles.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Specific Styles for Newsletter Tool */
+.newsletter-card {
+    background: var(--color-bg-darker);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 992px) {
+    .preview-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Simulated Desktop Inbox (Gmail style) */
+.inbox-mockup {
+    background: #f6f8fc;
+    border-radius: 8px;
+    padding: 1rem;
+    color: #202124;
+    font-family: 'Roboto', Arial, sans-serif;
+    border: 1px solid #e0e0e0;
+}
+
+.inbox-row {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid #f1f3f4;
+    font-size: 14px;
+}
+
+.inbox-sender {
+    width: 150px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.inbox-content {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.inbox-subject { font-weight: bold; }
+.inbox-preheader { color: #5f6368; }
+
+/* Mobile Preview */
+.mobile-mockup {
+    max-width: 320px;
+    margin: 0 auto;
+    background: #fff;
+    border: 8px solid #333;
+    border-radius: 24px;
+    height: 500px;
+    overflow-y: auto;
+}
+
+.mobile-header {
+    background: var(--color-primary);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+.newsletter-content-preview {
+    padding: 15px;
+    font-family: var(--font-sans);
+}
+
+/* Meter Styles */
+.meter-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.meter-bar { flex: 1; height: 5px; background: #1e293b; border-radius: 3px; overflow: hidden; }
+.meter-fill { height: 100%; width: 0%; border-radius: 3px; transition: width 0.3s; }
+.meter-label { font-size: 0.75rem; color: var(--color-text-muted); min-width: 50px; text-align: right; }
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Email Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Newsletter Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge">📧 Preview Suite</div>
+            <h1>Email Newsletter Preview Tool</h1>
+            <p>Don't send another campaign without seeing it first. Test your sender name, subject line, and preheader for maximum impact.</p>
+        </div>
+
+        <div class="preview-grid">
+            <div class="tool-card">
+                <div class="tool-card-title">⚙️ Campaign Configuration</div>
+                
+                <div class="form-group">
+                    <label>Sender Name</label>
+                    <input type="text" id="senderInput" class="form-control" placeholder="e.g., Weekly Insights" oninput="updatePreview()">
+                </div>
+
+                <div class="form-group">
+                    <label>Subject Line</label>
+                    <input type="text" id="subjectInput" class="form-control" placeholder="Your engaging subject..." oninput="updatePreview()">
+                    <div class="meter-row">
+                        <div class="meter-bar"><div id="subjectMeter" class="meter-fill"></div></div>
+                        <div id="subjectCount" class="meter-label">0/60</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Preheader Text (Snippet)</label>
+                    <textarea id="preheaderInput" class="form-control" rows="2" placeholder="The text that follows the subject line..." oninput="updatePreview()"></textarea>
+                    <div class="meter-row">
+                        <div class="meter-bar"><div id="preheaderMeter" class="meter-fill"></div></div>
+                        <div id="preheaderCount" class="meter-label">0/90</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Newsletter Body (HTML or Text)</label>
+                    <textarea id="bodyInput" class="form-control" rows="6" placeholder="Paste your newsletter content here to see how it renders on mobile..." oninput="updatePreview()"></textarea>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-card-title">👁️ Inbox & Device Preview</div>
+                
+                <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">Inbox View (Desktop Simulator)</p>
+                <div class="inbox-mockup">
+                    <div class="inbox-row">
+                        <div class="inbox-sender" id="prevSender">Sender Name</div>
+                        <div class="inbox-content">
+                            <span class="inbox-subject" id="prevSubject">Subject Line Goes Here</span>
+                            <span class="inbox-preheader" id="prevPreheader"> — This is the preheader text...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="font-size: 0.85rem; color: var(--color-text-muted); margin: 2rem 0 1rem;">Mobile Content Preview</p>
+                <div class="mobile-mockup">
+                    <div class="mobile-header">Email Newsletter Preview</div>
+                    <div id="prevBody" class="newsletter-content-preview">
+                        Your newsletter content will appear here...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Use the Newsletter Previewer</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Enter Metadata</h4>
+                    <p>Fill in your Sender Name, Subject, and Preheader. These are the three most important factors for your open rate.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Monitor Length</h4>
+                    <p>Use the color-coded meters to ensure your text isn't truncated. Green is optimal, orange is risky, red is too long.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Paste Content</h4>
+                    <p>Add your email body to the content area to see how the formatting holds up on a narrow mobile viewport.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Refine and Copy</h4>
+                    <p>Adjust your copy in real-time until the inbox preview looks perfect before moving to your ESP (Mailchimp, Klaviyo, etc.).</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> Why Preview Your Newsletter?</h2>
+            <p>In a crowded inbox, you only have a split second to capture attention. Most users decide whether to open an email based solely on the <strong>Subject Line</strong> and <strong>Preheader</strong>. If these elements are cut off by the email client, your message might be ignored or deleted.</p>
+            <ul>
+                <li><strong>The Subject Line:</strong> Most desktop clients show about 60 characters, while mobile clients may only show 30-40.</li>
+                <li><strong>The Preheader:</strong> This is the "snippet" text that follows the subject. If you don't define it, clients will pull the first text from your email (often "View in browser"), which looks unprofessional.</li>
+                <li><strong>Sender Recognition:</strong> Ensure your sender name is recognizable and consistent to build trust with your audience.</li>
+                <li><strong>Mobile Responsiveness:</strong> Over 50% of emails are opened on mobile devices. Testing your content layout in a narrow view is essential.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updatePreview() {
+    const sender = document.getElementById('senderInput').value || 'Sender Name';
+    const subject = document.getElementById('subjectInput').value || 'Subject Line Goes Here';
+    const preheader = document.getElementById('preheaderInput').value || 'This is the preheader text...';
+    const body = document.getElementById('bodyInput').value || 'Your newsletter content will appear here...';
+
+    // Update Text
+    document.getElementById('prevSender').innerText = sender;
+    document.getElementById('prevSubject').innerText = subject;
+    document.getElementById('prevPreheader').innerText = ' — ' + preheader;
+    document.getElementById('prevBody').innerHTML = body.replace(/\n/g, '<br>');
+
+    // Update Meters
+    updateMeter('subject', subject.length, 60);
+    updateMeter('preheader', preheader.length, 90);
+}
+
+function updateMeter(type, count, limit) {
+    const meter = document.getElementById(type + 'Meter');
+    const label = document.getElementById(type + 'Count');
+    const percentage = Math.min((count / limit) * 100, 100);
+    
+    meter.style.width = percentage + '%';
+    label.innerText = count + '/' + limit;
+
+    if (count > limit) {
+        meter.style.background = 'var(--color-error)';
+    } else if (count > limit * 0.8) {
+        meter.style.background = '#f59e0b'; // Warning orange
+    } else {
+        meter.style.background = 'var(--color-success)';
+    }
+}
+
+// Initialize
+updatePreview();
+</script>
+</body>
+</html>
