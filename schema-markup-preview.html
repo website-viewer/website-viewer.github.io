@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schema Markup Preview & Visualizer — Website Viewer</title>
+<meta name="description" content="Validate and visualize your JSON-LD Schema Markup. Paste your code to see a human-readable preview of your structured data before deploying it to your site.">
+<meta name="keywords" content="schema markup preview, json-ld visualizer, structured data tester, schema validator mockup, seo schema tool, rich results preview">
+<meta property="og:title" content="Schema Markup Preview & Visualizer — Website Viewer">
+<meta property="og:description" content="Turn complex JSON-LD code into clear visual data. Check your Organization, Product, and Article schema with our professional SEO tool.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/schema-markup-preview">
+<link rel="canonical" href="https://website-viewer.github.io/schema-markup-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Schema Markup Preview Tool",
+  "url": "https://website-viewer.github.io/schema-markup-preview",
+  "description": "A diagnostic SEO tool that parses JSON-LD schema markup and provides a visual representation of the entity relationships.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Schema Visualizer Styles */
+.schema-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .schema-workspace { grid-template-columns: 1fr; }
+}
+
+.code-input-area {
+    font-family: 'Courier New', Courier, monospace;
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 15px;
+    border-radius: 8px;
+    width: 100%;
+    height: 400px;
+    border: 1px solid #334155;
+    resize: none;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.visual-node {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.node-header {
+    background: var(--color-bg-light);
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.node-type {
+    font-weight: bold;
+    color: var(--color-primary);
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.node-body {
+    padding: 15px;
+}
+
+.property-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    padding: 6px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+}
+
+.property-row:last-child { border-bottom: none; }
+
+.prop-key {
+    color: #64748b;
+    font-weight: 600;
+}
+
+.prop-val {
+    color: #0f172a;
+    word-break: break-all;
+}
+
+.error-msg {
+    background: #fef2f2;
+    color: #b91c1c;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    display: none;
+    font-size: 13px;
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">SEO Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Schema Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(124, 58, 237, 0.1); color:#7c3aed; border-color:#7c3aed;">🧱 Structured Data</div>
+            <h1>Schema Markup Preview</h1>
+            <p>Don't just trust the code; see the structure. Paste your JSON-LD script below to visualize the entities, relationships, and data points that search engines will parse.</p>
+        </div>
+
+        <div class="schema-workspace">
+            <div class="tool-card">
+                <div class="tool-card-title">⌨️ Paste JSON-LD Code</div>
+                <textarea id="jsonInput" class="code-input-area" placeholder='{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Website Viewer",
+  "url": "https://example.com",
+  "logo": "https://example.com/logo.png"
+}'></textarea>
+                <div id="errorBox" class="error-msg"></div>
+                <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="visualizeSchema()">Visualize Markup</button>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-card-title">👁️ Data Relationship View</div>
+                <div id="visualOutput">
+                    <p style="color:#64748b; text-align:center; padding:40px;">Enter your JSON-LD code and click visualize to see the structured data tree.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> Why Visualizing Schema is Critical</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Syntax Validation</h4>
+                    <p>A single missing comma or bracket can break your entire schema. Our visualizer ensures your JSON is valid before you upload it.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Relationship Check</h4>
+                    <p>Schema is about entities. Visualizing helps you see if your <code>Product</code> is correctly nested within its <code>Organization</code>.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Rich Result Eligibility</h4>
+                    <p>By seeing the data as a search engine does, you can spot missing required fields like <code>Price</code> or <code>Author</code> that trigger rich results.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Developer Collaboration</h4>
+                    <p>Visual previews are easier for non-technical stakeholders to review than raw code, ensuring marketing and dev teams are aligned.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> JSON-LD Best Practices</h2>
+            <ul>
+                <li><strong>Always use JSON-LD:</strong> Google prefers JSON-LD over Microdata or RDFa because it is easier to maintain and doesn't clutter your HTML.</li>
+                <li><strong>Context is Key:</strong> Ensure your <code>@context</code> is always set to <code>https://schema.org</code>.</li>
+                <li><strong>Nesting:</strong> Use the <code>@id</code> attribute to link related entities across different parts of your page to build a "knowledge graph".</li>
+                <li><strong>Test Live:</strong> After visualizing here, always run your final URL through Google's official Rich Results Test.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function visualizeSchema() {
+    const input = document.getElementById('jsonInput').value.trim();
+    const output = document.getElementById('visualOutput');
+    const errorBox = document.getElementById('errorBox');
+    
+    errorBox.style.display = 'none';
+    output.innerHTML = '';
+
+    if (!input) {
+        output.innerHTML = '<p style="color:#64748b; text-align:center; padding:40px;">No data to visualize.</p>';
+        return;
+    }
+
+    try {
+        const data = JSON.parse(input);
+        renderNode(data, output);
+    } catch (e) {
+        errorBox.innerText = "Invalid JSON: " + e.message;
+        errorBox.style.display = 'block';
+    }
+}
+
+function renderNode(obj, container) {
+    const node = document.createElement('div');
+    node.className = 'visual-node';
+    
+    const type = obj['@type'] || 'Object';
+    node.innerHTML = `
+        <div class="node-header">
+            <span class="node-type">${type}</span>
+            <span style="font-size:10px; color:#94a3b8;">Entity</span>
+        </div>
+        <div class="node-body" id="body-${Math.random().toString(36).substr(2, 9)}"></div>
+    `;
+    
+    container.appendChild(node);
+    const body = node.querySelector('.node-body');
+
+    for (let key in obj) {
+        if (key === '@context' || key === '@type') continue;
+
+        const row = document.createElement('div');
+        row.className = 'property-row';
+        
+        const keySpan = document.createElement('span');
+        keySpan.className = 'prop-key';
+        keySpan.innerText = key;
+        
+        const valSpan = document.createElement('span');
+        valSpan.className = 'prop-val';
+
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            if (Array.isArray(obj[key])) {
+                valSpan.innerText = `Array (${obj[key].length} items)`;
+                obj[key].forEach(item => {
+                    if(typeof item === 'object') renderNode(item, body);
+                    else valSpan.innerText += ' ' + item;
+                });
+            } else {
+                renderNode(obj[key], body);
+            }
+        } else {
+            valSpan.innerText = obj[key];
+        }
+
+        row.appendChild(keySpan);
+        row.appendChild(valSpan);
+        body.appendChild(row);
+    }
+}
+
+window.onload = () => {
+    // Optional: Auto-visualize if there's content in placeholder
+    if(document.getElementById('jsonInput').value) visualizeSchema();
+};
+</script>
+</body>
+</html>
