@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>X (Twitter) Ad Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview your X (Twitter) Ads before they go live. Test post text, website cards, and images with our realistic X ad mockup tool to ensure high engagement.">
+<meta name="keywords" content="twitter ad preview, x ad mockup, twitter ad simulator, x marketing tool, social media ad preview, twitter card validator">
+<meta property="og:title" content="X (Twitter) Ad Preview Tool — Website Viewer">
+<meta property="og:description" content="Visualize your X (Twitter) campaigns in a realistic feed. Check character counts and see how your website cards look before you post.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/twitter-ad-preview">
+<link rel="canonical" href="https://website-viewer.github.io/twitter-ad-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "X (Twitter) Ad Preview Tool",
+  "url": "https://website-viewer.github.io/twitter-ad-preview",
+  "description": "A professional tool for X advertisers to visualize post text, website cards, and media in a realistic feed simulation.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* X (Twitter) Specific Styles */
+.x-mockup-container {
+    background: #000; /* Dark mode by default for X simulation */
+    border: 1px solid #2f3336;
+    border-radius: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #e7e9ea;
+    padding: 12px;
+}
+
+.x-ad-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
+.x-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #333;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.x-user-info {
+    font-size: 15px;
+}
+
+.x-name { font-weight: 700; color: #f7f9f9; }
+.x-handle { color: #71767b; margin-left: 4px; }
+.x-promoted { font-size: 13px; color: #71767b; display: block; margin-top: 2px; }
+
+.x-post-text {
+    font-size: 15px;
+    line-height: 20px;
+    margin-bottom: 12px;
+    white-space: pre-wrap;
+    padding-left: 52px;
+}
+
+.x-card {
+    margin-left: 52px;
+    border: 1px solid #2f3336;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.x-card-media {
+    aspect-ratio: 1.91 / 1;
+    background: #202327;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.x-card-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.x-card-content {
+    padding: 12px;
+    background: #000;
+}
+
+.x-card-site { font-size: 13px; color: #71767b; margin-bottom: 2px; }
+.x-card-title { font-size: 15px; color: #e7e9ea; }
+
+.x-actions {
+    margin-left: 52px;
+    display: flex;
+    justify-content: space-between;
+    max-width: 350px;
+    margin-top: 12px;
+    color: #71767b;
+    font-size: 13px;
+}
+
+.char-counter {
+    font-size: 12px;
+    text-align: right;
+    margin-top: 4px;
+    color: var(--color-text-muted);
+}
+.char-error { color: #f4212e; font-weight: bold; }
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Social Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">X (Twitter) Ad Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(255,255,255,0.1); color:#fff; border-color:#fff;">𝕏 Ad Preview</div>
+            <h1>X (Twitter) Ad Preview Tool</h1>
+            <p>X is a platform of speed. Use this tool to check your 280-character limit and ensure your Website Card imagery drives clicks.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="tool-card">
+                <div class="tool-card-title">📝 Compose Ad</div>
+                
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input type="text" id="xName" class="form-control" placeholder="Brand Name" oninput="updateX()">
+                </div>
+
+                <div class="form-group">
+                    <label>Post Text (Max 280)</label>
+                    <textarea id="xText" class="form-control" rows="4" placeholder="What's happening?" oninput="updateX()"></textarea>
+                    <div id="xCount" class="char-counter">0 / 280</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Card Image (1.91:1)</label>
+                    <input type="file" id="xFile" class="form-control" accept="image/*" onchange="previewXMedia(this)">
+                </div>
+
+                <div class="form-group">
+                    <label>Website Title</label>
+                    <input type="text" id="xCardTitle" class="form-control" placeholder="Catchy Website Title" oninput="updateX()">
+                </div>
+
+                <div class="form-group">
+                    <label>Website URL (Display)</label>
+                    <input type="text" id="xUrl" class="form-control" placeholder="example.com" oninput="updateX()">
+                </div>
+            </div>
+
+            <div class="tool-card" style="background: #15202b;">
+                <div class="tool-card-title" style="color:#fff;">📱 Live Preview</div>
+                <div class="x-mockup-container">
+                    <div class="x-ad-header">
+                        <div class="x-avatar" id="prevAvatar">B</div>
+                        <div class="x-user-info">
+                            <span class="x-name" id="prevName">Brand Name</span>
+                            <span class="x-handle" id="prevHandle">@brandname</span>
+                            <span class="x-promoted">↗ Promoted</span>
+                        </div>
+                    </div>
+                    
+                    <div class="x-post-text" id="prevText">Your ad text will appear here. Keep it snappy and use relevant #hashtags for better reach.</div>
+                    
+                    <div class="x-card">
+                        <div class="x-card-media" id="xMediaDisplay">
+                            <span style="color:#71767b; font-size:14px;">800 x 418 Image</span>
+                        </div>
+                        <div class="x-card-content">
+                            <div class="x-card-site" id="prevUrl">example.com</div>
+                            <div class="x-card-title" id="prevCardTitle">Catchy Website Title</div>
+                        </div>
+                    </div>
+
+                    <div class="x-actions">
+                        <span>💬 12</span> <span>🔁 45</span> <span>❤️ 128</span> <span>📊 12K</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> Optimizing X (Twitter) Ads</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>The First 70 Characters</h4>
+                    <p>On X, users decide to engage in seconds. Put your "hook" or your main value proposition in the very first sentence.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Website Cards</h4>
+                    <p>Using a Website Card instead of a raw link increases Click-Through Rate (CTR) by making the entire image clickable.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Hashtag Discipline</h4>
+                    <p>Don't overdo it. 1 or 2 relevant hashtags are enough. Over-tagging can make your ad look like spam and reduce trust.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Visual Clarity</h4>
+                    <p>Avoid busy images with lots of small text. Use bold, clear visuals that communicate your message even without reading the caption.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> X Ad Specifications</h2>
+            <p>X offers several ad formats, but the Website Card is the gold standard for driving traffic to your landing page.</p>
+            <ul>
+                <li><strong>Post Text:</strong> Up to 280 characters. URLs take up 23 characters regardless of their actual length.</li>
+                <li><strong>Image Ratio:</strong> 1.91:1 for Website Cards. 1:1 is also supported for some carousel formats.</li>
+                <li><strong>File Size:</strong> Maximum 5MB for images. Use JPG or PNG for the best quality rendering.</li>
+                <li><strong>Engagement:</strong> X ads allow for public conversation. Ensure your brand is ready to reply to comments for better "Ad Quality" scores.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updateX() {
+    const name = document.getElementById('xName').value || 'Brand Name';
+    const text = document.getElementById('xText').value || 'Your ad text will appear here...';
+    const title = document.getElementById('xCardTitle').value || 'Catchy Website Title';
+    const url = document.getElementById('xUrl').value || 'example.com';
+
+    document.getElementById('prevName').innerText = name;
+    document.getElementById('prevHandle').innerText = '@' + name.toLowerCase().replace(/\s/g, '');
+    document.getElementById('prevAvatar').innerText = name.charAt(0).toUpperCase();
+    document.getElementById('prevText').innerText = text;
+    document.getElementById('prevCardTitle').innerText = title;
+    document.getElementById('prevUrl').innerText = url.toLowerCase();
+
+    // Counter
+    const countEl = document.getElementById('xCount');
+    countEl.innerText = text.length + ' / 280';
+    if(text.length > 280) countEl.classList.add('char-error');
+    else countEl.classList.remove('char-error');
+}
+
+function previewXMedia(input) {
+    const display = document.getElementById('xMediaDisplay');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            display.innerHTML = `<img src="${e.target.result}" alt="X Ad Media">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+window.onload = updateX;
+</script>
+</body>
+</html>
