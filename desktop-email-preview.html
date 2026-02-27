@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desktop Email Preview Tool — Website Viewer</title>
+<meta name="description" content="Test and preview your HTML emails for desktop clients. Check how your newsletter layout, subject lines, and images appear on large screens to ensure a professional desktop experience.">
+<meta name="keywords" content="desktop email preview, email newsletter tester, outlook email preview, gmail web mockup, responsive email desktop view, email marketing tool">
+<meta property="og:title" content="Desktop Email Preview Tool — Website Viewer">
+<meta property="og:description" content="Visualize your email campaigns on desktop viewports. Test wide-screen layouts and ensure your HTML emails are perfectly optimized for desktop users.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/desktop-email-preview">
+<link rel="canonical" href="https://website-viewer.github.io/desktop-email-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Desktop Email Preview Tool",
+  "url": "https://website-viewer.github.io/desktop-email-preview",
+  "description": "A professional desktop email simulator for testing HTML marketing campaigns, subject line lengths, and wide-screen layout rendering.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Desktop Preview Specific Styles */
+.desktop-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.desktop-monitor-frame {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    border: 12px solid #334155;
+    position: relative;
+    width: 100%;
+    box-shadow: var(--shadow-xl);
+    margin: 0 auto;
+}
+
+.monitor-stand {
+    width: 120px;
+    height: 40px;
+    background: #334155;
+    margin: -12px auto 0;
+    border-radius: 0 0 10px 10px;
+}
+
+.monitor-base {
+    width: 240px;
+    height: 10px;
+    background: #1e293b;
+    margin: 0 auto;
+    border-radius: 10px 10px 0 0;
+}
+
+.browser-ui {
+    background: #f1f3f4;
+    height: 35px;
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 8px;
+}
+
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-r { background: #ff5f56; }
+.dot-y { background: #ffbd2e; }
+.dot-g { background: #27c93f; }
+
+.desktop-screen {
+    background: white;
+    height: 650px;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid #ddd;
+}
+
+#desktopIframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.meta-info-strip {
+    background: #fff;
+    padding: 15px 25px;
+    border-bottom: 1px solid #e5e7eb;
+    font-family: var(--font-sans);
+}
+
+.desktop-subj-display {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 5px;
+}
+
+.desktop-sender-display {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.validation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Email Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Desktop Email Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge">💻 Large Screen</div>
+            <h1>Desktop Email Preview Tool</h1>
+            <p>While mobile is growing, many B2B and corporate users still engage with emails on desktop. Test your wide-screen layouts and Outlook-specific rendering here.</p>
+        </div>
+
+        <div class="desktop-workspace">
+            <div class="tool-card">
+                <div class="tool-card-title">⚙️ Desktop Campaign Settings</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Email Subject Line</label>
+                        <input type="text" id="subjIn" class="form-control" placeholder="Our Q4 Product Update is Live" oninput="updateDesktop()">
+                    </div>
+                    <div class="form-group">
+                        <label>From Name</label>
+                        <input type="text" id="senderIn" class="form-control" placeholder="Marketing Team" oninput="updateDesktop()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>HTML Content</label>
+                    <textarea id="htmlIn" class="form-control" rows="8" style="font-family: var(--font-mono);" placeholder="Paste your <html> code here..." oninput="updateDesktop()"></textarea>
+                </div>
+
+                <div class="validation-grid">
+                    <div class="alert-box" style="padding:10px; font-size:0.8rem; background:rgba(16, 185, 129, 0.1);">
+                        ✅ <strong>Subject Status:</strong> <span id="subjStatus">Optimal</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="loadDesktopSample()">Load Sample Template</button>
+                </div>
+            </div>
+
+            <div class="desktop-monitor-frame">
+                <div class="browser-ui">
+                    <div class="dot dot-r"></div>
+                    <div class="dot dot-y"></div>
+                    <div class="dot dot-g"></div>
+                    <div style="background:#fff; height:20px; flex:1; border-radius:10px; margin-left:10px;"></div>
+                </div>
+                <div class="desktop-screen">
+                    <div class="meta-info-strip">
+                        <div class="desktop-subj-display" id="prevSubj">Subject Line</div>
+                        <div class="desktop-sender-display" id="prevSender">From: Sender Name &lt;info@company.com&gt;</div>
+                    </div>
+                    <iframe id="desktopIframe" title="Desktop Email Rendering"></iframe>
+                </div>
+            </div>
+            <div class="monitor-stand"></div>
+            <div class="monitor-base"></div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Optimize for Desktop</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Monitor Width</h4>
+                    <p>Standard desktop emails should be capped at 600px - 650px wide to ensure they don't look stretched on ultra-wide monitors.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Longer Subjects</h4>
+                    <p>Desktop clients allow for longer subject lines (up to 60+ chars). Use this extra space to add more context or urgency.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Verify Images</h4>
+                    <p>High-resolution screens can make low-quality images look blurry. Use 2x sized images for Retina desktop displays.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Outlook Check</h4>
+                    <p>Desktop Outlook often ignores background images. Always set a fallback background color for your main containers.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> Desktop Rendering Nuances</h2>
+            <p>Previewing on desktop is about more than just screen size; it's about the environment. Desktop users often have multiple windows open, meaning your email is competing for high-level cognitive attention.</p>
+            <ul>
+                <li><strong>Typography:</strong> Ensure your line-height is at least 1.5x on desktop to prevent text from looking cramped on large screens.</li>
+                <li><strong>The Sidebar:</strong> Most desktop clients (like Outlook or Apple Mail) have a sidebar. Our 100% width preview simulates how your email adapts if the user resizes their preview pane.</li>
+                <li><strong>Hover States:</strong> Unlike mobile, desktop users can hover over links. Test your button hover effects to add a layer of interactivity.</li>
+                <li><strong>Loading:</strong> Desktop users usually have faster connections, but that shouldn't be an excuse for unoptimized HTML. Keep your file size under 102KB to avoid Gmail clipping.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updateDesktop() {
+    const subj = document.getElementById('subjIn').value || 'Subject Line';
+    const sender = document.getElementById('senderIn').value || 'Sender Name';
+    const html = document.getElementById('htmlIn').value;
+    const iframe = document.getElementById('desktopIframe');
+
+    document.getElementById('prevSubj').innerText = subj;
+    document.getElementById('prevSender').innerText = 'From: ' + sender + ' <info@company.com>';
+
+    // Character Limit Logic
+    const status = document.getElementById('subjStatus');
+    if (subj.length > 60) {
+        status.innerText = 'May be truncated (60+ chars)';
+        status.parentElement.style.background = 'rgba(239, 68, 68, 0.1)';
+    } else {
+        status.innerText = 'Optimal Length';
+        status.parentElement.style.background = 'rgba(16, 185, 129, 0.1)';
+    }
+
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(html || '<div style="padding:40px; text-align:center; font-family:sans-serif; color:#999;">Enter your HTML code to see the desktop preview...</div>');
+    doc.close();
+}
+
+function loadDesktopSample() {
+    document.getElementById('subjIn').value = "🚀 New Feature Alert: Desktop Preview is Live!";
+    document.getElementById('senderIn').value = "Website Viewer";
+    document.getElementById('htmlIn').value = `<!DOCTYPE html>
+<html>
+<body style="margin: 0; padding: 40px; background: #f9fafb; font-family: 'Segoe UI', Tahoma, sans-serif;">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td align="center">
+                <table width="600" border="0" cellspacing="0" cellpadding="0" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <tr>
+                        <td style="padding: 40px; text-align: center; background: #6366f1; border-radius: 8px 8px 0 0; color: #ffffff;">
+                            <h1 style="margin: 0; font-size: 28px;">Hello Desktop User!</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px; line-height: 1.6; color: #374151;">
+                            <h2 style="color: #111827;">Perfect for Desktop Clients</h2>
+                            <p>This layout is locked at 600px wide, which is the industry standard for desktop email newsletters. It ensures that your lines of text don't become too long and difficult to read on wide monitors.</p>
+                            <p>Use this tool to test:</p>
+                            <ul>
+                                <li>Multi-column layouts</li>
+                                <li>Desktop-specific images</li>
+                                <li>Hover effects on buttons</li>
+                            </ul>
+                            <div style="text-align: center; margin-top: 30px;">
+                                <a href="#" style="background: #6366f1; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">View in Browser</a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+    updateDesktop();
+}
+
+window.onload = loadDesktopSample;
+</script>
+</body>
+</html>
