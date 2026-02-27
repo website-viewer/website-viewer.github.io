@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gmail Email Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your email subject line and preheader text appear in the Gmail inbox. Simulate desktop and mobile Gmail views to optimize your email marketing open rates.">
+<meta name="keywords" content="gmail preview tool, email subject line preview, preheader text simulator, email marketing tools, gmail inbox mockup">
+<meta property="og:title" content="Gmail Email Preview Tool — Website Viewer">
+<meta property="og:description" content="Optimize your email open rates by seeing exactly how your subject line and preheader look in Gmail across desktop and mobile devices.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/gmail-email-preview">
+<link rel="canonical" href="https://website-viewer.github.io/gmail-email-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Gmail Email Preview Tool",
+  "url": "https://website-viewer.github.io/gmail-email-preview",
+  "description": "Preview how your email appears in the Gmail inbox. Simulate authentic Gmail desktop and mobile layouts with sender name, subject line, and preheader previews.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Gmail UI Palette */
+:root {
+  --gm-bg: #f6f8fc;
+  --gm-white: #ffffff;
+  --gm-border: #e0e0e0;
+  --gm-text-primary: #202124;
+  --gm-text-secondary: #5f6368;
+  --gm-blue: #1a73e8;
+  --gm-hover: #f1f3f4;
+  --gm-unread: #ffffff;
+  --gm-read: #f2f6fc;
+  --gm-star: #fbbc04;
+}
+
+/* Tool Specific Layout */
+.gm-inbox-shell {
+  background: var(--gm-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+}
+
+.gm-header {
+  background: var(--gm-white);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gm-border);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.gm-search {
+  flex: 1;
+  background: #f1f3f4;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: var(--gm-text-secondary);
+  font-size: 14px;
+}
+
+/* Desktop Preview */
+.gm-row {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 40px;
+  background: var(--gm-white);
+  border-bottom: 1px solid var(--gm-border);
+  cursor: default;
+  font-size: 14px;
+}
+
+.gm-row:hover {
+  box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+  z-index: 1;
+}
+
+.gm-row-icons {
+  display: flex;
+  gap: 12px;
+  color: #c0c0c0;
+  margin-right: 15px;
+  font-size: 18px;
+}
+
+.gm-sender {
+  width: 180px;
+  font-weight: 700;
+  color: var(--gm-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 20px;
+}
+
+.gm-content {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  gap: 5px;
+}
+
+.gm-subject {
+  font-weight: 700;
+  color: var(--gm-text-primary);
+}
+
+.gm-preheader {
+  color: var(--gm-text-secondary);
+}
+
+.gm-date {
+  width: 60px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gm-text-primary);
+}
+
+/* Mobile Preview */
+.gm-mobile-shell {
+  max-width: 380px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin: 0 auto;
+}
+
+.gm-mobile-row {
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.gm-mobile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1a73e8;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.gm-mobile-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.gm-mobile-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+
+.gm-mobile-sender {
+  font-weight: 700;
+  font-size: 15px;
+  color: #202124;
+}
+
+.gm-mobile-date {
+  font-size: 12px;
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.gm-mobile-subject {
+  font-weight: 700;
+  font-size: 14px;
+  color: #202124;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.gm-mobile-snippet {
+  font-size: 13px;
+  color: #5f6368;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.star-active { color: var(--gm-star) !important; }
+.attach-icon { font-size: 14px; margin-left: auto; color: #5f6368; }
+
+/* Existing Meter Styles from DDG tool */
+.meter-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+.meter-bar{flex:1;height:5px;background:#1e293b;border-radius:3px;overflow:hidden}
+.meter-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
+.meter-label{font-size:.72rem;color:var(--color-text-muted);white-space:nowrap;min-width:55px;text-align:right}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+<div class="tool-page">
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Email Tools</a><span>/</span>
+    <span style="color:var(--color-text-light)">Gmail Preview Tool</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge" style="background:rgba(234,67,53,0.1);border-color:rgba(234,67,53,0.3);color:#ea4335;">✉️ Gmail Mockup</div>
+    <h1>Gmail Email Preview Tool</h1>
+    <p>See how your email subject and preheader will appear in your subscribers' Gmail inboxes. Optimize for clicks before you hit send.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Email Configuration</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Sender Name</label>
+        <input id="emSender" type="text" class="form-control" placeholder="Company Name or Person" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Received Time</label>
+        <input id="emTime" type="text" class="form-control" placeholder="e.g. 10:45 AM" oninput="updatePreview()">
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Subject Line</label>
+      <input id="emSubject" type="text" class="form-control" placeholder="Your exciting subject line here..." oninput="updatePreview()">
+      <div class="meter-row">
+        <div class="meter-bar"><div class="meter-fill" id="subjectMeter" style="width:0%"></div></div>
+        <div class="meter-label" id="subjectCount">0 / 60</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Preheader Text (Snippet)</label>
+      <textarea id="emPreheader" class="form-control" rows="2" placeholder="This text follows the subject line..." oninput="updatePreview()"></textarea>
+      <div class="meter-row">
+        <div class="meter-bar"><div class="meter-fill" id="preheaderMeter" style="width:0%"></div></div>
+        <div class="meter-label" id="preheaderCount">0 / 100</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status Flags</label>
+        <div style="display:flex; gap: 15px; margin-top: 8px;">
+          <label style="display:flex; align-items:center; gap:5px; text-transform:none; font-size:14px; cursor:pointer;">
+            <input type="checkbox" id="checkStar" onchange="updatePreview()"> Starred
+          </label>
+          <label style="display:flex; align-items:center; gap:5px; text-transform:none; font-size:14px; cursor:pointer;">
+            <input type="checkbox" id="checkAttach" onchange="updatePreview()"> Attachment
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Gmail Inbox Preview</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
+      <div class="device-toggle">
+        <button class="dtog active" id="btnDesktop" onclick="setDevice('desktop')">🖥 Desktop</button>
+        <button class="dtog" id="btnMobile" onclick="setDevice('mobile')">📱 Mobile</button>
+      </div>
+    </div>
+
+    <div id="previewWrap" style="background:var(--gm-bg); border-radius:12px; padding:2rem; min-height:200px;">
+      </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the Gmail Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box">
+        <div class="step-num">01</div>
+        <h4>Enter Sender Info</h4>
+        <p>Type the name your subscribers will see. Use a name they recognize to build trust immediately.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">02</div>
+        <h4>Craft Your Subject</h4>
+        <p>Input your subject line. Our meter helps you stay under 60 characters to avoid truncation in most views.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">03</div>
+        <h4>Add Preheader</h4>
+        <p>The preheader acts as a secondary subject line. Use it to provide context and encourage clicks.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">04</div>
+        <h4>Check Mobile</h4>
+        <p>Over 50% of emails are opened on mobile. Switch views to ensure your message isn't cut off mid-word.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Gmail Email Previews</h2>
+    <p>Gmail remains the world's most popular email provider. How your email appears in the inbox—specifically the <strong>Sender Name</strong>, <strong>Subject Line</strong>, and <strong>Snippet</strong> (Preheader)—is the single biggest factor in your open rates.</p>
+    <ul>
+      <li><strong>Desktop view:</strong> Shows subject and snippet on one line. Truncation depends on screen width.</li>
+      <li><strong>Mobile view:</strong> Typically stacks subject above the snippet, allowing for more vertical visibility.</li>
+      <li><strong>Recommended Subject Length:</strong> Aim for <strong>40-60 characters</strong> for maximum compatibility.</li>
+      <li><strong>The "Secret" Preheader:</strong> If you don't define a preheader, Gmail will pull the first text it finds in your email (like "View in browser" or navigation links).</li>
+      <li><strong>Icons:</strong> Stars and attachment paperclips take up horizontal space and can impact how much text is shown.</li>
+    </ul>
+  </div>
+</div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="header.js"></script>
+<script src="footer.js"></script>
+<script>
+let currentDevice = 'desktop';
+
+function setDevice(device) {
+  currentDevice = device;
+  document.getElementById('btnDesktop').classList.toggle('active', device === 'desktop');
+  document.getElementById('btnMobile').classList.toggle('active', device === 'mobile');
+  updatePreview();
+}
+
+function updateMeter(id, meterId, countId, limit) {
+  const val = document.getElementById(id).value.length;
+  const pct = Math.min((val / limit) * 100, 100);
+  const meter = document.getElementById(meterId);
+  meter.style.width = pct + '%';
+  
+  if(val === 0) meter.style.background = '#334155';
+  else if(val <= limit) meter.style.background = '#10b981';
+  else meter.style.background = '#ef4444';
+  
+  document.getElementById(countId).textContent = `${val} / ${limit}`;
+}
+
+function updatePreview() {
+  const sender = document.getElementById('emSender').value || 'Your Name';
+  const time = document.getElementById('emTime').value || '11:20 AM';
+  const subject = document.getElementById('emSubject').value || 'Email Subject Line Here';
+  const preheader = document.getElementById('emPreheader').value || 'Preview text follows...';
+  const isStarred = document.getElementById('checkStar').checked;
+  const hasAttach = document.getElementById('checkAttach').checked;
+
+  updateMeter('emSubject', 'subjectMeter', 'subjectCount', 60);
+  updateMeter('emPreheader', 'preheaderMeter', 'preheaderCount', 100);
+
+  const wrap = document.getElementById('previewWrap');
+  
+  if (currentDevice === 'desktop') {
+    wrap.innerHTML = `
+      <div class="gm-inbox-shell">
+        <div class="gm-header">
+          <span style="font-size:20px; color:#5f6368">☰</span>
+          <div class="gm-search">Search mail</div>
+        </div>
+        <div class="gm-row">
+          <div class="gm-row-icons">
+            <span style="font-size:16px">☐</span>
+            <span class="${isStarred ? 'star-active' : ''}">${isStarred ? '★' : '☆'}</span>
+          </div>
+          <div class="gm-sender">${sender}</div>
+          <div class="gm-content">
+            <span class="gm-subject">${subject}</span>
+            <span class="gm-preheader">- ${preheader}</span>
+            ${hasAttach ? '<span class="attach-icon">📎</span>' : ''}
+          </div>
+          <div class="gm-date">${time}</div>
+        </div>
+        <div class="gm-row" style="opacity:0.3; filter:grayscale(1);">
+          <div class="gm-row-icons"><span>☐</span><span>☆</span></div>
+          <div class="gm-sender">Another Sender</div>
+          <div class="gm-content"><span class="gm-subject">Another subject line...</span></div>
+          <div class="gm-date">9:15 AM</div>
+        </div>
+      </div>
+    `;
+  } else {
+    wrap.innerHTML = `
+      <div class="gm-mobile-shell">
+        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:15px;">
+          <span style="color:#5f6368">☰</span>
+          <div style="background:#f1f3f4; border-radius:24px; padding:8px 20px; flex:1; font-size:14px; color:#5f6368;">Search in mail</div>
+          <div style="width:32px; height:32px; border-radius:50%; background:#ea4335; color:#fff; display:flex; align-items:center; justify-content:center;">${sender.charAt(0).toUpperCase()}</div>
+        </div>
+        <div class="gm-mobile-row">
+          <div class="gm-mobile-avatar">${sender.charAt(0).toUpperCase()}</div>
+          <div class="gm-mobile-text">
+            <div class="gm-mobile-header-row">
+              <span class="gm-mobile-sender">${sender}</span>
+              <span class="gm-mobile-date">${time}</span>
+            </div>
+            <span class="gm-mobile-subject">${subject}</span>
+            <div style="display:flex; align-items:flex-end;">
+              <span class="gm-mobile-snippet">${preheader}</span>
+              <span class="${isStarred ? 'star-active' : ''}" style="margin-left:auto; color:#ccc;">${isStarred ? '★' : '☆'}</span>
+            </div>
+          </div>
+        </div>
+        <div class="gm-mobile-row" style="opacity:0.4">
+          <div class="gm-mobile-avatar" style="background:#ccc">A</div>
+          <div class="gm-mobile-text">
+            <div class="gm-mobile-header-row"><span class="gm-mobile-sender">Promotions</span><span class="gm-mobile-date">Yesterday</span></div>
+            <span class="gm-mobile-subject">A marketing email here</span>
+            <span class="gm-mobile-snippet">Context for surrounding emails...</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updatePreview();
+});
+</script>
+</body>
+</html>
