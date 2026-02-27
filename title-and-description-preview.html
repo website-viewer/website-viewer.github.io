@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google Title & Description Preview Tool — Website Viewer</title>
+<meta name="description" content="Optimize your Google search presence. Use our real-time snippet preview tool to write SEO titles and meta descriptions that get more clicks without being truncated.">
+<meta name="keywords" content="title tag preview, meta description tool, google snippet simulator, seo title checker, serp preview, search engine optimization tool">
+<meta property="og:title" content="Google Title & Description Preview Tool — Website Viewer">
+<meta property="og:description" content="Visualize your search appearance. Check character limits for titles and meta descriptions with our professional SEO simulator.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/title-and-description-preview">
+<link rel="canonical" href="https://website-viewer.github.io/title-and-description-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Title and Description Preview Tool",
+  "url": "https://website-viewer.github.io/title-and-description-preview",
+  "description": "An SEO utility to simulate Google Search results and validate character counts for title tags and meta descriptions.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Snippet Specific Styles */
+.snippet-preview-card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.google-snippet {
+    font-family: arial, sans-serif;
+    text-align: left;
+}
+
+.google-url-row {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #202124;
+    margin-bottom: 4px;
+}
+
+.google-favicon {
+    width: 26px;
+    height: 26px;
+    background: #f1f3f4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.google-title {
+    color: #1a0dab;
+    font-size: 20px;
+    line-height: 1.3;
+    margin-bottom: 3px;
+    display: block;
+    word-wrap: break-word;
+    cursor: pointer;
+}
+
+.google-title:hover {
+    text-decoration: underline;
+}
+
+.google-desc {
+    color: #4d5156;
+    font-size: 14px;
+    line-height: 1.58;
+    word-wrap: break-word;
+}
+
+.counter-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.counter-label {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-indicator {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    color: white;
+}
+
+.bg-success { background: var(--color-success); }
+.bg-warning { background: #f59e0b; }
+.bg-error { background: var(--color-error); }
+
+.editor-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">SEO Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Title & Description Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(59, 130, 246, 0.1); color:var(--color-info);">🔍 SERP Optimizer</div>
+            <h1>Title & Description Preview</h1>
+            <p>Your first impression in search results. Fine-tune your meta tags to ensure they are the perfect length for Google's desktop and mobile displays.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="tool-card">
+                <div class="tool-card-title">📝 Snippet Editor</div>
+                
+                <div class="editor-panel">
+                    <div class="form-group">
+                        <label>SEO Title Tag</label>
+                        <input type="text" id="seoTitle" class="form-control" placeholder="Enter your page title..." oninput="updateSnippet()">
+                        <div class="counter-group">
+                            <span id="titleStatus" class="status-indicator bg-warning">Too Short</span>
+                            <span class="counter-label" id="titleCount">0 / 60 chars</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Meta Description</label>
+                        <textarea id="seoDesc" class="form-control" rows="5" placeholder="Enter your meta description..." oninput="updateSnippet()"></textarea>
+                        <div class="counter-group">
+                            <span id="descStatus" class="status-indicator bg-warning">Too Short</span>
+                            <span class="counter-label" id="descCount">0 / 160 chars</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Display URL / Path</label>
+                        <input type="text" id="seoUrl" class="form-control" placeholder="https://example.com/your-page" oninput="updateSnippet()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-card" style="background: #f8f9fa;">
+                <div class="tool-card-title">👁️ Google Desktop Preview</div>
+                <div class="snippet-preview-card">
+                    <div class="google-snippet">
+                        <div class="google-url-row">
+                            <div class="google-favicon" id="prevFav">G</div>
+                            <span id="prevUrlDisplay">https://example.com › your-page</span>
+                        </div>
+                        <span class="google-title" id="prevTitle">Example Page Title - Brand Name</span>
+                        <p class="google-desc" id="prevDesc">Write a meta description that is informative and includes a call to action. This text helps users understand what they will find on your page before they click.</p>
+                    </div>
+                </div>
+                <p style="font-size: 12px; color: #666; margin-top: 15px; text-align: center;">
+                    * Google may rewrite titles and descriptions based on the search query.
+                </p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Optimize Your Snippet</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Target Keywords</h4>
+                    <p>Place your most important keywords at the beginning of the title. Google gives more weight to the first few words.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>The Sweet Spot</h4>
+                    <p>Keep titles between 50-60 characters and descriptions between 120-155 characters to avoid the "..." ellipsis.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Actionable Descriptions</h4>
+                    <p>Think of your meta description as an ad. Use words like "Discover," "Learn," or "Buy" to encourage users to click.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Branding</h4>
+                    <p>Include your brand name at the end of the title tag, separated by a pipe (|) or hyphen (-) for better brand recognition.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> SEO Meta Specs</h2>
+            <p>Search engines use the Title Tag and Meta Description to understand the content of your page and display it to users.</p>
+            <ul>
+                <li><strong>Title Tag:</strong> The clickable blue link. It is the most important on-page SEO element after content quality.</li>
+                <li><strong>Meta Description:</strong> The summary snippet below the title. While not a direct ranking factor, it greatly impacts CTR.</li>
+                <li><strong>Truncation:</strong> Google measures width in pixels (approx. 600px for titles). Using "W" takes more space than "i", so character counts are a close estimate.</li>
+                <li><strong>Canonicalization:</strong> Ensure your URL path looks clean and follows a logical hierarchy to improve user trust.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updateSnippet() {
+    const title = document.getElementById('seoTitle').value || "Example Page Title - Brand Name";
+    const desc = document.getElementById('seoDesc').value || "Write a meta description that is informative and includes a call to action. This text helps users understand what they will find on your page before they click.";
+    const url = document.getElementById('seoUrl').value || "https://example.com/your-page";
+
+    // Update Preview
+    document.getElementById('prevTitle').innerText = title;
+    document.getElementById('prevDesc').innerText = desc;
+    document.getElementById('prevUrlDisplay').innerText = url.replace('https://', '').replace(/\//g, ' › ');
+    document.getElementById('prevFav').innerText = (url.split('//')[1] || 'G').charAt(0).toUpperCase();
+
+    // Title Logic
+    const tLen = title.length;
+    const tCount = document.getElementById('titleCount');
+    const tStatus = document.getElementById('titleStatus');
+    tCount.innerText = `${tLen} / 60 chars`;
+    
+    if (tLen === 0) { tStatus.innerText = "Empty"; tStatus.className = "status-indicator bg-error"; }
+    else if (tLen < 40) { tStatus.innerText = "Too Short"; tStatus.className = "status-indicator bg-warning"; }
+    else if (tLen <= 60) { tStatus.innerText = "Perfect"; tStatus.className = "status-indicator bg-success"; }
+    else { tStatus.innerText = "Too Long"; tStatus.className = "status-indicator bg-error"; }
+
+    // Desc Logic
+    const dLen = desc.length;
+    const dCount = document.getElementById('descCount');
+    const dStatus = document.getElementById('descStatus');
+    dCount.innerText = `${dLen} / 160 chars`;
+
+    if (dLen === 0) { dStatus.innerText = "Empty"; dStatus.className = "status-indicator bg-error"; }
+    else if (dLen < 100) { dStatus.innerText = "Too Short"; dStatus.className = "status-indicator bg-warning"; }
+    else if (dLen <= 160) { dStatus.innerText = "Perfect"; dStatus.className = "status-indicator bg-success"; }
+    else { dStatus.innerText = "Too Long"; dStatus.className = "status-indicator bg-error"; }
+}
+
+window.onload = updateSnippet;
+</script>
+</body>
+</html>
