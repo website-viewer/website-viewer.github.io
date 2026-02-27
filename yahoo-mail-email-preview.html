@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yahoo Mail Email Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview your email subject lines and snippets in the Yahoo Mail inbox. Simulate desktop and mobile views to optimize open rates for Yahoo users.">
+<meta name="keywords" content="yahoo mail preview, email subject line preview, preheader text simulator, yahoo inbox mockup, email marketing tools">
+<meta property="og:title" content="Yahoo Mail Email Preview Tool — Website Viewer">
+<meta property="og:description" content="Test your email subject lines and preheaders specifically for Yahoo Mail. Switch between desktop and mobile views to ensure your message isn't cut off.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/yahoo-mail-email-preview">
+<link rel="canonical" href="https://website-viewer.github.io/yahoo-mail-email-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Yahoo Mail Email Preview Tool",
+  "url": "https://website-viewer.github.io/yahoo-mail-email-preview",
+  "description": "Preview how your email appears in the Yahoo Mail inbox. Simulate authentic Yahoo desktop and mobile layouts with sender name, subject line, and preheader previews.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Yahoo UI Palette */
+:root {
+  --yh-purple: #6001d2;
+  --yh-bg: #f0f3f5;
+  --yh-white: #ffffff;
+  --yh-border: #e0e4e9;
+  --yh-text-primary: #26282a;
+  --yh-text-secondary: #626971;
+  --yh-blue: #0078ff;
+  --yh-unread-bg: #ffffff;
+  --yh-read-bg: #f5f8fa;
+}
+
+/* Tool Specific Layout */
+.yh-inbox-shell {
+  background: var(--yh-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.yh-header {
+  background: var(--yh-white);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--yh-border);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.yh-logo {
+  color: var(--yh-purple);
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: -1px;
+}
+
+.yh-search {
+  flex: 1;
+  background: #f1f3f5;
+  border: 1px solid #d8dee4;
+  border-radius: 4px;
+  padding: 6px 12px;
+  color: #626971;
+  font-size: 14px;
+}
+
+/* Desktop Preview */
+.yh-row {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 44px;
+  background: var(--yh-white);
+  border-bottom: 1px solid #f0f3f5;
+  cursor: default;
+  font-size: 14px;
+  position: relative;
+}
+
+.yh-row:hover {
+  background: #f1f3f5;
+  box-shadow: inset 2px 0 0 var(--yh-purple);
+}
+
+.yh-row-selection {
+  width: 30px;
+  display: flex;
+  gap: 8px;
+  color: #abb4be;
+}
+
+.yh-sender {
+  width: 160px;
+  font-weight: 700;
+  color: var(--yh-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 20px;
+}
+
+.yh-content {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  gap: 4px;
+}
+
+.yh-subject {
+  font-weight: 700;
+  color: var(--yh-text-primary);
+}
+
+.yh-snippet {
+  color: var(--yh-text-secondary);
+}
+
+.yh-date {
+  width: 70px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--yh-text-primary);
+  font-weight: 400;
+}
+
+/* Mobile Preview */
+.yh-mobile-shell {
+  max-width: 380px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin: 0 auto;
+}
+
+.yh-mobile-nav {
+  background: var(--yh-purple);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.yh-mobile-row {
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #f0f3f5;
+}
+
+.yh-mobile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e0e4e9;
+  color: #626971;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.yh-mobile-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.yh-mobile-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.yh-mobile-sender {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1d2228;
+}
+
+.yh-mobile-date {
+  font-size: 12px;
+  color: #626971;
+}
+
+.yh-mobile-subject {
+  font-weight: 700;
+  font-size: 14px;
+  color: #1d2228;
+  margin-bottom: 2px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.yh-mobile-snippet {
+  font-size: 13px;
+  color: #626971;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.star-active { color: #ffca00 !important; }
+
+/* Existing Meter Styles */
+.meter-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+.meter-bar{flex:1;height:5px;background:#1e293b;border-radius:3px;overflow:hidden}
+.meter-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
+.meter-label{font-size:.72rem;color:var(--color-text-muted);white-space:nowrap;min-width:55px;text-align:right}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+<div class="tool-page">
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Email Tools</a><span>/</span>
+    <span style="color:var(--color-text-light)">Yahoo Mail Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge" style="background:rgba(96,1,210,0.1);border-color:rgba(96,1,210,0.3);color:#6001d2;">💜 Yahoo Mockup</div>
+    <h1>Yahoo Mail Email Preview Tool</h1>
+    <p>Check how your email's sender name, subject line, and preheader look in Yahoo Mail. Optimize your marketing campaigns for one of the web's largest email providers.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Email Editor</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Sender Name</label>
+        <input id="emSender" type="text" class="form-control" placeholder="Yahoo News" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Received At</label>
+        <input id="emTime" type="text" class="form-control" placeholder="Tue 11:20 AM" oninput="updatePreview()">
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Subject Line</label>
+      <input id="emSubject" type="text" class="form-control" placeholder="Important account update..." oninput="updatePreview()">
+      <div class="meter-row">
+        <div class="meter-bar"><div class="meter-fill" id="subjectMeter" style="width:0%"></div></div>
+        <div class="meter-label" id="subjectCount">0 / 60</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Preheader Text</label>
+      <textarea id="emPreheader" class="form-control" rows="2" placeholder="This message contains a summary of your..." oninput="updatePreview()"></textarea>
+      <div class="meter-row">
+        <div class="meter-bar"><div class="meter-fill" id="preheaderMeter" style="width:0%"></div></div>
+        <div class="meter-label" id="preheaderCount">0 / 100</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Visual Options</label>
+        <div style="display:flex; gap: 15px; margin-top: 8px;">
+          <label style="display:flex; align-items:center; gap:5px; text-transform:none; font-size:14px; cursor:pointer;">
+            <input type="checkbox" id="checkStar" onchange="updatePreview()"> Starred
+          </label>
+          <label style="display:flex; align-items:center; gap:5px; text-transform:none; font-size:14px; cursor:pointer;">
+            <input type="checkbox" id="checkAttach" onchange="updatePreview()"> Attachment
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Yahoo Inbox Preview</div>
+    <div class="device-toggle">
+      <button class="dtog active" id="btnDesktop" onclick="setDevice('desktop')">🖥 Desktop</button>
+      <button class="dtog" id="btnMobile" onclick="setDevice('mobile')">📱 Mobile</button>
+    </div>
+
+    <div id="previewWrap" style="background:var(--yh-bg); border-radius:12px; padding:2rem; min-height:200px;">
+      </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the Yahoo Mail Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box">
+        <div class="step-num">01</div>
+        <h4>Set Your Brand Name</h4>
+        <p>Enter your "From" name. Yahoo highlights the sender in bold for all unread messages, making it the focal point.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">02</div>
+        <h4>Write Your Subject</h4>
+        <p>Yahoo's desktop view allows for quite a bit of text, but mobile will truncate subjects after about 45 characters.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">03</div>
+        <h4>Add a Preheader</h4>
+        <p>The preheader snippet provides additional context. Use it to complete the thought started in your subject line.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">04</div>
+        <h4>Toggle Views</h4>
+        <p>Switch between the desktop "Classic" feel and the modern mobile app layout to ensure your branding remains consistent.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Yahoo Mail Email Previews</h2>
+    <p>Yahoo Mail remains a primary inbox for millions of users worldwide. Its rendering engine and UI have specific quirks that can affect how your email marketing is perceived.</p>
+    <ul>
+      <li><strong>Bold Typography:</strong> Yahoo uses a very distinct bold font-weight for unread senders and subjects, which can make text look slightly longer than in Gmail.</li>
+      <li><strong>Inbox Organization:</strong> Yahoo often groups messages by date (Today, Yesterday). Our tool helps you see how your timestamp fits into this structure.</li>
+      <li><strong>Mobile Avatars:</strong> If you haven't set a Brand Indicator for Message Identification (BIMI), Yahoo shows a generic circular avatar with the sender's initial.</li>
+      <li><strong>The Snippet:</strong> On desktop, the snippet follows the subject line on the same horizontal plane. On mobile, it appears as a distinct block below the subject.</li>
+    </ul>
+  </div>
+</div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="header.js"></script>
+<script src="footer.js"></script>
+<script>
+let currentDevice = 'desktop';
+
+function setDevice(device) {
+  currentDevice = device;
+  document.getElementById('btnDesktop').classList.toggle('active', device === 'desktop');
+  document.getElementById('btnMobile').classList.toggle('active', device === 'mobile');
+  updatePreview();
+}
+
+function updateMeter(id, meterId, countId, limit) {
+  const val = document.getElementById(id).value.length;
+  const pct = Math.min((val / limit) * 100, 100);
+  const meter = document.getElementById(meterId);
+  meter.style.width = pct + '%';
+  
+  if(val === 0) meter.style.background = '#334155';
+  else if(val <= limit) meter.style.background = '#10b981';
+  else meter.style.background = '#ef4444';
+  
+  document.getElementById(countId).textContent = `${val} / ${limit}`;
+}
+
+function updatePreview() {
+  const sender = document.getElementById('emSender').value || 'Yahoo Style';
+  const time = document.getElementById('emTime').value || '11:20 AM';
+  const subject = document.getElementById('emSubject').value || 'Spring trends are here!';
+  const preheader = document.getElementById('emPreheader').value || 'Find out what is hot this season in our latest guide...';
+  const isStarred = document.getElementById('checkStar').checked;
+  const hasAttach = document.getElementById('checkAttach').checked;
+
+  updateMeter('emSubject', 'subjectMeter', 'subjectCount', 60);
+  updateMeter('emPreheader', 'preheaderMeter', 'preheaderCount', 100);
+
+  const wrap = document.getElementById('previewWrap');
+  
+  if (currentDevice === 'desktop') {
+    wrap.innerHTML = `
+      <div class="yh-inbox-shell">
+        <div class="yh-header">
+          <span class="yh-logo">yahoo!</span>
+          <div class="yh-search">Search</div>
+        </div>
+        <div class="yh-row">
+          <div class="yh-row-selection"><span>☐</span> <span class="${isStarred ? 'star-active' : ''}">${isStarred ? '★' : '☆'}</span></div>
+          <div class="yh-sender">${sender}</div>
+          <div class="yh-content">
+            <span class="yh-subject">${subject}</span>
+            <span class="yh-snippet">- ${preheader}</span>
+          </div>
+          ${hasAttach ? '<span style="color:#626971; font-size:12px; margin-right:10px">📎</span>' : ''}
+          <div class="yh-date">${time}</div>
+        </div>
+        <div class="yh-row" style="opacity:0.3; filter:grayscale(1);">
+          <div class="yh-row-selection"><span>☐</span> <span>☆</span></div>
+          <div class="yh-sender">Yahoo Finance</div>
+          <div class="yh-content"><span class="yh-subject">Market Open: What to watch</span></div>
+          <div class="yh-date">9:30 AM</div>
+        </div>
+      </div>
+    `;
+  } else {
+    wrap.innerHTML = `
+      <div class="yh-mobile-shell">
+        <div class="yh-mobile-nav">
+          <span style="font-size:20px">☰</span>
+          <span class="yh-logo" style="color:#fff; font-size:18px;">yahoo<b>mail</b></span>
+          <span style="font-size:18px">🔍</span>
+        </div>
+        <div class="yh-mobile-row">
+          <div class="yh-mobile-avatar">${sender.charAt(0).toUpperCase()}</div>
+          <div class="yh-mobile-text">
+            <div class="yh-mobile-header">
+              <span class="yh-mobile-sender">${sender}</span>
+              <span class="yh-mobile-date">${time}</span>
+            </div>
+            <span class="yh-mobile-subject">${subject}</span>
+            <div style="display:flex; align-items:flex-end;">
+              <span class="yh-mobile-snippet">${preheader}</span>
+              <span class="${isStarred ? 'star-active' : ''}" style="margin-left:auto; font-size:18px; color:#ccc;">${isStarred ? '★' : '☆'}</span>
+            </div>
+            ${hasAttach ? '<div style="margin-top:4px; font-size:12px; color:#626971">📎 1 attachment</div>' : ''}
+          </div>
+        </div>
+        <div class="yh-mobile-row" style="opacity:0.5">
+          <div class="yh-mobile-avatar">S</div>
+          <div class="yh-mobile-text">
+            <div class="yh-mobile-header"><span class="yh-mobile-sender">Support</span><span class="yh-mobile-date">Yesterday</span></div>
+            <span class="yh-mobile-subject">Your ticket has been closed</span>
+            <span class="yh-mobile-snippet">Thank you for contacting our support team regarding...</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', updatePreview);
+</script>
+</body>
+</html>
