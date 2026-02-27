@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML5 Ad Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview and test your HTML5 banner ads in real-time. Support for standard IAB sizes, responsive containers, and live code rendering for Google Display Network and programmatic ads.">
+<meta name="keywords" content="html5 ad preview, banner ad tester, display ad mockup, google display network preview, iab ad sizes, html5 banner validator">
+<meta property="og:title" content="HTML5 Ad Preview Tool — Website Viewer">
+<meta property="og:description" content="Professional HTML5 ad testing environment. Load your banner code or URL and preview across multiple industry-standard display dimensions.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/html5-ad-preview">
+<link rel="canonical" href="https://website-viewer.github.io/html5-ad-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "HTML5 Ad Preview Tool",
+  "url": "https://website-viewer.github.io/html5-ad-preview",
+  "description": "A technical preview environment for HTML5 banner ads, allowing marketers and developers to test responsiveness and visual integrity across IAB standard sizes.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* HTML5 Ad Preview Specific Styles */
+.ad-workspace {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .ad-workspace { grid-template-columns: 1fr; }
+}
+
+.size-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.size-btn {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.size-btn:hover { border-color: var(--color-primary); }
+.size-btn.active { 
+    background: var(--color-primary); 
+    color: white; 
+    border-color: var(--color-primary); 
+}
+
+.preview-stage {
+    background: #e2e8f0;
+    border-radius: 8px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    position: relative;
+    overflow: auto;
+}
+
+.ad-iframe-wrapper {
+    background: #fff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    position: relative;
+    transition: all 0.4s ease;
+}
+
+#adFrame {
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
+.dimension-badge {
+    position: absolute;
+    top: -30px;
+    left: 0;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--color-bg-dark);
+    font-weight: bold;
+}
+
+.code-editor {
+    width: 100%;
+    height: 200px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 10px;
+    background: #1e293b;
+    color: #818cf8;
+    border-radius: 4px;
+    border: none;
+    margin-top: 10px;
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Display Ads</a><span>/</span>
+            <span style="color:var(--color-text-light)">HTML5 Ad Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(236, 72, 153, 0.1); color:var(--color-secondary);">⚡ HTML5 Banner</div>
+            <h1>HTML5 Ad Preview Tool</h1>
+            <p>Test your dynamic and rich media banners. Preview how your HTML5 code renders across standard IAB dimensions used by Google Ads and major ad exchanges.</p>
+        </div>
+
+        <div class="ad-workspace">
+            <div class="tool-card">
+                <div class="tool-card-title">⚙️ Configuration</div>
+                
+                <label style="font-size:13px; font-weight:600; margin-bottom:8px; display:block;">Select Banner Size</label>
+                <div class="size-selector">
+                    <div class="size-btn active" onclick="setSize(300, 250, this)">300x250<br>M-Rect</div>
+                    <div class="size-btn" onclick="setSize(728, 90, this)">728x90<br>L-Board</div>
+                    <div class="size-btn" onclick="setSize(160, 600, this)">160x600<br>Skyscraper</div>
+                    <div class="size-btn" onclick="setSize(300, 600, this)">300x600<br>Half Page</div>
+                    <div class="size-btn" onclick="setSize(320, 50, this)">320x50<br>Mobile</div>
+                    <div class="size-btn" onclick="setSize(970, 250, this)">970x250<br>Billboard</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ad URL (Remote Test)</label>
+                    <input type="text" id="adUrl" class="form-control" placeholder="https://cdn.example.com/banner.html" oninput="loadFromUrl()">
+                </div>
+
+                <div class="form-group">
+                    <label>Custom HTML/Code</label>
+                    <textarea id="adCode" class="code-editor" placeholder="Paste <html> or <canvas> code here..." oninput="loadFromCode()"></textarea>
+                </div>
+                
+                <button class="btn btn-primary" style="width:100%" onclick="refreshAd()">🔄 Reload Preview</button>
+            </div>
+
+            <div class="preview-stage" id="stage">
+                <div class="ad-iframe-wrapper" id="frameWrapper" style="width: 300px; height: 250px;">
+                    <div class="dimension-badge" id="dimBadge">300 x 250 (Medium Rectangle)</div>
+                    <iframe id="adFrame" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Use the HTML5 Tester</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Choose a Size</h4>
+                    <p>Select from standard IAB sizes like 300x250 or 728x90. The preview container will automatically adjust to the exact pixel dimensions.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Load Your Creative</h4>
+                    <p>Enter the URL where your ad is hosted, or paste the raw HTML5/CSS/JS code directly into the editor for instant rendering.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Test Animations</h4>
+                    <p>Use the "Reload" button to trigger the start of your animation sequence. Ensure your loop and timing meet ad network requirements.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Verify ClickTAG</h4>
+                    <p>Interact with the preview to ensure your click-through layers and landing page redirects are functioning as expected.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> HTML5 Ad Best Practices</h2>
+            <p>Developing HTML5 banners requires a balance between rich animation and strict file size limits set by ad servers (like Google Ad Manager).</p>
+            <ul>
+                <li><strong>Initial Load Limit:</strong> Most networks allow a maximum of 150KB for the initial load. Use CDNs for heavy libraries like GSAP or CreateJS.</li>
+                <li><strong>The clickTag Variable:</strong> Always use a standard clickTag variable for your exit links rather than a hardcoded URL to ensure the ad server can track clicks.</li>
+                <li><strong>Animation Length:</strong> Industry standard is 15-30 seconds. Most networks forbid animations that loop indefinitely without user interaction.</li>
+                <li><strong>CPU Usage:</strong> Avoid heavy filters (like blur) or excessive simultaneous animations which can cause lag on mobile devices.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function setSize(w, h, btn) {
+    const wrapper = document.getElementById('frameWrapper');
+    const badge = document.getElementById('dimBadge');
+    
+    wrapper.style.width = w + 'px';
+    wrapper.style.height = h + 'px';
+    badge.innerText = `${w} x ${h}`;
+
+    // Update active UI
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function loadFromUrl() {
+    const url = document.getElementById('adUrl').value;
+    if(url) {
+        document.getElementById('adFrame').src = url;
+        document.getElementById('adCode').value = ''; 
+    }
+}
+
+function loadFromCode() {
+    const code = document.getElementById('adCode').value;
+    const frame = document.getElementById('adFrame');
+    const doc = frame.contentDocument || frame.contentWindow.document;
+    
+    doc.open();
+    doc.write(code || '<body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;color:#ccc;font-family:sans-serif">Preview Area</body>');
+    doc.close();
+    document.getElementById('adUrl').value = '';
+}
+
+function refreshAd() {
+    const url = document.getElementById('adUrl').value;
+    const code = document.getElementById('adCode').value;
+    if(url) loadFromUrl();
+    else loadFromCode();
+}
+
+window.onload = () => {
+    loadFromCode(); // Init empty
+};
+</script>
+</body>
+</html>
