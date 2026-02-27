@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outlook Email Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your email subject line and preheader text appear in the Outlook inbox. Simulate desktop and mobile Outlook views to optimize your email marketing open rates.">
+<meta name="keywords" content="outlook preview tool, email subject line preview, preheader text simulator, outlook inbox mockup, email marketing tools">
+<meta property="og:title" content="Outlook Email Preview Tool — Website Viewer">
+<meta property="og:description" content="Optimize your email open rates by seeing exactly how your subject line and preheader look in Outlook across desktop and mobile devices.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/outlook-email-preview">
+<link rel="canonical" href="https://website-viewer.github.io/outlook-email-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Outlook Email Preview Tool",
+  "url": "https://website-viewer.github.io/outlook-email-preview",
+  "description": "Preview how your email appears in the Outlook inbox. Simulate authentic Outlook desktop and mobile layouts with sender name, subject line, and preheader previews.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Outlook UI Palette */
+:root {
+  --ol-blue: #0078d4;
+  --ol-bg: #f3f2f1;
+  --ol-white: #ffffff;
+  --ol-border: #edebe9;
+  --ol-text-primary: #323130;
+  --ol-text-secondary: #605e5c;
+  --ol-hover: #f3f2f1;
+  --ol-selected: #edebe9;
+  --ol-unread: #0078d4;
+}
+
+/* Tool Specific Layout */
+.ol-inbox-shell {
+  background: var(--ol-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.ol-header {
+  background: var(--ol-blue);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #fff;
+}
+
+.ol-search {
+  flex: 1;
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #fff;
+}
+
+/* Desktop Preview */
+.ol-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 16px;
+  background: var(--ol-white);
+  border-bottom: 1px solid var(--ol-border);
+  cursor: default;
+  position: relative;
+}
+
+.ol-row:hover {
+  background: var(--ol-hover);
+}
+
+.ol-unread-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--ol-unread);
+}
+
+.ol-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #a19f9d;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.ol-main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ol-top-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.ol-sender {
+  font-weight: 600;
+  color: var(--ol-text-primary);
+  font-size: 14px;
+}
+
+.ol-date {
+  font-size: 12px;
+  color: var(--ol-unread);
+  font-weight: 600;
+}
+
+.ol-subject {
+  font-weight: 600;
+  color: var(--ol-text-primary);
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.ol-snippet {
+  color: var(--ol-text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ol-icons {
+  display: flex;
+  gap: 8px;
+  color: var(--ol-text-secondary);
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+/* Mobile Preview */
+.ol-mobile-shell {
+  max-width: 380px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin: 0 auto;
+}
+
+.ol-mobile-row {
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #f3f2f1;
+}
+
+.ol-mobile-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ol-mobile-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.ol-mobile-sender {
+  font-weight: 700;
+  font-size: 15px;
+  color: #323130;
+}
+
+.ol-mobile-subject {
+  font-weight: 600;
+  font-size: 14px;
+  color: #323130;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.star-active { color: #ffb900 !important; }
+
+/* Shared Meter Styles */
+.meter-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+.meter-bar{flex:1;height:5px;background:#1e293b;border-radius:3px;overflow:hidden}
+.meter-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
+.meter-label{font-size:.72rem;color:var(--color-text-muted);white-space:nowrap;min-width:55px;text-align:right}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+<div class="tool-page">
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Email Tools</a><span>/</span>
+    <span style="color:var(--color-text-light)">Outlook Preview Tool</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge" style="background:rgba(0,120,212,0.1);border-color:rgba(0,120,212,0.3);color:#0078d4;">📧 Outlook Mockup</div>
+    <h1>Outlook Email Preview Tool</h1>
+    <p>Simulate how your email campaigns appear in Microsoft Outlook. Test subject lines, sender names, and preheaders on desktop and mobile.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Email Configuration</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Sender Name</label>
+        <input id="emSender" type="text" class="form-control" placeholder="Company Name or Person" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Time Received</label>
+        <input id="emTime" type="text" class="form-control" placeholder="e.g. 10:45 AM" oninput="updatePreview()">
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Subject Line</label>
+      <input id="emSubject" type="text" class="form-control" placeholder="Your exciting subject line here..." oninput="updatePreview()">
+      <div class="meter-row">
+        <div class="meter-bar"><div class="meter-fill" id="subjectMeter" style="width:0%"></div></div>
+        <div class="meter-label" id="subjectCount">0 / 60</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Preheader Text (Snippet)</label>
+      <textarea id="emPreheader" class="form-control" rows="2" placeholder="This text follows the subject line in the preview..." oninput="updatePreview()"></textarea>
+      <div class="meter-row">
+        <div class="meter-bar"><div class="meter-fill" id="preheaderMeter" style="width:0%"></div></div>
+        <div class="meter-label" id="preheaderCount">0 / 100</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Message Status</label>
+        <div style="display:flex; gap: 15px; margin-top: 8px;">
+          <label style="display:flex; align-items:center; gap:5px; text-transform:none; font-size:14px; cursor:pointer;">
+            <input type="checkbox" id="checkStar" onchange="updatePreview()"> Flagged
+          </label>
+          <label style="display:flex; align-items:center; gap:5px; text-transform:none; font-size:14px; cursor:pointer;">
+            <input type="checkbox" id="checkAttach" onchange="updatePreview()"> Attachment
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Outlook Inbox Preview</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
+      <div class="device-toggle">
+        <button class="dtog active" id="btnDesktop" onclick="setDevice('desktop')">🖥 Desktop</button>
+        <button class="dtog" id="btnMobile" onclick="setDevice('mobile')">📱 Mobile</button>
+      </div>
+    </div>
+
+    <div id="previewWrap" style="background:var(--ol-bg); border-radius:12px; padding:2rem; min-height:200px;">
+      </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the Outlook Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box">
+        <div class="step-num">01</div>
+        <h4>Define Your Sender</h4>
+        <p>Enter the "From" name. In Outlook, sender names are bold for unread messages, making them stand out immediately.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">02</div>
+        <h4>Input Subject Line</h4>
+        <p>Outlook generally shows fewer subject characters on desktop compared to Gmail. Keep it punchy and under 50 characters if possible.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">03</div>
+        <h4>Add Snippet Text</h4>
+        <p>The preheader (snippet) provides a sneak peek. Use our tool to ensure it doesn't get cut off by the subject line on desktop.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">04</div>
+        <h4>Test Device Views</h4>
+        <p>Toggle between Desktop and Mobile. Desktop Outlook uses a stacked list while Mobile focuses on sender prominence.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Outlook Email Previews</h2>
+    <p>Outlook is a staple in B2B environments. Unlike Gmail's single-line desktop layout, Outlook's "Focused" and "Other" tabs often display emails in a list view that prioritizes the <strong>Sender</strong> and <strong>Subject</strong> vertically.</p>
+    <ul>
+      <li><strong>Desktop Layout:</strong> Outlook's standard layout shows the subject on the second line and the snippet on the third line, though this varies by user configuration.</li>
+      <li><strong>Character Limits:</strong> While subjects can be long, most users only see the first <strong>35-45 characters</strong> before truncation on mobile.</li>
+      <li><strong>Unread Indicators:</strong> Outlook uses a distinctive blue vertical bar on the left to indicate unread messages.</li>
+      <li><strong>Flagging:</strong> Flags (equivalent to stars) appear on the right and can change the visual weight of the email entry.</li>
+      <li><strong>The Snippet:</strong> Outlook pulls the first plain text it finds. Using our tool ensures your hidden preheader text looks professional.</li>
+    </ul>
+  </div>
+</div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="header.js"></script>
+<script src="footer.js"></script>
+<script>
+let currentDevice = 'desktop';
+
+function setDevice(device) {
+  currentDevice = device;
+  document.getElementById('btnDesktop').classList.toggle('active', device === 'desktop');
+  document.getElementById('btnMobile').classList.toggle('active', device === 'mobile');
+  updatePreview();
+}
+
+function updateMeter(id, meterId, countId, limit) {
+  const val = document.getElementById(id).value.length;
+  const pct = Math.min((val / limit) * 100, 100);
+  const meter = document.getElementById(meterId);
+  meter.style.width = pct + '%';
+  
+  if(val === 0) meter.style.background = '#334155';
+  else if(val <= limit) meter.style.background = '#10b981';
+  else meter.style.background = '#ef4444';
+  
+  document.getElementById(countId).textContent = `${val} / ${limit}`;
+}
+
+function updatePreview() {
+  const sender = document.getElementById('emSender').value || 'Microsoft Outlook';
+  const time = document.getElementById('emTime').value || '10:15 AM';
+  const subject = document.getElementById('emSubject').value || 'New features in Outlook';
+  const preheader = document.getElementById('emPreheader').value || 'Check out what is new in your favorite email app...';
+  const isFlagged = document.getElementById('checkStar').checked;
+  const hasAttach = document.getElementById('checkAttach').checked;
+
+  updateMeter('emSubject', 'subjectMeter', 'subjectCount', 60);
+  updateMeter('emPreheader', 'preheaderMeter', 'preheaderCount', 100);
+
+  const wrap = document.getElementById('previewWrap');
+  const initials = sender.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  
+  if (currentDevice === 'desktop') {
+    wrap.innerHTML = `
+      <div class="ol-inbox-shell">
+        <div class="ol-header">
+          <span style="font-size:18px">≡</span>
+          <div class="ol-search">Search</div>
+        </div>
+        <div class="ol-row">
+          <div class="ol-unread-indicator"></div>
+          <div class="ol-avatar">${initials || 'U'}</div>
+          <div class="ol-main-content">
+            <div class="ol-top-line">
+              <span class="ol-sender">${sender}</span>
+              <span class="ol-date">${time}</span>
+            </div>
+            <span class="ol-subject">${subject}</span>
+            <div style="display:flex; align-items:center;">
+              <span class="ol-snippet">${preheader}</span>
+              <div class="ol-icons">
+                ${hasAttach ? '📎' : ''}
+                <span class="${isFlagged ? 'star-active' : ''}">${isFlagged ? '⚑' : '⚐'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ol-row" style="opacity:0.4; filter:grayscale(1);">
+          <div class="ol-avatar" style="background:#00a1f1">MS</div>
+          <div class="ol-main-content">
+            <div class="ol-top-line"><span class="ol-sender">System Admin</span><span class="ol-date" style="color:#605e5c; font-weight:400">9:00 AM</span></div>
+            <span class="ol-subject" style="font-weight:400">Weekly status report</span>
+            <span class="ol-snippet">Please find the attached document for...</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    wrap.innerHTML = `
+      <div class="ol-mobile-shell">
+        <div style="background:#0078d4; padding:12px 16px; color:#fff; display:flex; align-items:center; gap:15px;">
+          <span style="font-size:20px">≡</span>
+          <span style="font-weight:600; font-size:17px">Inbox</span>
+        </div>
+        <div class="ol-mobile-row">
+          <div class="ol-avatar" style="width:40px; height:40px;">${initials || 'U'}</div>
+          <div class="ol-mobile-text">
+            <div class="ol-mobile-header">
+              <span class="ol-mobile-sender">${sender}</span>
+              <span style="font-size:12px; color:#0078d4; font-weight:600">${time}</span>
+            </div>
+            <span class="ol-mobile-subject">${subject}</span>
+            <div style="display:flex; align-items:flex-end;">
+              <span class="ol-snippet" style="-webkit-line-clamp: 2;">${preheader}</span>
+              <div style="margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+                <span class="${isFlagged ? 'star-active' : ''}" style="font-size:16px;">${isFlagged ? '⚑' : '⚐'}</span>
+                ${hasAttach ? '<span style="font-size:12px; color:#605e5c">📎</span>' : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ol-mobile-row" style="opacity:0.5">
+          <div class="ol-avatar" style="width:40px; height:40px; background:#edebe9; color:#605e5c">J</div>
+          <div class="ol-mobile-text">
+            <div class="ol-mobile-header"><span class="ol-mobile-sender">John Doe</span><span style="font-size:12px; color:#605e5c">Yesterday</span></div>
+            <span class="ol-mobile-subject" style="font-weight:400">Meeting follow up</span>
+            <span class="ol-snippet">Thanks for the great call today...</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updatePreview();
+});
+</script>
+</body>
+</html>
