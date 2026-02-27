@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsive Search Ad Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview your Google Responsive Search Ads (RSA). Test multiple headlines and descriptions with our real-time simulator to ensure your ad combinations look great.">
+<meta name="keywords" content="responsive search ad preview, RSA mockup, google ads simulator, search ad tester, ppc ad preview, ad headlines rotation">
+<meta property="og:title" content="Responsive Search Ad Preview Tool — Website Viewer">
+<meta property="og:description" content="Visualize how Google rotates your Responsive Search Ad headlines and descriptions. Ensure high-quality ad strength with our preview tool.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/responsive-search-ad-preview">
+<link rel="canonical" href="https://website-viewer.github.io/responsive-search-ad-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Responsive Search Ad Preview Tool",
+  "url": "https://website-viewer.github.io/responsive-search-ad-preview",
+  "description": "A professional tool for digital marketers to preview Responsive Search Ads. Simulates headline and description rotation as seen on Google Search.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* RSA Specific Styles */
+.rsa-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 992px) {
+    .rsa-container {
+        grid-template-columns: 1fr 450px;
+    }
+}
+
+.input-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-number {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    min-width: 25px;
+}
+
+.rsa-mockup-card {
+    background: #fff;
+    border: 1px solid #dfe1e5;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: arial, sans-serif;
+    box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+}
+
+.rsa-ad-label {
+    font-weight: 700;
+    font-size: 14px;
+    color: #202124;
+    margin-bottom: 4px;
+}
+
+.rsa-url {
+    color: #202124;
+    font-size: 14px;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.rsa-headline {
+    color: #1a0dab;
+    font-size: 20px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    font-weight: 400;
+}
+
+.rsa-description {
+    color: #4d5156;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.shuffle-btn {
+    margin-top: 15px;
+    width: 100%;
+    background: #4285f4;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.shuffle-btn:hover { background: #3367d6; }
+
+.char-indicator {
+    font-size: 11px;
+    color: #666;
+    margin-left: auto;
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Ad Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Responsive Search Ad</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge">🤖 AI-Powered Format</div>
+            <h1>Responsive Search Ad Preview</h1>
+            <p>Google Ads now uses Responsive Search Ads (RSA) to automatically test different combinations. Input your assets below to see how they might be paired together.</p>
+        </div>
+
+        <div class="rsa-container">
+            <div class="tool-card">
+                <div class="tool-card-title">📦 Ad Assets (Headlines & Descriptions)</div>
+                
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--color-text-muted);">Enter at least 3 headlines and 2 descriptions.</p>
+                
+                <div class="form-group">
+                    <label>Headlines (30 characters max)</label>
+                    <div class="input-list" id="headlineList">
+                        </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 2rem;">
+                    <label>Descriptions (90 characters max)</label>
+                    <div class="input-list" id="descriptionList">
+                        </div>
+                </div>
+            </div>
+
+            <div class="preview-sticky">
+                <div class="tool-card">
+                    <div class="tool-card-title">🎲 Rotation Simulator</div>
+                    <div class="rsa-mockup-card">
+                        <div class="rsa-ad-label">Ad</div>
+                        <span class="rsa-url">https://www.example.com</span>
+                        <div class="rsa-headline" id="displayHeadlines">Headline 1 | Headline 2 | Headline 3</div>
+                        <div class="rsa-description" id="displayDescriptions">Your descriptions will be combined and rotated here based on Google's AI optimization.</div>
+                    </div>
+                    <button class="shuffle-btn" onclick="shuffleAd()">🔀 Shuffle Combination</button>
+                    <p style="font-size: 0.75rem; color: #666; margin-top: 10px; text-align: center;">
+                        This simulates one possible variation a user might see.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Optimize RSAs</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Maximize Assets</h4>
+                    <p>Provide all 15 headlines and 4 descriptions if possible. More assets give Google's AI more opportunities to find winning pairs.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Unique Content</h4>
+                    <p>Avoid repetitive headlines. Ensure each asset highlights a different benefit, feature, or call to action.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Test Combinations</h4>
+                    <p>Use our "Shuffle" button to ensure that any random combination of your headlines still makes sense grammatically.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Smart Pinning</h4>
+                    <p>Only pin headlines if absolutely necessary for legal reasons, as pinning reduces Google's ability to optimize for performance.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> Understanding Responsive Search Ads</h2>
+            <p>Responsive Search Ads (RSA) are now the default ad type for Google Search campaigns. Unlike the older "Expanded Text Ads," RSAs allow you to provide multiple versions of headlines and descriptions.</p>
+            <ul>
+                <li><strong>Dynamic Selection:</strong> Google automatically tests different combinations and learns which ones perform best for different search queries.</li>
+                <li><strong>Ad Strength:</strong> This is a metric used by Google to measure the quantity and diversity of your ad assets. High diversity usually leads to better ad strength.</li>
+                <li><strong>Flexibility:</strong> Because the ad size adapts to the user's device, your headlines might be shown in different orders or even omitted to fit the screen.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+const headlineCount = 5; // Simplified for tool (Google allows 15)
+const descriptionCount = 3; // Simplified for tool (Google allows 4)
+
+function initInputs() {
+    const hList = document.getElementById('headlineList');
+    for(let i=1; i<=headlineCount; i++) {
+        hList.innerHTML += `
+            <div class="input-item">
+                <span class="input-number">${i}</span>
+                <input type="text" class="form-control rsa-h" placeholder="Headline ${i}" maxlength="30" oninput="shuffleAd()">
+            </div>`;
+    }
+
+    const dList = document.getElementById('descriptionList');
+    for(let i=1; i<=descriptionCount; i++) {
+        dList.innerHTML += `
+            <div class="input-item">
+                <span class="input-number">${i}</span>
+                <textarea class="form-control rsa-d" rows="2" placeholder="Description ${i}" maxlength="90" oninput="shuffleAd()"></textarea>
+            </div>`;
+    }
+}
+
+function shuffleAd() {
+    const headlines = Array.from(document.querySelectorAll('.rsa-h'))
+        .map(i => i.value)
+        .filter(v => v.trim() !== "");
+    
+    const descriptions = Array.from(document.querySelectorAll('.rsa-d'))
+        .map(i => i.value)
+        .filter(v => v.trim() !== "");
+
+    // Default Fallbacks
+    const displayH = headlines.length >= 2 ? getRandom(headlines, 3) : ["Headline 1", "Headline 2", "Headline 3"];
+    const displayD = descriptions.length >= 1 ? getRandom(descriptions, 2) : ["Description 1 goes here.", "Description 2 follows."];
+
+    document.getElementById('displayHeadlines').innerText = displayH.join(' | ');
+    document.getElementById('displayDescriptions').innerText = displayD.join(' ');
+}
+
+function getRandom(arr, n) {
+    let result = new Array(Math.min(n, arr.length)),
+        len = arr.length,
+        taken = new Array(len);
+    if (n > len) n = len;
+    while (n--) {
+        let x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
+}
+
+window.onload = () => {
+    initInputs();
+    // Pre-fill first items
+    const hs = document.querySelectorAll('.rsa-h');
+    hs[0].value = "Best Running Shoes";
+    hs[1].value = "Free Shipping Today";
+    hs[2].value = "Shop Our New 2025 Collection";
+    
+    const ds = document.querySelectorAll('.rsa-d');
+    ds[0].value = "Find the perfect pair for your next race. Durable, lightweight, and stylish designs.";
+    ds[1].value = "Order now and enjoy a 30-day money-back guarantee on all professional footwear.";
+    
+    shuffleAd();
+};
+</script>
+</body>
+</html>
