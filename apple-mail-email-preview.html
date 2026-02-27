@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Mail Email Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview how your email subject lines and snippets look in Apple Mail on iPhone and Mac. Optimize your email marketing for the default mail client on iOS and macOS.">
+<meta name="keywords" content="apple mail preview, ios email mockup, iphone email simulator, mac mail preview, email subject line tool, preheader text preview">
+<meta property="og:title" content="Apple Mail Email Preview Tool — Website Viewer">
+<meta property="og:description" content="Instantly visualize your email's appearance in the Apple Mail inbox. Toggle between iOS and macOS views to ensure your subject lines aren't truncated.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/apple-mail-email-preview">
+<link rel="canonical" href="https://website-viewer.github.io/apple-mail-email-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Apple Mail Email Preview Tool",
+  "url": "https://website-viewer.github.io/apple-mail-email-preview",
+  "description": "A specialized simulator for Apple Mail that allows marketers to preview sender names, subject lines, and preheader snippets on iOS and macOS devices.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Apple Design System Palette */
+:root {
+  --apple-blue: #007aff;
+  --apple-gray-bg: #f2f2f7;
+  --apple-border: #c6c6c8;
+  --apple-text: #000000;
+  --apple-secondary-text: #8e8e93;
+  --apple-white: #ffffff;
+}
+
+/* iOS Layout */
+.am-ios-shell {
+  max-width: 375px;
+  background: var(--apple-white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.am-ios-header {
+  padding: 15px 16px 5px;
+  border-bottom: 0.5px solid var(--apple-border);
+}
+
+.am-ios-title {
+  font-size: 34px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.am-ios-row {
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 0.5px solid var(--apple-border);
+  position: relative;
+  background: #fff;
+}
+
+.am-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--apple-blue);
+  border-radius: 50%;
+  position: absolute;
+  left: 3px;
+  top: 18px;
+}
+
+.am-ios-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.am-ios-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1px;
+}
+
+.am-ios-sender {
+  font-size: 17px;
+  font-weight: 600;
+  color: #000;
+}
+
+.am-ios-time {
+  font-size: 15px;
+  color: var(--apple-secondary-text);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.am-ios-subject {
+  font-size: 15px;
+  color: #000;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.am-ios-snippet {
+  font-size: 15px;
+  color: var(--apple-secondary-text);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* macOS Layout */
+.am-mac-shell {
+  max-width: 650px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #d1d1d1;
+  overflow: hidden;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.am-mac-row {
+  display: flex;
+  padding: 10px 12px 10px 24px;
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.am-mac-row.active {
+  background: #007aff15;
+}
+
+.am-mac-dot {
+  position: absolute;
+  left: 8px;
+  top: 14px;
+}
+
+.am-mac-content {
+  flex: 1;
+}
+
+.am-mac-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.am-mac-sender {
+  font-size: 13px;
+  color: #333;
+}
+
+.am-mac-time {
+  font-size: 12px;
+  color: #999;
+}
+
+.am-mac-subject {
+  font-size: 13px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.am-mac-snippet {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Shared Components */
+.meter-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+.meter-bar{flex:1;height:5px;background:#1e293b;border-radius:3px;overflow:hidden}
+.meter-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
+.meter-label{font-size:.72rem;color:var(--color-text-muted);white-space:nowrap;min-width:55px;text-align:right}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+<div class="tool-page">
+  <nav class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="#">Email Tools</a><span>/</span>
+    <span style="color:var(--color-text-light)">Apple Mail Preview</span>
+  </nav>
+
+  <div class="tool-hero">
+    <div class="tool-badge" style="background:rgba(0,122,255,0.1);border-color:rgba(0,122,255,0.3);color:#007aff;"> Apple Mail</div>
+    <h1>Apple Mail Preview Tool</h1>
+    <p>See exactly how your email campaigns appear in the default Mail app on iPhone and Mac. Perfect for testing subject line truncation and snippet clarity.</p>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">⚙️ Campaign Settings</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Sender Name</label>
+        <input id="amSender" type="text" class="form-control" placeholder="Steve Jobs" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Time</label>
+        <input id="amTime" type="text" class="form-control" placeholder="9:41 AM" oninput="updatePreview()">
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Subject Line</label>
+      <input id="amSubject" type="text" class="form-control" placeholder="One more thing..." oninput="updatePreview()">
+      <div class="meter-row">
+        <div class="meter-bar"><div class="meter-fill" id="subjectMeter" style="width:0%"></div></div>
+        <div class="meter-label" id="subjectCount">0 / 40</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Preheader Snippet</label>
+      <textarea id="amPreheader" class="form-control" rows="2" placeholder="This revolutionary product changes everything..." oninput="updatePreview()"></textarea>
+      <div class="meter-row">
+        <div class="meter-bar"><div class="meter-fill" id="preheaderMeter" style="width:0%"></div></div>
+        <div class="meter-label" id="preheaderCount">0 / 90</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status Indicators</label>
+        <div style="display:flex; gap: 15px; margin-top: 8px;">
+          <label style="display:flex; align-items:center; gap:5px; text-transform:none; font-size:14px; cursor:pointer;">
+            <input type="checkbox" id="checkUnread" checked onchange="updatePreview()"> Unread
+          </label>
+          <label style="display:flex; align-items:center; gap:5px; text-transform:none; font-size:14px; cursor:pointer;">
+            <input type="checkbox" id="checkFlag" onchange="updatePreview()"> Flagged
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-title">👁️ Live Mailbox Preview</div>
+    <div class="device-toggle">
+      <button class="dtog active" id="btnIos" onclick="setDevice('ios')">📱 iOS (iPhone)</button>
+      <button class="dtog" id="btnMac" onclick="setDevice('mac')">🖥 macOS (Mac)</button>
+    </div>
+
+    <div id="previewWrap" style="background:#f2f2f7; border-radius:12px; padding:2rem; min-height:200px;">
+      </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">📖</span> How to Use the Apple Mail Preview Tool</h2>
+    <div class="steps-grid">
+      <div class="step-box">
+        <div class="step-num">01</div>
+        <h4>Input Sender Details</h4>
+        <p>Enter the sender name. Apple Mail displays this as the largest text in the iOS list view, making sender reputation critical.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">02</div>
+        <h4>Craft Your Subject</h4>
+        <p>iPhone screens truncate subject lines quickly. We recommend keeping important keywords within the first 35-40 characters.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">03</div>
+        <h4>Optimize the Snippet</h4>
+        <p>The "Snippet" is the text following the subject. In iOS, it typically shows 2 lines, offering significant real estate for conversions.</p>
+      </div>
+      <div class="step-box">
+        <div class="step-num">04</div>
+        <h4>Check Desktop vs Mobile</h4>
+        <p>Switch to macOS view to see how the subject line becomes bold and the snippet follows. The visual hierarchy changes between devices.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2><span class="icon">💡</span> About Apple Mail Previews</h2>
+    <p>Apple Mail remains one of the most popular email clients globally due to its integration with iPhone and Mac. Understanding its unique rendering logic is key for email marketers.</p>
+    <ul>
+      <li><strong>The Unread Dot:</strong> Apple uses a bright blue dot. It is positioned to the left of the content and shifts the entire text block.</li>
+      <li><strong>Snippet Length:</strong> Unlike Gmail, Apple Mail is generous with snippet text, often showing two full lines on iOS and macOS.</li>
+      <li><strong>Desktop Hierarchy:</strong> On Mac, the Subject line is bold while the Sender is regular weight. This is the opposite of the iOS mobile layout.</li>
+      <li><strong>Font Rendering:</strong> Apple uses the system font (San Francisco), which is highly legible even at small sizes, allowing for longer previews than many competitors.</li>
+    </ul>
+  </div>
+</div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="header.js"></script>
+<script src="footer.js"></script>
+<script>
+let currentDevice = 'ios';
+
+function setDevice(device) {
+  currentDevice = device;
+  document.getElementById('btnIos').classList.toggle('active', device === 'ios');
+  document.getElementById('btnMac').classList.toggle('active', device === 'mac');
+  updatePreview();
+}
+
+function updateMeter(id, meterId, countId, limit) {
+  const val = document.getElementById(id).value.length;
+  const pct = Math.min((val / limit) * 100, 100);
+  const meter = document.getElementById(meterId);
+  meter.style.width = pct + '%';
+  
+  if(val === 0) meter.style.background = '#334155';
+  else if(val <= limit) meter.style.background = '#10b981';
+  else meter.style.background = '#ef4444';
+  
+  document.getElementById(countId).textContent = `${val} / ${limit}`;
+}
+
+function updatePreview() {
+  const sender = document.getElementById('amSender').value || 'Apple News';
+  const time = document.getElementById('amTime').value || '9:41 AM';
+  const subject = document.getElementById('amSubject').value || 'Your daily briefing is ready';
+  const preheader = document.getElementById('amPreheader').value || 'Get the latest stories on technology, finance, and culture delivered to your inbox.';
+  const isUnread = document.getElementById('checkUnread').checked;
+  const isFlagged = document.getElementById('checkFlag').checked;
+
+  updateMeter('amSubject', 'subjectMeter', 'subjectCount', 40);
+  updateMeter('amPreheader', 'preheaderMeter', 'preheaderCount', 90);
+
+  const wrap = document.getElementById('previewWrap');
+  
+  if (currentDevice === 'ios') {
+    wrap.innerHTML = `
+      <div class="am-ios-shell">
+        <div class="am-ios-header"><div class="am-ios-title">Inbox</div></div>
+        <div class="am-ios-row">
+          ${isUnread ? '<div class="am-dot"></div>' : ''}
+          <div class="am-ios-content" style="${isUnread ? 'margin-left:8px' : ''}">
+            <div class="am-ios-top">
+              <span class="am-ios-sender">${sender}</span>
+              <span class="am-ios-time">
+                ${isFlagged ? '<span style="color:#ff9500">⚐</span> ' : ''}${time} <span style="color:#c6c6c8; font-size:18px;">›</span>
+              </span>
+            </div>
+            <span class="am-ios-subject">${subject}</span>
+            <span class="am-ios-snippet">${preheader}</span>
+          </div>
+        </div>
+        <div class="am-ios-row" style="opacity:0.4">
+          <div class="am-ios-content">
+            <div class="am-ios-top"><span class="am-ios-sender">iCloud Storage</span><span class="am-ios-time">Yesterday <span style="color:#c6c6c8; font-size:18px;">›</span></span></div>
+            <span class="am-ios-subject">Your storage is almost full</span>
+            <span class="am-ios-snippet">Upgrade to iCloud+ for more space and features like Hide My Email...</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    wrap.innerHTML = `
+      <div class="am-mac-shell">
+        <div class="am-mac-row active">
+          ${isUnread ? '<span class="am-mac-dot" style="color:#007aff">●</span>' : ''}
+          <div class="am-mac-content">
+            <div class="am-mac-header">
+              <span class="am-mac-sender">${sender}</span>
+              <span class="am-mac-time">${time}</span>
+            </div>
+            <span class="am-mac-subject">${subject}</span>
+            <span class="am-mac-snippet" style="-webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">
+              ${isFlagged ? '<span style="color:#ff9500">⚐</span> ' : ''}${preheader}
+            </span>
+          </div>
+        </div>
+        <div class="am-mac-row" style="opacity:0.6">
+          <div class="am-mac-content">
+            <div class="am-mac-header"><span class="am-mac-sender">App Store</span><span class="am-mac-time">Monday</span></div>
+            <span class="am-mac-subject" style="font-weight:400">A receipt from Apple</span>
+            <span class="am-mac-snippet">Thank you for your purchase of...</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', updatePreview);
+</script>
+</body>
+</html>
