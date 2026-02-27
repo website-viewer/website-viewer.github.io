@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn Ad Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview your LinkedIn Ads before they go live. Test professional headlines, introductory text, and CTA buttons with our realistic LinkedIn mockup tool.">
+<meta name="keywords" content="linkedin ad preview, linkedin mockup, b2b ad simulator, linkedin ad copy tool, social media ad preview, linkedin marketing tool">
+<meta property="og:title" content="LinkedIn Ad Preview Tool — Website Viewer">
+<meta property="og:description" content="Visualize your B2B LinkedIn campaigns. Check how your professional content and images appear in the LinkedIn news feed.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/linkedin-ad-preview">
+<link rel="canonical" href="https://website-viewer.github.io/linkedin-ad-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "LinkedIn Ad Preview Tool",
+  "url": "https://website-viewer.github.io/linkedin-ad-preview",
+  "description": "A professional B2B tool for LinkedIn advertisers to visualize introductory text, headlines, and call-to-action buttons in a realistic feed simulation.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* LinkedIn Specific UI Styles */
+.li-mockup-container {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    max-width: 550px;
+    margin: 0 auto;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: rgba(0,0,0,0.9);
+}
+
+.li-header {
+    padding: 12px 16px;
+    display: flex;
+    gap: 12px;
+}
+
+.li-avatar {
+    width: 48px;
+    height: 48px;
+    background: #f3f2ef;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #666;
+}
+
+.li-company-info {
+    flex: 1;
+}
+
+.li-company-name {
+    font-weight: 600;
+    font-size: 14px;
+    display: block;
+}
+
+.li-followers {
+    font-size: 12px;
+    color: rgba(0,0,0,0.6);
+    display: block;
+}
+
+.li-promoted {
+    font-size: 12px;
+    color: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.li-intro-text {
+    padding: 0 16px 12px;
+    font-size: 14px;
+    line-height: 1.42;
+    white-space: pre-wrap;
+}
+
+.li-media-area {
+    background: #f3f2ef;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-top: 1px solid #f3f2ef;
+}
+
+.li-media-area img {
+    width: 100%;
+    display: block;
+}
+
+.li-footer-card {
+    background: #f3f6f8;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.li-headline-group {
+    flex: 1;
+    padding-right: 12px;
+}
+
+.li-headline {
+    font-weight: 600;
+    font-size: 14px;
+    color: rgba(0,0,0,0.9);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.li-subline {
+    font-size: 12px;
+    color: rgba(0,0,0,0.6);
+}
+
+.li-cta {
+    border: 1px solid #0a66c2;
+    color: #0a66c2;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.li-actions {
+    padding: 8px 16px;
+    border-top: 1px solid #f3f2ef;
+    display: flex;
+    gap: 20px;
+    color: rgba(0,0,0,0.6);
+    font-size: 13px;
+    font-weight: 600;
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Social Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">LinkedIn Ad Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(10, 102, 194, 0.1); color:#0a66c2; border-color:#0a66c2;">💼 Professional Ads</div>
+            <h1>LinkedIn Ad Preview Tool</h1>
+            <p>Master the world's premier B2B advertising platform. Test your introductory text, professional headlines, and CTA buttons for maximum lead generation.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="tool-card">
+                <div class="tool-card-title">📝 Campaign Editor</div>
+                
+                <div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" id="liCompany" class="form-control" placeholder="Acme Solutions" oninput="updateLi()">
+                </div>
+
+                <div class="form-group">
+                    <label>Introductory Text</label>
+                    <textarea id="liIntro" class="form-control" rows="4" placeholder="Share professional insights or an offer..." oninput="updateLi()"></textarea>
+                    <div id="introCount" style="font-size: 11px; text-align: right; color: #666; margin-top: 4px;">0 / 600</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ad Image (1.91:1 recommended)</label>
+                    <input type="file" id="liFile" class="form-control" accept="image/*" onchange="previewLiMedia(this)">
+                </div>
+
+                <div class="form-group">
+                    <label>Ad Headline</label>
+                    <input type="text" id="liHead" class="form-control" placeholder="The Future of Enterprise SaaS" oninput="updateLi()">
+                    <div id="headCount" style="font-size: 11px; text-align: right; color: #666; margin-top: 4px;">0 / 70</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Call to Action (CTA)</label>
+                    <select id="liCta" class="form-control" onchange="updateLi()">
+                        <option value="Learn More">Learn More</option>
+                        <option value="Register">Register</option>
+                        <option value="Download">Download</option>
+                        <option value="Apply">Apply</option>
+                        <option value="Subscribe">Subscribe</option>
+                        <option value="Contact Us">Contact Us</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tool-card" style="background: #f3f2ef;">
+                <div class="tool-card-title">👁️ Desktop Feed Preview</div>
+                <div class="li-mockup-container">
+                    <div class="li-header">
+                        <div class="li-avatar" id="prevIcon">A</div>
+                        <div class="li-company-info">
+                            <span class="li-company-name" id="prevCompany">Acme Solutions</span>
+                            <span class="li-followers">12,500 followers</span>
+                            <span class="li-promoted">Promoted</span>
+                        </div>
+                        <div style="font-weight: bold; color: rgba(0,0,0,0.6);">...</div>
+                    </div>
+                    
+                    <div class="li-intro-text" id="prevIntro">Your introductory text will appear here. For B2B audiences, focus on problem-solving or data-driven insights.</div>
+                    
+                    <div class="li-media-area" id="liMediaDisplay">
+                        <span style="color:#666; font-size: 14px;">1200 x 627 Image</span>
+                    </div>
+
+                    <div class="li-footer-card">
+                        <div class="li-headline-group">
+                            <span class="li-headline" id="prevHead">The Future of Enterprise SaaS</span>
+                            <span class="li-subline">example.com</span>
+                        </div>
+                        <div class="li-cta" id="prevCta">Learn More</div>
+                    </div>
+
+                    <div class="li-actions">
+                        <span>👍 Like</span> <span>💬 Comment</span> <span>🔁 Repost</span> <span>➡️ Send</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Optimize LinkedIn Ads</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>The "See More" Break</h4>
+                    <p>Introductory text is truncated after ~150 characters on mobile. Ensure your primary value proposition is in the first sentence.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>70-Character Headlines</h4>
+                    <p>Keep headlines concise. If they exceed 70 characters, they may be truncated, especially when paired with a long CTA button.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Professional Imagery</h4>
+                    <p>LinkedIn users respond well to high-quality photography, infographics, or clean, branded illustrations that look "corporate" yet modern.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Contextual CTAs</h4>
+                    <p>"Download" works exceptionally well for lead magnets (Whitepapers/Ebooks), while "Register" is the standard for Webinars.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> LinkedIn Ad Specifications</h2>
+            <p>LinkedIn Single Image Ads are the workhorse of B2B marketing. They appear directly in the feed of decision-makers and professionals.</p>
+            <ul>
+                <li><strong>Introductory Text:</strong> Up to 600 characters, but 150 or fewer is recommended for better mobile performance.</li>
+                <li><strong>Headline:</strong> 70 characters max to avoid truncation.</li>
+                <li><strong>Image Ratio:</strong> 1.91:1 (Desktop/Mobile) or 1:1 (Square). 1200 x 627 pixels is the standard recommendation.</li>
+                <li><strong>Audience Tone:</strong> Unlike TikTok or Facebook, LinkedIn audiences prefer a professional, educational, or industry-focused tone.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updateLi() {
+    const company = document.getElementById('liCompany').value || 'Acme Solutions';
+    const intro = document.getElementById('liIntro').value || 'Your introductory text will appear here...';
+    const head = document.getElementById('liHead').value || 'The Future of Enterprise SaaS';
+    const cta = document.getElementById('liCta').value;
+
+    document.getElementById('prevCompany').innerText = company;
+    document.getElementById('prevIcon').innerText = company.charAt(0).toUpperCase();
+    document.getElementById('prevIntro').innerText = intro;
+    document.getElementById('prevHead').innerText = head;
+    document.getElementById('prevCta').innerText = cta;
+
+    // Counters
+    document.getElementById('introCount').innerText = intro.length + ' / 600';
+    const hCount = document.getElementById('headCount');
+    hCount.innerText = head.length + ' / 70';
+    hCount.style.color = head.length > 70 ? 'var(--color-error)' : '#666';
+}
+
+function previewLiMedia(input) {
+    const display = document.getElementById('liMediaDisplay');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            display.innerHTML = `<img src="${e.target.result}" alt="LinkedIn Ad Media">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+window.onload = updateLi;
+</script>
+</body>
+</html>
