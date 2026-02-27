@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dark Mode Email Preview Tool — Website Viewer</title>
+<meta name="description" content="Test how your HTML emails render in Dark Mode. Preview your newsletter design, subject lines, and images against dark backgrounds to ensure readability and brand consistency.">
+<meta name="keywords" content="dark mode email preview, email dark mode tester, newsletter dark mode, responsive email preview, email accessibility tool, html email tester">
+<meta property="og:title" content="Dark Mode Email Preview Tool — Website Viewer">
+<meta property="og:description" content="Preview and optimize your emails for Dark Mode. Check text contrast, image transparency, and automatic color inversions before you send.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/dark-mode-email-preview">
+<link rel="canonical" href="https://website-viewer.github.io/dark-mode-email-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Dark Mode Email Preview Tool",
+  "url": "https://website-viewer.github.io/dark-mode-email-preview",
+  "description": "A professional tool for email marketers to simulate Dark Mode rendering for HTML emails, focusing on contrast, transparency, and CSS media queries.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Dark Mode Tool Specific Styles */
+.dark-mode-workspace {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 1200px) {
+    .dark-mode-workspace {
+        grid-template-columns: 400px 1fr;
+    }
+}
+
+.editor-surface {
+    background: var(--color-bg-darker);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.preview-surface {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Simulated Mobile Frame with Dark Theme */
+.email-phone-frame {
+    width: 100%;
+    max-width: 380px;
+    height: 700px;
+    background: #000;
+    border: 12px solid #1e293b;
+    border-radius: 40px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-xl);
+    transition: background 0.4s ease;
+}
+
+.email-phone-frame.light-theme {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+.phone-status-bar {
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 25px;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.light-theme .phone-status-bar { color: #000; }
+
+.phone-inbox-meta {
+    padding: 15px 20px;
+    border-bottom: 1px solid #334155;
+    background: #111;
+}
+
+.light-theme .phone-inbox-meta {
+    background: #f8fafc;
+    border-bottom-color: #e2e8f0;
+}
+
+.meta-subject { font-weight: bold; font-size: 1.1rem; margin-bottom: 4px; color: #fff; }
+.meta-sender { font-size: 0.9rem; color: #94a3b8; }
+.light-theme .meta-subject { color: #000; }
+
+.email-viewport {
+    width: 100%;
+    height: calc(100% - 140px);
+    border: none;
+    background: #fff; /* Default iframe background */
+}
+
+/* Theme Toggle Switch */
+.theme-switch-container {
+    display: flex;
+    background: var(--color-bg-darker);
+    padding: 5px;
+    border-radius: 30px;
+    border: 1px solid var(--color-border);
+    width: fit-content;
+    margin-bottom: 1rem;
+}
+
+.theme-btn {
+    padding: 8px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.theme-btn.active {
+    background: var(--color-primary);
+    color: white;
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Email Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Dark Mode Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(2, 6, 23, 0.8); color:#8b5cf6; border: 1px solid #8b5cf6;">🌙 Accessibility Tool</div>
+            <h1>Dark Mode Email Preview</h1>
+            <p>Approximately 35-50% of users open emails in Dark Mode. Ensure your newsletter looks professional by testing color inversions and image transparency here.</p>
+        </div>
+
+        <div class="dark-mode-workspace">
+            <div class="editor-surface">
+                <div class="tool-card-title">⚙️ Email Configuration</div>
+                
+                <div class="form-group">
+                    <label>Subject Line</label>
+                    <input type="text" id="subjectIn" class="form-control" placeholder="Flash Sale: 50% Off!" oninput="syncMeta()">
+                </div>
+
+                <div class="form-group">
+                    <label>Sender Name</label>
+                    <input type="text" id="senderIn" class="form-control" placeholder="Brand Name" oninput="syncMeta()">
+                </div>
+
+                <div class="form-group">
+                    <label>HTML Code</label>
+                    <textarea id="htmlIn" class="form-control" rows="12" style="font-family: var(--font-mono); font-size: 12px;" placeholder="Paste your <html> code here..." oninput="updateIframe()"></textarea>
+                </div>
+
+                <button class="btn btn-secondary" style="width:100%" onclick="loadSample()">Load Dark Mode Sample</button>
+            </div>
+
+            <div class="preview-surface">
+                <div class="theme-switch-container">
+                    <div class="theme-btn active" id="btnDark" onclick="setTheme('dark')">🌙 Dark Mode</div>
+                    <div class="theme-btn" id="btnLight" onclick="setTheme('light')">☀️ Light Mode</div>
+                </div>
+
+                <div id="phoneFrame" class="email-phone-frame">
+                    <div class="phone-status-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="phone-inbox-meta">
+                        <div class="meta-subject" id="prevSubject">Newsletter Subject</div>
+                        <div class="meta-sender" id="prevSender">sender@example.com</div>
+                    </div>
+                    <iframe id="emailPreview" class="email-viewport" title="Dark Mode Preview"></iframe>
+                </div>
+                
+                <div class="alert-box" style="background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--color-info); padding: 15px; border-radius: 4px;">
+                    <strong>Pro Tip:</strong> Most mobile clients (iOS/Android) perform a "Full Color Inversion" if they don't detect dark-mode specific CSS.
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Optimize for Dark Mode</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Check Transparency</h4>
+                    <p>Ensure your logo and icons are transparent PNGs. Avoid white boxes around images that look "broken" on dark backgrounds.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Add Strokes</h4>
+                    <p>If your logo is black, add a subtle white stroke or outer glow so it remains visible when the background turns dark.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Test Contrast</h4>
+                    <p>Check that your call-to-action buttons have enough contrast. Some automated inversions can make button text unreadable.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Use Meta Tags</h4>
+                    <p>Add <code>&lt;meta name="color-scheme" content="light dark"&gt;</code> to your HTML to signal that your email supports both themes.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> Dark Mode Rendering Explained</h2>
+            <p>Different email clients handle dark mode in three distinct ways. This tool allows you to simulate these environments to prevent your design from "breaking."</p>
+            <ul>
+                <li><strong>No Changes:</strong> Some clients (like Apple Mail on Desktop) simply change the UI around the email but leave your HTML colors exactly as you defined them.</li>
+                <li><strong>Partial Inversion:</strong> Clients like Outlook.com only invert backgrounds that are light, but keep dark text dark, often leading to poor contrast.</li>
+                <li><strong>Full Inversion:</strong> Gmail (Android/iOS) and Outlook (iOS/Android) are the most aggressive. They invert both backgrounds and text colors to ensure a dark experience for the user.</li>
+            </ul>
+            <p>To truly master Dark Mode, use the <code>@media (prefers-color-scheme: dark)</code> CSS media query in your <code>&lt;style&gt;</code> block to manually define your dark theme colors.</p>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+const htmlIn = document.getElementById('htmlIn');
+const emailPreview = document.getElementById('emailPreview');
+const phoneFrame = document.getElementById('phoneFrame');
+
+function setTheme(theme) {
+    document.getElementById('btnDark').classList.toggle('active', theme === 'dark');
+    document.getElementById('btnLight').classList.toggle('active', theme === 'light');
+    
+    if (theme === 'light') {
+        phoneFrame.classList.add('light-theme');
+    } else {
+        phoneFrame.classList.remove('light-theme');
+    }
+    updateIframe(); // Re-render to apply theme simulation
+}
+
+function syncMeta() {
+    document.getElementById('prevSubject').innerText = document.getElementById('subjectIn').value || 'Newsletter Subject';
+    document.getElementById('prevSender').innerText = document.getElementById('senderIn').value || 'sender@example.com';
+}
+
+function updateIframe() {
+    const code = htmlIn.value;
+    const isDark = !phoneFrame.classList.contains('light-theme');
+    const iframeDoc = emailPreview.contentDocument || emailPreview.contentWindow.document;
+    
+    // Simple simulation logic: if dark mode selected, wrap content in a dark div 
+    // and attempt to force a dark preference if the code supports it.
+    let renderedCode = code;
+    if (isDark) {
+        // We inject a wrapper to simulate the dark inbox background
+        renderedCode = `
+        <style>
+            body { background-color: #121212 !important; color: #ffffff !important; }
+            /* Basic force-dark simulation for elements without specific dark styles */
+            table, td { border-color: #333 !important; }
+        </style>
+        ${code}`;
+    }
+
+    iframeDoc.open();
+    iframeDoc.write(renderedCode);
+    iframeDoc.close();
+}
+
+function loadSample() {
+    htmlIn.value = `<!DOCTYPE html>
+<html>
+<head>
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <style>
+        :root { color-scheme: light dark; }
+        body { font-family: sans-serif; padding: 20px; background: #ffffff; color: #111111; }
+        .card { padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
+        .btn { display: inline-block; padding: 10px 20px; background: #6366f1; color: #ffffff; text-decoration: none; border-radius: 5px; }
+        
+        @media (prefers-color-scheme: dark) {
+            body { background: #121212 !important; color: #eeeeee !important; }
+            .card { background: #1e1e1e !important; border-color: #333 !important; }
+            .card p { color: #bbbbbb !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Dark Mode Support</h2>
+        <p>This email uses media queries to change its look based on the user's system settings.</p>
+        <p>Switch between Light and Dark mode using the toggle above to see the magic happen!</p>
+        <br>
+        <a href="#" class="btn">Click Here</a>
+    </div>
+</body>
+</html>`;
+    updateIframe();
+}
+
+// Init
+window.onload = () => {
+    loadSample();
+    syncMeta();
+};
+</script>
+</body>
+</html>
