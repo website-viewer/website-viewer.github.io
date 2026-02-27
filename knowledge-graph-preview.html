@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knowledge Graph Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview your brand or personal Knowledge Graph card. See how your logo, social profiles, and company data appear in Google's high-authority search features.">
+<meta name="keywords" content="knowledge graph preview, knowledge panel mockup, google brand card simulator, entity seo tool, schema markup preview">
+<meta property="og:title" content="Knowledge Graph Preview Tool — Website Viewer">
+<meta property="og:description" content="Visualize your entity in Google Search. Test how your organization's data, social icons, and descriptions look in a professional Knowledge Panel.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/knowledge-graph-preview">
+<link rel="canonical" href="https://website-viewer.github.io/knowledge-graph-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Knowledge Graph Preview Tool",
+  "url": "https://website-viewer.github.io/knowledge-graph-preview",
+  "description": "An SEO simulation tool for visualizing Google Knowledge Panels for brands, organizations, and public figures.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Knowledge Graph Specific UI */
+.kg-preview-stage {
+    background: #fff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 370px;
+    font-family: 'Roboto', arial, sans-serif;
+    color: #202124;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.kg-header {
+    padding: 16px;
+    border-bottom: 1px solid #dadce0;
+}
+
+.kg-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.kg-main-title {
+    font-size: 30px;
+    font-weight: 400;
+    margin-bottom: 4px;
+}
+
+.kg-subtitle {
+    font-size: 14px;
+    color: #70757a;
+}
+
+.kg-image-gallery {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2px;
+    background: #dadce0;
+    height: 160px;
+}
+
+.kg-img-main {
+    background: #f1f3f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.kg-img-main img { width: 100%; height: 100%; object-fit: cover; }
+
+.kg-content {
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.58;
+}
+
+.kg-description {
+    margin-bottom: 16px;
+}
+
+.kg-description span { color: #70757a; font-size: 12px; }
+
+.kg-data-point {
+    margin-bottom: 8px;
+}
+
+.kg-label { font-weight: 700; }
+
+.kg-social-row {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #dadce0;
+    display: flex;
+    gap: 15px;
+}
+
+.kg-social-icon {
+    text-align: center;
+    font-size: 11px;
+    color: #70757a;
+}
+
+.kg-icon-box {
+    width: 32px;
+    height: 32px;
+    background: #f1f3f4;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">SEO Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Knowledge Graph Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(66, 133, 244, 0.1); color:#4285f4; border-color:#4285f4;">🏢 Entity SEO</div>
+            <h1>Knowledge Graph Preview Tool</h1>
+            <p>Visualize your brand's authority. Use this mockup tool to simulate how Google displays your organization, its social profiles, and key facts in the Knowledge Panel.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="tool-card">
+                <div class="tool-card-title">🏢 Entity Details</div>
+                
+                <div class="form-group">
+                    <label>Entity Name (Brand/Person)</label>
+                    <input type="text" id="kgName" class="form-control" placeholder="Website Viewer Inc." oninput="updateKG()">
+                </div>
+
+                <div class="form-group">
+                    <label>Type / Subtitle</label>
+                    <input type="text" id="kgSubtitle" class="form-control" placeholder="Software Company" oninput="updateKG()">
+                </div>
+
+                <div class="form-group">
+                    <label>Description (Wikipedia Style)</label>
+                    <textarea id="kgDesc" class="form-control" rows="4" placeholder="Acme Corp is a global leader in..." oninput="updateKG()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Entity Logo/Main Image</label>
+                    <input type="file" id="kgFile" class="form-control" accept="image/*" onchange="previewKGImage(this)">
+                </div>
+
+                <div class="grid-2" style="gap:10px;">
+                    <div class="form-group">
+                        <label>Founder</label>
+                        <input type="text" id="kgFounder" class="form-control" placeholder="Jane Doe" oninput="updateKG()">
+                    </div>
+                    <div class="form-group">
+                        <label>Founded</label>
+                        <input type="text" id="kgFounded" class="form-control" placeholder="2024" oninput="updateKG()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Customer Service</label>
+                    <input type="text" id="kgPhone" class="form-control" placeholder="1 (800) 123-4567" oninput="updateKG()">
+                </div>
+            </div>
+
+            <div class="tool-card" style="background: #f8f9fa;">
+                <div class="tool-card-title">🔍 Knowledge Panel Simulation</div>
+                <div class="kg-preview-stage">
+                    <div class="kg-image-gallery">
+                        <div class="kg-img-main" id="kgMediaPrev">Logo</div>
+                        <div style="background:#f8f9fa; display:flex; flex-direction:column; gap:2px;">
+                            <div style="flex:1; background:#eee;"></div>
+                            <div style="flex:1; background:#eee;"></div>
+                        </div>
+                    </div>
+                    <div class="kg-header">
+                        <div class="kg-title-row">
+                            <div>
+                                <div class="kg-main-title" id="prevKgName">Entity Name</div>
+                                <div class="kg-subtitle" id="prevKgSubtitle">Organization Type</div>
+                            </div>
+                            <div style="font-size:20px; color:#70757a;">🔗</div>
+                        </div>
+                    </div>
+                    <div class="kg-content">
+                        <div class="kg-description">
+                            <span id="prevKgDesc">Acme Corp is a fictional company used in previews. This area typically displays a summary sourced from Wikipedia or your official website.</span> <span>Wikipedia</span>
+                        </div>
+                        <div class="kg-data-point"><span class="kg-label">Founder:</span> <span id="prevKgFounder">Jane Doe</span></div>
+                        <div class="kg-data-point"><span class="kg-label">Founded:</span> <span id="prevKgFounded">2024</span></div>
+                        <div class="kg-data-point"><span class="kg-label">Customer Service:</span> <span id="prevKgPhone" style="color:#1a0dab;">1 (800) 123-4567</span></div>
+                        
+                        <div class="kg-social-row">
+                            <div class="kg-social-icon"><div class="kg-icon-box">𝕏</div>X</div>
+                            <div class="kg-social-icon"><div class="kg-icon-box">f</div>Facebook</div>
+                            <div class="kg-social-icon"><div class="kg-icon-box">in</div>LinkedIn</div>
+                            <div class="kg-social-icon"><div class="kg-icon-box">📷</div>Instagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Influence the Knowledge Graph</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Structured Data</h4>
+                    <p>Implement <code>Organization</code> or <code>Person</code> schema markup on your homepage. This is the primary way to "talk" to Google's Knowledge Graph.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Wikipedia & Wikidata</h4>
+                    <p>Google heavily relies on neutral third-party sources. Having a Wikipedia or Wikidata entry is the most consistent way to trigger a panel.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Verify Your Entity</h4>
+                    <p>Once a panel appears, click "Claim this knowledge panel" to suggest edits and verify your official social media profiles.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Consistent NAP</h4>
+                    <p>Ensure your Name, Address, and Phone (NAP) are identical across Google Business Profile, LinkedIn, and your website.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> Knowledge Panel Specifications</h2>
+            <p>The Knowledge Graph is an entity-based system. It doesn't just rank pages; it understands real-world relationships between things.</p>
+            <ul>
+                <li><strong>Main Image:</strong> Google prefers square logos or high-quality landscape photos for organizations.</li>
+                <li><strong>Social Icons:</strong> These are pulled automatically based on <code>sameAs</code> properties in your Schema markup.</li>
+                <li><strong>Sourcing:</strong> Descriptions are usually truncated at ~250 characters before a "Wikipedia" or "Official Website" link.</li>
+                <li><strong>Local vs. Brand:</strong> Brand panels (shown here) are for global entities. Local panels include maps and reviews.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updateKG() {
+    const name = document.getElementById('kgName').value || "Entity Name";
+    const sub = document.getElementById('kgSubtitle').value || "Organization Type";
+    const desc = document.getElementById('kgDesc').value || "Acme Corp is a fictional company used in previews. This area typically displays a summary sourced from Wikipedia or your official website.";
+    const founder = document.getElementById('kgFounder').value || "Jane Doe";
+    const founded = document.getElementById('kgFounded').value || "2024";
+    const phone = document.getElementById('kgPhone').value || "1 (800) 123-4567";
+
+    document.getElementById('prevKgName').innerText = name;
+    document.getElementById('prevKgSubtitle').innerText = sub;
+    document.getElementById('prevKgDesc').innerText = desc;
+    document.getElementById('prevKgFounder').innerText = founder;
+    document.getElementById('prevKgFounded').innerText = founded;
+    document.getElementById('prevKgPhone').innerText = phone;
+}
+
+function previewKGImage(input) {
+    const display = document.getElementById('kgMediaPrev');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            display.innerHTML = `<img src="${e.target.result}" alt="Entity Logo">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+window.onload = updateKG;
+</script>
+</body>
+</html>
