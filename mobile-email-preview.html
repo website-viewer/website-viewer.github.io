@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Email Preview Tool — Website Viewer</title>
+<meta name="description" content="Test your email designs specifically for mobile devices. Preview how your subject lines and HTML content render on small screens to ensure mobile-responsiveness.">
+<meta name="keywords" content="mobile email preview, responsive email tester, mobile newsletter mockup, email mobile view, smartphone email simulator">
+<meta property="og:title" content="Mobile Email Preview Tool — Website Viewer">
+<meta property="og:description" content="Check your email's mobile experience. Optimize for small viewports and ensure your content is readable on iPhones and Android devices.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/mobile-email-preview">
+<link rel="canonical" href="https://website-viewer.github.io/mobile-email-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Mobile Email Preview Tool",
+  "url": "https://website-viewer.github.io/mobile-email-preview",
+  "description": "A mobile-focused email previewer designed to help marketers and developers optimize their newsletter layouts for smartphones.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Mobile Preview Specific Styles */
+.mobile-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 992px) {
+    .mobile-layout-grid {
+        grid-template-columns: 1fr 400px;
+    }
+}
+
+.mobile-phone-container {
+    background: #1e293b;
+    padding: 40px 20px;
+    border-radius: 40px;
+    border: 8px solid #334155;
+    position: relative;
+    width: 100%;
+    max-width: 375px;
+    margin: 0 auto;
+    box-shadow: var(--shadow-xl);
+}
+
+.phone-notch {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 25px;
+    background: #334155;
+    border-radius: 0 0 15px 15px;
+}
+
+.phone-screen {
+    background: white;
+    height: 600px;
+    border-radius: 5px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+#mobileIframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.limit-indicator {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-top: 5px;
+    color: var(--color-text-muted);
+}
+
+.status-green { color: var(--color-success); }
+.status-red { color: var(--color-error); }
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Email Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">Mobile Email Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge">📱 Mobile-First</div>
+            <h1>Mobile Email Preview Tool</h1>
+            <p>Over 60% of emails are opened on mobile. Use this simulator to ensure your fonts are readable, your buttons are "tappable," and your subject lines don't get cut off.</p>
+        </div>
+
+        <div class="mobile-layout-grid">
+            <div class="tool-card">
+                <div class="tool-card-title">📝 Mobile Content Editor</div>
+                
+                <div class="form-group">
+                    <label>Mobile Subject Line</label>
+                    <input type="text" id="subjIn" class="form-control" placeholder="Flash Sale: 24 Hours Left!" oninput="updateMobile()">
+                    <div class="limit-indicator">
+                        <span>Optimal for mobile: &lt; 35 chars</span>
+                        <span id="subjCount">0 chars</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>HTML Email Code</label>
+                    <textarea id="htmlIn" class="form-control" rows="15" style="font-family: var(--font-mono); font-size: 13px;" placeholder="Paste your responsive HTML here..." oninput="updateMobile()"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                    <button class="btn btn-primary" onclick="loadResponsiveSample()">Load Mobile Sample</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('htmlIn').value=''; updateMobile();">Clear</button>
+                </div>
+            </div>
+
+            <div class="mobile-phone-container">
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                    <div style="background: #f1f3f4; padding: 10px; border-bottom: 1px solid #ddd; font-family: sans-serif;">
+                        <div style="font-weight: bold; font-size: 14px;" id="prevSubj">Subject Preview</div>
+                        <div style="font-size: 11px; color: #666; margin-top: 2px;">From: Your Brand &lt;news@brand.com&gt;</div>
+                    </div>
+                    <iframe id="mobileIframe" title="Mobile Email Rendering"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Optimize for Mobile</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Shorten Subjects</h4>
+                    <p>Mobile screens truncate subject lines quickly. Keep your main value proposition within the first 30-35 characters.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Check Font Sizes</h4>
+                    <p>Body text should be at least 14px-16px to be readable on mobile without zooming. Use our preview to check clarity.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Touch Targets</h4>
+                    <p>Ensure your buttons are at least 44x44 pixels. This makes them easy to tap with a thumb without accidentally hitting other links.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Single Column</h4>
+                    <p>Multi-column layouts often break on mobile. Use a single-column layout for the most consistent mobile experience.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> The Importance of Mobile-First Email</h2>
+            <p>A "broken" email on mobile often leads to an immediate unsubscribe. Since most users check their email on the go, your design must adapt to narrow viewports instantly.</p>
+            <ul>
+                <li><strong>Responsive vs. Fluid:</strong> This tool helps you test if your media queries (<code>@media</code>) are firing correctly to stack elements vertically.</li>
+                <li><strong>Preheader Importance:</strong> On mobile, the preheader text is highly visible under the subject line. Make sure it provides a compelling "second hook."</li>
+                <li><strong>Loading Speed:</strong> Large images can slow down mobile rendering. Use the preview to visualize if your image-to-text ratio is balanced.</li>
+                <li><strong>Accessibility:</strong> High contrast and clear hierarchy are even more vital on small screens where glare can be an issue.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updateMobile() {
+    const subj = document.getElementById('subjIn').value;
+    const html = document.getElementById('htmlIn').value;
+    const iframe = document.getElementById('mobileIframe');
+    const subjCount = document.getElementById('subjCount');
+
+    // Update Meta Preview
+    document.getElementById('prevSubj').innerText = subj || 'Subject Preview';
+    
+    // Character Counter logic
+    subjCount.innerText = subj.length + ' chars';
+    subjCount.className = 'limit-indicator ' + (subj.length > 35 ? 'status-red' : 'status-green');
+
+    // Update Iframe
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(html || '<div style="padding:20px; font-family:sans-serif; color:#999;">Email body will appear here...</div>');
+    doc.close();
+}
+
+function loadResponsiveSample() {
+    document.getElementById('subjIn').value = "Your Weekly Digest is Here! 🚀";
+    document.getElementById('htmlIn').value = `<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: #f4f4f4; }
+    .container { width: 100% !important; max-width: 600px; margin: 0 auto; background: #ffffff; }
+    .hero-img { width: 100%; height: auto; display: block; background: #6366f1; color: white; text-align: center; padding: 40px 0; }
+    .content { padding: 20px; text-align: center; }
+    .btn { display: inline-block; padding: 15px 30px; background: #6366f1; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+    @media screen and (max-width: 480px) {
+        .content h1 { font-size: 22px !important; }
+        .content p { font-size: 16px !important; }
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero-img">
+            <h1>LOGO</h1>
+        </div>
+        <div class="content">
+            <h1>Responsive Layout</h1>
+            <p>This text and button will look great on any mobile device. We use fluid widths to ensure nothing goes off-screen.</p>
+            <a href="#" class="btn">Shop Now</a>
+        </div>
+    </div>
+</body>
+</html>`;
+    updateMobile();
+}
+
+window.onload = loadResponsiveSample;
+</script>
+</body>
+</html>
