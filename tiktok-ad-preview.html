@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Ad Preview Tool — Website Viewer</title>
+<meta name="description" content="Preview your TikTok In-Feed Ads before publishing. Test captions, music titles, and call-to-action buttons with our realistic vertical video mockup tool.">
+<meta name="keywords" content="tiktok ad preview, tiktok mockup, vertical video ad simulator, tiktok ad copy tool, meta ads preview, tiktok marketing tool">
+<meta property="og:title" content="TikTok Ad Preview Tool — Website Viewer">
+<meta property="og:description" content="Visualize your TikTok campaigns in a realistic vertical feed. Check how your safe zones and ad copy interact with the TikTok UI overlay.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/tiktok-ad-preview">
+<link rel="canonical" href="https://website-viewer.github.io/tiktok-ad-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "TikTok Ad Preview Tool",
+  "url": "https://website-viewer.github.io/tiktok-ad-preview",
+  "description": "A professional tool for TikTok advertisers to simulate 9:16 vertical ads with UI overlays, captions, and CTA buttons.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* TikTok Specific UI Styles */
+.tt-mockup-container {
+    width: 100%;
+    max-width: 340px;
+    height: 600px;
+    background: #000;
+    border-radius: 30px;
+    border: 8px solid #1a1a1a;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    font-family: 'ProximaNova', sans-serif, Arial;
+    box-shadow: var(--shadow-xl);
+}
+
+.tt-video-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.tt-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background: linear-gradient(0deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.2) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 15px;
+}
+
+/* Right Side Icons */
+.tt-right-bar {
+    position: absolute;
+    right: 8px;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    z-index: 3;
+}
+
+.tt-icon-group {
+    text-align: center;
+}
+
+.tt-icon-circle {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.tt-icon-label {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Bottom Content */
+.tt-bottom-info {
+    max-width: 80%;
+    z-index: 3;
+}
+
+.tt-user-handle {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.tt-caption {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tt-music-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.tt-cta-bar {
+    background: #fe2c55;
+    color: white;
+    padding: 10px;
+    border-radius: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.tt-safe-zone-toggle {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Social Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">TikTok Ad Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(254, 44, 85, 0.1); color:#fe2c55; border-color:#fe2c55;">🎵 TikTok Ads</div>
+            <h1>TikTok Ad Preview Tool</h1>
+            <p>TikTok is all about vertical "Safe Zones." Use this simulator to ensure your key text and CTAs aren't hidden behind the TikTok interface elements.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="tool-card">
+                <div class="tool-card-title">📝 Creative Details</div>
+                
+                <div class="form-group">
+                    <label>Username (Handle)</label>
+                    <input type="text" id="ttUser" class="form-control" placeholder="@yourbrand" oninput="updateTikTok()">
+                </div>
+
+                <div class="form-group">
+                    <label>Video Background (9:16)</label>
+                    <input type="file" id="ttFile" class="form-control" accept="image/*,video/*" onchange="previewMedia(this)">
+                </div>
+
+                <div class="form-group">
+                    <label>Ad Caption</label>
+                    <textarea id="ttCaption" class="form-control" rows="3" placeholder="Enter your ad text and #hashtags..." oninput="updateTikTok()"></textarea>
+                    <div class="char-counter" id="capCount">0 / 150</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Call to Action (CTA)</label>
+                    <select id="ttCta" class="form-control" onchange="updateTikTok()">
+                        <option value="Learn More">Learn More</option>
+                        <option value="Shop Now">Shop Now</option>
+                        <option value="Sign Up">Sign Up</option>
+                        <option value="Book Now">Book Now</option>
+                        <option value="Install Now">Install Now</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Music/Sound Name</label>
+                    <input type="text" id="ttMusic" class="form-control" placeholder="Original sound - Your Brand" oninput="updateTikTok()">
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-card-title">📱 In-Feed Simulation</div>
+                <div class="tt-mockup-container">
+                    <div id="mediaPlaceholder" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#111;">
+                        <span style="color:#444;">Upload 9:16 Media</span>
+                    </div>
+                    <div class="tt-overlay">
+                        <div class="tt-right-bar">
+                            <div class="tt-icon-group">
+                                <div class="tt-icon-circle" style="background: #fff; border: 1px solid #fff;"><img src="" id="avatarIcon" style="width:100%; border-radius:50%; display:none;"></div>
+                                <div style="color:#fe2c55; font-size:16px; margin-top:-10px;">+</div>
+                            </div>
+                            <div class="tt-icon-group">
+                                <div class="tt-icon-circle">❤️</div>
+                                <div class="tt-icon-label">12.5K</div>
+                            </div>
+                            <div class="tt-icon-group">
+                                <div class="tt-icon-circle">💬</div>
+                                <div class="tt-icon-label">248</div>
+                            </div>
+                            <div class="tt-icon-group">
+                                <div class="tt-icon-circle">🔗</div>
+                                <div class="tt-icon-label">84</div>
+                            </div>
+                        </div>
+
+                        <div class="tt-bottom-info">
+                            <div class="tt-user-handle" id="prevUser">@yourbrand</div>
+                            <div class="tt-caption" id="prevCap">Your ad caption will go here. Be sure to include your main hook and relevant hashtags!</div>
+                            <div class="tt-music-row">
+                                <span>🎵</span> <marquee scrollamount="3" style="width:100px;" id="prevMusic">Original sound - yourbrand</marquee>
+                            </div>
+                            <div class="tt-cta-bar" id="ctaContainer">
+                                <span id="prevCtaText">Learn More</span>
+                                <span>&gt;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="tt-safe-zone-toggle">⚠️ Ensure no text or logos are placed in the red/bottom-right areas.</p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> Optimizing TikTok Ads</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>The Safe Zone</h4>
+                    <p>Avoid placing text or logos on the right side or the bottom 25% of the screen. The TikTok UI elements will cover them.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>The First 3 Seconds</h4>
+                    <p>TikTok is fast. Your visual hook must happen immediately to stop users from swiping past your ad.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Caption Strategy</h4>
+                    <p>Keep captions brief. While you have 150 characters, only the first 2 lines are visible before being hidden under "more."</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Native Look</h4>
+                    <p>Ads that look like organic TikToks (shot on a phone, using trending sounds) generally have higher engagement than high-production commercials.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> TikTok In-Feed Ad Specs</h2>
+            <p>In-Feed ads are the standard video format that appears as users scroll through their "For You" feed. They are immersive, full-screen, and sound-on by default.</p>
+            <ul>
+                <li><strong>Aspect Ratio:</strong> Strictly 9:16 (1080x1920 pixels). Using other ratios will result in black bars and lower performance.</li>
+                <li><strong>Video Length:</strong> 5 to 60 seconds (9-15 seconds is the "sweet spot" for performance).</li>
+                <li><strong>CTA Button:</strong> The button color is dynamically chosen by TikTok but is usually high-contrast (Red or White).</li>
+                <li><strong>Interaction:</strong> Users can like, comment, and share just like an organic video, which provides social proof for your brand.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+function updateTikTok() {
+    const user = document.getElementById('ttUser').value || '@yourbrand';
+    const cap = document.getElementById('ttCaption').value || 'Your ad caption will go here...';
+    const cta = document.getElementById('ttCta').value;
+    const music = document.getElementById('ttMusic').value || 'Original sound - ' + user;
+
+    document.getElementById('prevUser').innerText = user;
+    document.getElementById('prevCap').innerText = cap;
+    document.getElementById('prevCtaText').innerText = cta;
+    document.getElementById('prevMusic').innerText = music;
+
+    document.getElementById('capCount').innerText = cap.length + ' / 150';
+}
+
+function previewMedia(input) {
+    const container = document.getElementById('mediaPlaceholder');
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            if (file.type.startsWith('video')) {
+                container.innerHTML = `<video src="${e.target.result}" autoplay loop muted class="tt-video-bg"></video>`;
+            } else {
+                container.innerHTML = `<img src="${e.target.result}" class="tt-video-bg">`;
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+window.onload = updateTikTok;
+</script>
+</body>
+</html>
