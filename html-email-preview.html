@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Email Preview Tool — Website Viewer</title>
+<meta name="description" content="Test and visualize your HTML email code in real-time. Preview how your email designs look on desktop and mobile devices before sending your marketing campaigns.">
+<meta name="keywords" content="html email preview, email code tester, responsive email viewer, email design simulator, html email mockup, newsletter code preview">
+<meta property="og:title" content="HTML Email Preview Tool — Website Viewer">
+<meta property="og:description" content="Instantly render and test your HTML email code. Use our live previewer to ensure your email designs are mobile-responsive and professional.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io/html-email-preview">
+<link rel="canonical" href="https://website-viewer.github.io/html-email-preview">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="tool-shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "HTML Email Preview Tool",
+  "url": "https://website-viewer.github.io/html-email-preview",
+  "description": "A developer tool for rendering and testing HTML email code. Features real-time updates, mobile vs desktop toggles, and safe iframe isolation.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Website Viewer"
+  }
+}
+</script>
+<style>
+/* Email Preview Specific Styles */
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#htmlInput {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: #1e293b;
+    color: #e2e8f0;
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 300px;
+}
+
+#htmlInput::placeholder {
+    color: #64748b;
+}
+
+.preview-container {
+    background: #f1f5f9;
+    border-radius: var(--border-radius);
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 500px;
+    overflow-x: auto;
+}
+
+.device-frame {
+    background: #fff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+}
+
+.device-frame.desktop {
+    width: 100%;
+    max-width: 800px;
+}
+
+.device-frame.mobile {
+    width: 375px;
+    border: 12px solid #334155;
+    border-radius: 36px;
+    height: 667px;
+}
+
+#emailIframe {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    border: none;
+    display: block;
+}
+
+.controls-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: var(--color-info);
+    color: white;
+}
+</style>
+</head>
+<body>
+<header id="header-component"></header>
+
+<main>
+    <div class="tool-page">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a><span>/</span>
+            <a href="#">Email Tools</a><span>/</span>
+            <span style="color:var(--color-text-light)">HTML Email Preview</span>
+        </nav>
+
+        <div class="tool-hero">
+            <div class="tool-badge" style="background:rgba(99,102,241,0.1); color:var(--color-primary);">🛠 Developer Tool</div>
+            <h1>HTML Email Preview Tool</h1>
+            <p>Paste your HTML email code below to see exactly how it will render. Toggle between desktop and mobile views to ensure your design is fully responsive.</p>
+        </div>
+
+        <div class="tool-card">
+            <div class="controls-bar">
+                <div class="tool-card-title" style="margin-bottom:0">📝 HTML Source Code</div>
+                <div id="renderStatus" class="status-badge">Live Sync Active</div>
+            </div>
+            <textarea id="htmlInput" class="form-control" placeholder="<html>
+<body style='font-family: Arial, sans-serif;'>
+  <h1 style='color: #6366f1;'>Hello World!</h1>
+  <p>This is a live HTML email preview.</p>
+</body>
+</html>" oninput="renderEmail()"></textarea>
+            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                <button class="btn btn-secondary" onclick="clearCode()">Clear Code</button>
+                <button class="btn btn-primary" onclick="loadSample()">Load Sample Email</button>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="controls-bar">
+                <div class="tool-card-title" style="margin-bottom:0">👁️ Rendering Preview</div>
+                <div class="device-toggle">
+                    <button class="dtog active" id="btnDesktop" onclick="setDevice('desktop')">🖥 Desktop</button>
+                    <button class="dtog" id="btnMobile" onclick="setDevice('mobile')">📱 Mobile</button>
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <div id="previewFrame" class="device-frame desktop">
+                    <iframe id="emailIframe" title="Email Preview"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">📖</span> How to Preview Your HTML Email</h2>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <div class="step-num">01</div>
+                    <h4>Paste Your Code</h4>
+                    <p>Copy your raw HTML email code from your editor and paste it into the source code box above.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">02</div>
+                    <h4>Real-time Rendering</h4>
+                    <p>The preview updates instantly. Any changes you make to the styles or content are reflected in the frame below.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">03</div>
+                    <h4>Check Responsiveness</h4>
+                    <p>Switch to the "Mobile" view to see how your media queries and fluid layouts behave on smaller screens.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">04</div>
+                    <h4>Verify Links & Images</h4>
+                    <p>Interact with the preview to check that your images load correctly and your call-to-action buttons are placed properly.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2><span class="icon">💡</span> About HTML Email Development</h2>
+            <p>Designing for email is vastly different from designing for the modern web. Email clients like Outlook, Gmail, and Apple Mail use different rendering engines, making testing a critical step in your workflow.</p>
+            <ul>
+                <li><strong>Inline Styles:</strong> Most email clients prefer inline CSS over external or internal style sheets. Ensure your preview looks consistent by inlining your styles.</li>
+                <li><strong>Table-Based Layouts:</strong> While modern web design uses Flexbox and Grid, complex email layouts often still rely on HTML tables for maximum compatibility across older versions of Outlook.</li>
+                <li><strong>Image Hosting:</strong> For images to appear in this preview and in your subscribers' inboxes, they must be hosted on a public server with absolute URLs (e.g., <code>https://yoursite.com/image.jpg</code>).</li>
+                <li><strong>Media Queries:</strong> Use the Mobile toggle in our tool to verify that your <code>@media</code> rules are correctly triggering for narrow viewports.</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-component"></footer>
+
+<script src="../header.js"></script>
+<script src="../footer.js"></script>
+<script>
+const htmlInput = document.getElementById('htmlInput');
+const emailIframe = document.getElementById('emailIframe');
+const previewFrame = document.getElementById('previewFrame');
+
+function setDevice(device) {
+    document.getElementById('btnDesktop').classList.toggle('active', device === 'desktop');
+    document.getElementById('btnMobile').classList.toggle('active', device === 'mobile');
+    
+    if (device === 'mobile') {
+        previewFrame.className = 'device-frame mobile';
+    } else {
+        previewFrame.className = 'device-frame desktop';
+    }
+}
+
+function renderEmail() {
+    const code = htmlInput.value;
+    const iframeDoc = emailIframe.contentDocument || emailIframe.contentWindow.document;
+    
+    iframeDoc.open();
+    iframeDoc.write(code);
+    iframeDoc.close();
+    
+    // Auto-adjust height for desktop
+    if (!previewFrame.classList.contains('mobile')) {
+        setTimeout(() => {
+            emailIframe.style.height = iframeDoc.documentElement.scrollHeight + 'px';
+        }, 50);
+    } else {
+        emailIframe.style.height = '100%';
+    }
+}
+
+function clearCode() {
+    htmlInput.value = '';
+    renderEmail();
+}
+
+function loadSample() {
+    htmlInput.value = `<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container { width: 100%; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #eeeeee; }
+        .header { background: #6366f1; color: #ffffff; padding: 40px; text-align: center; }
+        .content { padding: 30px; line-height: 1.6; color: #334155; }
+        .cta { display: inline-block; padding: 12px 24px; background: #6366f1; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: bold; }
+        @media only screen and (max-width: 480px) {
+            .header { padding: 20px; }
+            .content { padding: 15px; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 20px; background: #f8fafc; font-family: Helvetica, Arial, sans-serif;">
+    <div class="container">
+        <div class="header">
+            <h1 style="margin: 0;">Monthly Newsletter</h1>
+        </div>
+        <div class="content">
+            <h2>Welcome to the preview!</h2>
+            <p>This is a sample HTML email template. You can edit the code in the box above and see the changes here instantly.</p>
+            <p>Testing your emails for both desktop and mobile is essential for a high click-through rate.</p>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="#" class="cta">Get Started Now</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+    renderEmail();
+}
+
+// Initial Render
+window.onload = () => {
+    loadSample();
+};
+</script>
+</body>
+</html>
