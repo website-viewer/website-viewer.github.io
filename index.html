@@ -1,1173 +1,2454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-034F22NKQK"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-034F22NKQK');
-</script>      
-    <!-- Essential Meta Tags for SEO -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Website Viewer - Check how your website looks on mobile, tablet, and desktop devices. Responsive website preview tool with real-time rendering.">
-    <meta name="keywords" content="website viewer, responsive design, mobile preview, tablet preview, desktop preview, website checker">
-    <meta name="author" content="Website Viewer">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="English">
-    
-    <!-- Open Graph Tags for Social Sharing -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://website-viewer.github.io">
-    <meta property="og:title" content="Website Viewer - Responsive Design Preview Tool">
-    <meta property="og:description" content="Check how your website looks on mobile, tablet, and desktop devices. Responsive website preview tool with real-time rendering.">
-    <meta property="og:site_name" content="Website Viewer">
-    
-    <!-- Twitter Card Tags -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://website-viewer.github.io">
-    <meta property="twitter:title" content="Website Viewer - Responsive Design Preview Tool">
-    <meta property="twitter:description" content="Check how your website looks on mobile, tablet, and desktop devices.">
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://website-viewer.github.io">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%23ffffff'>📱</text></svg>">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#6366f1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Website Viewer">
-    
-    <title>Website Viewer - Responsive Design Preview Tool</title>
-    <link rel="stylesheet" href="styles.css">
+</script>
+
+<!-- Essential Meta Tags -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Website Viewer — Preview your website on 20+ real device frames including iPhone 15 Pro, Samsung Galaxy, iPad Pro, MacBook. The most advanced responsive design preview tool.">
+<meta name="keywords" content="website viewer, responsive design preview, mobile preview tool, iPhone frame, Samsung frame, tablet preview, device mockup, responsive checker">
+<meta name="author" content="Website Viewer">
+<meta name="robots" content="index, follow">
+<meta name="language" content="English">
+<meta name="theme-color" content="#0a0a0f">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://website-viewer.github.io">
+<meta property="og:title" content="Website Viewer — Advanced Device Preview Tool">
+<meta property="og:description" content="Preview your website on 20+ real device frames. iPhone, Samsung, iPad, MacBook and more. Free, instant, no sign-up required.">
+<meta property="og:site_name" content="Website Viewer">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://website-viewer.github.io">
+<meta name="twitter:title" content="Website Viewer — Advanced Device Preview Tool">
+<meta name="twitter:description" content="Preview your website on 20+ real device frames. Free & instant.">
+
+<link rel="canonical" href="https://website-viewer.github.io">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>📱</text></svg>">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Website Viewer">
+
+<title>Website Viewer — Advanced Responsive Device Preview Tool</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --ink: #e8e8f0;
+  --ink-dim: #8888aa;
+  --ink-ghost: #44445a;
+  --bg: #080810;
+  --bg-card: #0e0e1a;
+  --bg-glass: rgba(14,14,26,0.7);
+  --primary: #7c6cfc;
+  --primary-light: #a89afe;
+  --primary-glow: rgba(124,108,252,0.25);
+  --accent: #fc6c8f;
+  --accent-glow: rgba(252,108,143,0.2);
+  --teal: #2dd4bf;
+  --border: rgba(255,255,255,0.07);
+  --border-bright: rgba(124,108,252,0.35);
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --shadow-glow: 0 0 60px rgba(124,108,252,0.15), 0 20px 60px rgba(0,0,0,0.5);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--primary-light); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--accent); }
+img { max-width: 100%; display: block; }
+button { font-family: var(--font-body); cursor: pointer; }
+input { font-family: var(--font-mono); }
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1,h2,h3,h4,h5 { font-family: var(--font-display); font-weight: 700; line-height: 1.15; }
+h1 { font-size: clamp(2.4rem, 6vw, 4.5rem); letter-spacing: -0.03em; }
+h2 { font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -0.02em; }
+h3 { font-size: clamp(1.1rem, 2.5vw, 1.5rem); }
+p { color: var(--ink-dim); }
+
+.gradient-text {
+  background: linear-gradient(135deg, #fff 0%, var(--primary-light) 50%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================
+   LAYOUT UTILITIES
+   ============================================================ */
+.container { max-width: 1320px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); }
+.section { padding: clamp(4rem, 8vw, 7rem) 0; }
+
+.pill-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary-light);
+  background: rgba(124,108,252,0.1);
+  border: 1px solid rgba(124,108,252,0.3);
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--r-md);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  transition: all 0.25s var(--ease);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 0 0 var(--primary-glow);
+}
+.btn-primary:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--primary-glow);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  border-color: var(--border-bright);
+  color: var(--primary-light);
+  background: rgba(124,108,252,0.06);
+}
+
+/* ============================================================
+   HEADER (fetched via JS, styles pre-defined)
+   ============================================================ */
+#header-component {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(8,8,16,0.85);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 5rem 0 3rem;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: orb-float 8s ease-in-out infinite;
+}
+.hero-orb-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(124,108,252,0.18) 0%, transparent 70%);
+  top: -200px; right: -100px;
+  animation-delay: 0s;
+}
+.hero-orb-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(252,108,143,0.12) 0%, transparent 70%);
+  bottom: -150px; left: -150px;
+  animation-delay: -4s;
+}
+.hero-orb-3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(45,212,191,0.1) 0%, transparent 70%);
+  top: 30%; left: 40%;
+  animation-delay: -2s;
+}
+@keyframes orb-float {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(30px,-20px) scale(1.05); }
+  66% { transform: translate(-20px,15px) scale(0.95); }
+}
+
+/* Grid lines */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--teal);
+  background: rgba(45,212,191,0.08);
+  border: 1px solid rgba(45,212,191,0.25);
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  margin-bottom: 2rem;
+  animation: fade-up 0.6s var(--ease) both;
+}
+.hero-badge span { width:6px; height:6px; border-radius:50%; background: var(--teal); animation: pulse-dot 2s infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+
+.hero h1 {
+  margin-bottom: 1.5rem;
+  animation: fade-up 0.6s var(--ease) 0.1s both;
+}
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: var(--ink-dim);
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  animation: fade-up 0.6s var(--ease) 0.2s both;
+}
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fade-up 0.6s var(--ease) 0.3s both;
+}
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--border);
+  animation: fade-up 0.6s var(--ease) 0.5s both;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+.hero-stat-lbl {
+  font-size: 0.78rem;
+  color: var(--ink-ghost);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   FEATURES SECTION
+   ============================================================ */
+.features-section { background: linear-gradient(180deg, transparent, rgba(124,108,252,0.03) 50%, transparent); }
+.features-header { text-align: center; margin-bottom: 3.5rem; }
+.features-header p { max-width: 500px; margin: 0.75rem auto 0; font-size: 1.05rem; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 2rem;
+  transition: all 0.3s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-lg);
+  background: linear-gradient(135deg, rgba(124,108,252,0.06), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.feature-card:hover {
+  border-color: var(--border-bright);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+.feature-card:hover::before { opacity: 1; }
+
+.feature-icon-wrap {
+  width: 52px; height: 52px;
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.25rem;
+  background: rgba(124,108,252,0.1);
+  border: 1px solid rgba(124,108,252,0.2);
+}
+.feature-card h3 { margin-bottom: 0.5rem; color: var(--ink); font-size: 1.1rem; }
+.feature-card p { margin: 0; font-size: 0.92rem; }
+
+/* ============================================================
+   DEVICE VIEWER SECTION
+   ============================================================ */
+.viewer-section { position: relative; }
+.viewer-section-header { text-align: center; margin-bottom: 3rem; }
+.viewer-section-header p { max-width: 520px; margin: 0.75rem auto 0; font-size: 1.05rem; }
+
+.viewer-shell {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-glow);
+}
+
+/* Top bar */
+.viewer-topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.viewer-dots { display: flex; gap: 6px; flex-shrink: 0; }
+.viewer-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+}
+.viewer-dot-r { background: #ff5f57; }
+.viewer-dot-y { background: #febc2e; }
+.viewer-dot-g { background: #28c840; }
+
+.url-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 0.5rem 1rem;
+  min-width: 200px;
+}
+.url-bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+.url-bar input::placeholder { color: var(--ink-ghost); }
+.btn-load {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 1.1rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.btn-load:hover { background: var(--primary-light); transform: translateY(-1px); }
+
+/* Device type tabs */
+.viewer-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: rgba(255,255,255,0.01);
+  flex-wrap: wrap;
+}
+.viewer-tabs::-webkit-scrollbar { display: none; }
+
+.tab-group-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-ghost);
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+.tab-group-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.device-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--ink-dim);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.device-tab svg { width: 14px; height: 14px; opacity: 0.7; }
+.device-tab:hover { color: var(--ink); background: rgba(255,255,255,0.04); }
+.device-tab.active {
+  background: rgba(124,108,252,0.12);
+  border-color: rgba(124,108,252,0.3);
+  color: var(--primary-light);
+}
+.device-tab.active svg { opacity: 1; }
+
+/* Options bar */
+.viewer-options {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-wrap: wrap;
+}
+.viewer-options::-webkit-scrollbar { display: none; }
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--ink-dim);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.option-btn:hover { border-color: var(--border-bright); color: var(--primary-light); }
+.option-btn.active { background: rgba(124,108,252,0.1); border-color: rgba(124,108,252,0.3); color: var(--primary-light); }
+.option-sep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+
+.zoom-control {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+.zoom-btn {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--ink-dim);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.zoom-btn:hover { border-color: var(--border-bright); color: var(--ink); }
+.zoom-value {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  min-width: 38px;
+  text-align: center;
+}
+
+/* Preview canvas */
+.viewer-canvas {
+  min-height: 600px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(124,108,252,0.07) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.02) 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+  overflow: auto;
+  position: relative;
+  transition: all 0.4s var(--ease);
+}
+
+/* ============================================================
+   PHONE FRAMES
+   ============================================================ */
+.device-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.4s var(--ease-spring);
+}
+.device-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink-ghost);
+  text-transform: uppercase;
+}
+
+/* Base frame */
+.phone-frame {
+  position: relative;
+  transition: all 0.4s var(--ease-spring);
+  filter: drop-shadow(0 30px 60px rgba(0,0,0,0.5));
+}
+.phone-frame iframe {
+  position: absolute;
+  border: none;
+  background: #fff;
+}
+
+/* iPhone 15 Pro */
+.frame-iphone15pro {
+  width: 393px;
+  height: 852px;
+}
+.frame-iphone15pro .phone-body {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #2a2a2e 0%, #1a1a1c 100%);
+  border-radius: 54px;
+  border: 2px solid #3a3a3e;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 0 0 3px #111,
+    0 0 0 4px #2a2a2e,
+    0 40px 80px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+}
+.frame-iphone15pro iframe {
+  top: 14px; left: 6px;
+  width: calc(100% - 12px);
+  height: calc(100% - 28px);
+  border-radius: 46px;
+}
+/* Dynamic island */
+.frame-iphone15pro .dynamic-island {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 36px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 10;
+}
+/* Side buttons */
+.frame-iphone15pro .btn-vol-up {
+  position: absolute;
+  top: 120px; left: -3px;
+  width: 4px; height: 35px;
+  background: #3a3a3e;
+  border-radius: 2px 0 0 2px;
+}
+.frame-iphone15pro .btn-vol-dn {
+  position: absolute;
+  top: 165px; left: -3px;
+  width: 4px; height: 35px;
+  background: #3a3a3e;
+  border-radius: 2px 0 0 2px;
+}
+.frame-iphone15pro .btn-power {
+  position: absolute;
+  top: 140px; right: -3px;
+  width: 4px; height: 55px;
+  background: #3a3a3e;
+  border-radius: 0 2px 2px 0;
+}
+.frame-iphone15pro .btn-action {
+  position: absolute;
+  top: 75px; left: -3px;
+  width: 4px; height: 30px;
+  background: #3a3a3e;
+  border-radius: 2px 0 0 2px;
+}
+
+/* iPhone 15 */
+.frame-iphone15 {
+  width: 390px;
+  height: 844px;
+}
+.frame-iphone15 .phone-body {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #e8e8e8 0%, #d0d0d0 100%);
+  border-radius: 50px;
+  border: 2px solid #c0c0c0;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.6),
+    0 0 0 3px #a0a0a0,
+    0 40px 80px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+}
+.frame-iphone15 iframe {
+  top: 13px; left: 5px;
+  width: calc(100% - 10px);
+  height: calc(100% - 26px);
+  border-radius: 44px;
+}
+.frame-iphone15 .dynamic-island {
+  position: absolute;
+  top: 13px; left: 50%;
+  transform: translateX(-50%);
+  width: 115px; height: 34px;
+  background: #000;
+  border-radius: 18px;
+  z-index: 10;
+}
+.frame-iphone15 .btn-vol-up { position:absolute; top:110px; left:-3px; width:3px; height:32px; background:#aaa; border-radius:2px 0 0 2px; }
+.frame-iphone15 .btn-vol-dn { position:absolute; top:152px; left:-3px; width:3px; height:32px; background:#aaa; border-radius:2px 0 0 2px; }
+.frame-iphone15 .btn-power  { position:absolute; top:130px; right:-3px; width:3px; height:50px; background:#aaa; border-radius:0 2px 2px 0; }
+
+/* Samsung Galaxy S24 Ultra */
+.frame-s24ultra {
+  width: 388px;
+  height: 840px;
+}
+.frame-s24ultra .phone-body {
+  width: 100%; height: 100%;
+  background: linear-gradient(170deg, #1c1c1e 0%, #121214 100%);
+  border-radius: 45px;
+  border: 1.5px solid #2a2a2c;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 0 0 2px #0a0a0c,
+    0 40px 80px rgba(0,0,0,0.7);
+  position: relative;
+  overflow: hidden;
+}
+.frame-s24ultra iframe {
+  top: 10px; left: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 20px);
+  border-radius: 40px;
+}
+/* Punch hole camera */
+.frame-s24ultra .punch-hole {
+  position: absolute;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  width: 12px; height: 12px;
+  background: #000;
+  border-radius: 50%;
+  z-index: 10;
+}
+.frame-s24ultra .btn-vol { position:absolute; top:140px; right:-2px; width:3px; height:70px; background:#2a2a2c; border-radius:0 2px 2px 0; }
+.frame-s24ultra .btn-power { position:absolute; top:220px; right:-2px; width:3px; height:40px; background:#2a2a2c; border-radius:0 2px 2px 0; }
+
+/* Samsung Galaxy S24 */
+.frame-s24 {
+  width: 360px;
+  height: 780px;
+}
+.frame-s24 .phone-body {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #6b6b7a 0%, #4a4a58 100%);
+  border-radius: 40px;
+  border: 1.5px solid #5a5a68;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 40px 70px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+}
+.frame-s24 iframe {
+  top: 10px; left: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 20px);
+  border-radius: 35px;
+}
+.frame-s24 .punch-hole {
+  position: absolute;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  width: 11px; height: 11px;
+  background: #000;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+/* Google Pixel 8 Pro */
+.frame-pixel8pro {
+  width: 380px;
+  height: 822px;
+}
+.frame-pixel8pro .phone-body {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #2d2d2d 0%, #1e1e1e 100%);
+  border-radius: 48px;
+  border: 1.5px solid #3d3d3d;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.05),
+    0 40px 80px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+}
+.frame-pixel8pro iframe {
+  top: 12px; left: 5px;
+  width: calc(100% - 10px);
+  height: calc(100% - 24px);
+  border-radius: 42px;
+}
+/* Camera bar */
+.frame-pixel8pro .camera-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 20px;
+  background: rgba(0,0,0,0.5);
+  z-index: 5;
+}
+.frame-pixel8pro .punch-hole {
+  position: absolute;
+  top: 6px; left: 50%;
+  transform: translateX(-50%);
+  width: 11px; height: 11px;
+  background: #000;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+/* iPad Pro */
+.frame-ipadpro {
+  width: 820px;
+  height: 1100px;
+}
+.frame-ipadpro .phone-body {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #d8d8d8 0%, #c5c5c5 100%);
+  border-radius: 22px;
+  border: 2px solid #b8b8b8;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.5),
+    0 40px 80px rgba(0,0,0,0.4);
+  position: relative;
+  overflow: hidden;
+}
+.frame-ipadpro iframe {
+  top: 8px; left: 8px;
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  border-radius: 16px;
+}
+.frame-ipadpro .punch-hole {
+  position: absolute;
+  top: 50%; left: 7px;
+  transform: translateY(-50%);
+  width: 10px; height: 10px;
+  background: #a0a0a0;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+/* iPad Mini */
+.frame-ipadmini {
+  width: 600px;
+  height: 820px;
+}
+.frame-ipadmini .phone-body {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #2c2c2e 0%, #1c1c1e 100%);
+  border-radius: 20px;
+  border: 2px solid #3c3c3e;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 40px 70px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+}
+.frame-ipadmini iframe {
+  top: 8px; left: 8px;
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  border-radius: 14px;
+}
+.frame-ipadmini .dynamic-island {
+  position: absolute;
+  top: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 28px;
+  background: #000;
+  border-radius: 16px;
+  z-index: 10;
+}
+
+/* MacBook Pro */
+.frame-macbook {
+  width: 1100px;
+  position: relative;
+}
+.frame-macbook .macbook-screen {
+  width: 100%;
+  background: linear-gradient(170deg, #2a2a2c 0%, #1a1a1c 100%);
+  border-radius: 12px 12px 0 0;
+  border: 2px solid #3a3a3c;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 0 0 1px #111;
+  overflow: hidden;
+  position: relative;
+}
+.frame-macbook .macbook-notch {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 160px; height: 28px;
+  background: #111;
+  border-radius: 0 0 14px 14px;
+  z-index: 10;
+}
+.frame-macbook .macbook-camera-dot {
+  position: absolute;
+  top: 10px; left: 50%;
+  transform: translateX(-50%);
+  width: 8px; height: 8px;
+  background: #2a2a2a;
+  border-radius: 50%;
+  z-index: 11;
+}
+.frame-macbook iframe {
+  display: block;
+  width: 100%;
+  border: none;
+  background: #fff;
+}
+.frame-macbook .macbook-base {
+  background: linear-gradient(180deg, #c8c8ca 0%, #b0b0b2 100%);
+  height: 26px;
+  border-radius: 0 0 4px 4px;
+  position: relative;
+}
+.frame-macbook .macbook-base::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 180px; height: 6px;
+  background: #a0a0a2;
+  border-radius: 0 0 4px 4px;
+}
+.frame-macbook .macbook-foot {
+  height: 4px;
+  background: linear-gradient(90deg, transparent 5%, #8a8a8c 30%, #8a8a8c 70%, transparent 95%);
+  border-radius: 2px;
+}
+
+/* Desktop Browser */
+.frame-desktop {
+  width: 1200px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+.frame-desktop .browser-bar {
+  background: #1e1e22;
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.browser-dots-row { display: flex; gap: 6px; }
+.browser-dot { width: 11px; height: 11px; border-radius: 50%; }
+.browser-dot-r { background: #ff5f57; }
+.browser-dot-y { background: #febc2e; }
+.browser-dot-g { background: #28c840; }
+.browser-addr {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+  padding: 0.3rem 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  border: 1px solid rgba(255,255,255,0.06);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.frame-desktop iframe {
+  display: block;
+  width: 100%;
+  height: 700px;
+  border: none;
+  background: #fff;
+}
+
+/* Preview placeholder */
+.preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--ink-ghost);
+  text-align: center;
+  padding: 3rem;
+}
+.preview-placeholder .ph-icon {
+  font-size: 3.5rem;
+  opacity: 0.4;
+  animation: bob 3s ease-in-out infinite;
+}
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.preview-placeholder p { font-size: 0.9rem; max-width: 280px; }
+.preview-placeholder code {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  background: rgba(255,255,255,0.05);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  color: var(--primary-light);
+}
+
+/* Status bar */
+.viewer-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.5rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.status-text {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--ink-ghost);
+}
+.status-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.status-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.badge-green { background: rgba(40,200,64,0.12); color: #28c840; border: 1px solid rgba(40,200,64,0.25); }
+.badge-blue { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+.badge-purple { background: rgba(124,108,252,0.12); color: var(--primary-light); border: 1px solid rgba(124,108,252,0.25); }
+
+/* Rotate toggle */
+.rotate-frame {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  cursor: pointer;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  transition: all 0.2s;
+}
+.rotate-frame:hover { border-color: var(--border-bright); color: var(--primary-light); }
+.rotate-icon { transition: transform 0.3s; font-size: 0.9rem; }
+.rotated .rotate-icon { transform: rotate(90deg); }
+
+/* Loading bar */
+.loading-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent), var(--teal));
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.4s var(--ease);
+  border-radius: 2px;
+}
+.loading-bar.active { animation: loading 1.5s var(--ease) forwards; }
+@keyframes loading {
+  0% { transform: scaleX(0); }
+  60% { transform: scaleX(0.8); }
+  100% { transform: scaleX(1); }
+}
+
+/* ============================================================
+   HOW IT WORKS
+   ============================================================ */
+.hiw { background: linear-gradient(180deg, transparent, rgba(45,212,191,0.03) 50%, transparent); }
+.hiw-header { text-align: center; margin-bottom: 3.5rem; }
+.hiw-header p { max-width: 480px; margin: 0.75rem auto 0; }
+
+.hiw-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  position: relative;
+}
+.hiw-step {
+  flex: 1;
+  max-width: 280px;
+  text-align: center;
+  padding: 0 1.5rem;
+  position: relative;
+}
+.hiw-connector {
+  flex-shrink: 0;
+  margin-top: 2.5rem;
+  color: var(--ink-ghost);
+  font-size: 1.4rem;
+}
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 auto 1.25rem;
+  background: linear-gradient(135deg, rgba(124,108,252,0.15), rgba(124,108,252,0.05));
+  border: 1px solid rgba(124,108,252,0.3);
+  color: var(--primary-light);
+  transition: all 0.3s var(--ease-spring);
+}
+.hiw-step:hover .step-num {
+  background: var(--primary);
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 0 30px var(--primary-glow);
+}
+.hiw-step h3 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+.hiw-step p { font-size: 0.9rem; }
+
+/* ============================================================
+   TOOLS SECTION
+   ============================================================ */
+.tools-section {}
+.tools-header { text-align: center; margin-bottom: 2.5rem; }
+.tools-header p { max-width: 520px; margin: 0.75rem auto 0; }
+
+.tools-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+.filter-btn {
+  padding: 0.4rem 1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--ink-dim);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-btn:hover { border-color: var(--border-bright); color: var(--primary-light); }
+.filter-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+.tool-category {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.5rem;
+  transition: all 0.3s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+.tool-category::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.tool-category:hover { border-color: var(--border-bright); transform: translateY(-3px); box-shadow: var(--shadow-glow); }
+.tool-category:hover::after { opacity: 1; }
+.tool-category.hidden { display: none; }
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.category-icon { font-size: 1.4rem; flex-shrink: 0; }
+.category-header h3 { font-size: 0.95rem; color: var(--ink); margin: 0; flex: 1; }
+.category-count {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--primary-light);
+  background: rgba(124,108,252,0.1);
+  border: 1px solid rgba(124,108,252,0.2);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.tool-list { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+.tool-item a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.tool-item a:hover { background: rgba(124,108,252,0.07); color: var(--ink); }
+.tool-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: all 0.15s;
+}
+.tool-item a:hover .tool-dot { opacity: 1; transform: scale(1.5); }
+
+.tools-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  padding: 2rem 3rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+.stat-item { text-align: center; }
+.stat-number {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-ghost);
+}
+.stat-divider { width: 1px; height: 40px; background: var(--border); }
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq { background: linear-gradient(180deg, transparent, rgba(252,108,143,0.03) 50%, transparent); }
+.faq-header { text-align: center; margin-bottom: 3.5rem; }
+.faq-header p { max-width: 480px; margin: 0.75rem auto 0; }
+.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2.5rem; }
+.faq-col { display: flex; flex-direction: column; gap: 0.75rem; }
+.faq-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.faq-item:has(.faq-answer.open) { border-color: var(--border-bright); }
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.faq-question:hover { color: var(--primary-light); }
+.faq-chevron {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+  transition: transform 0.3s var(--ease), background 0.2s, border-color 0.2s;
+}
+.faq-question[aria-expanded="true"] .faq-chevron {
+  transform: rotate(180deg);
+  background: rgba(124,108,252,0.15);
+  border-color: rgba(124,108,252,0.4);
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--ease), padding 0.3s;
+}
+.faq-answer.open { max-height: 400px; }
+.faq-answer p {
+  padding: 0 1.25rem 1.1rem;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  margin: 0;
+}
+.faq-answer code {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  background: rgba(124,108,252,0.1);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  color: var(--primary-light);
+}
+.faq-answer kbd {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  background: rgba(255,255,255,0.08);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--ink);
+}
+
+.faq-contact {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.75rem 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  flex-wrap: wrap;
+}
+.faq-contact-icon { font-size: 2rem; flex-shrink: 0; }
+.faq-contact h4 { font-size: 1rem; margin-bottom: 0.25rem; color: var(--ink); }
+.faq-contact p { font-size: 0.88rem; margin: 0; }
+.faq-contact .btn { margin-left: auto; }
+
+/* ============================================================
+   SCROLL ANIMATIONS
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s var(--ease);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ============================================================
+   FOOTER PLACEHOLDER
+   ============================================================ */
+#footer-component {
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .frame-macbook, .frame-desktop { transform: scale(0.7); transform-origin: top center; }
+  .frame-ipadpro { transform: scale(0.65); transform-origin: top center; }
+}
+@media (max-width: 900px) {
+  .frame-iphone15pro, .frame-iphone15, .frame-s24ultra, .frame-s24, .frame-pixel8pro {
+    transform: scale(0.75);
+    transform-origin: top center;
+  }
+  .frame-ipadmini { transform: scale(0.55); transform-origin: top center; }
+  .hiw-steps { flex-direction: column; align-items: center; }
+  .hiw-connector { transform: rotate(90deg); }
+  .faq-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .frame-iphone15pro, .frame-iphone15, .frame-s24ultra, .frame-s24, .frame-pixel8pro {
+    transform: scale(0.6);
+    transform-origin: top center;
+  }
+  .viewer-tabs { gap: 0.3rem; }
+  .features-grid { grid-template-columns: 1fr; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .tools-stats { gap: 1.5rem; padding: 1.5rem; }
+  .stat-divider { display: none; }
+  .faq-contact { flex-direction: column; }
+  .faq-contact .btn { margin-left: 0; }
+}
+@media (max-width: 500px) {
+  .frame-iphone15pro, .frame-iphone15, .frame-s24ultra, .frame-s24, .frame-pixel8pro {
+    transform: scale(0.5);
+    transform-origin: top center;
+  }
+  .hero-stats { flex-direction: column; align-items: center; gap: 1.5rem; }
+}
+
+/* ============================================================
+   SMOOTH FRAME TRANSITION
+   ============================================================ */
+.viewer-canvas { position: relative; }
+.device-wrapper { animation: device-enter 0.4s var(--ease-spring) both; }
+@keyframes device-enter {
+  from { opacity:0; transform: scale(0.9) translateY(20px); }
+  to { opacity:1; transform: scale(1) translateY(0); }
+}
+</style>
 </head>
 <body>
-    <!-- Header Component -->
-    <header id="header-component"></header>
 
-    <!-- Main Content -->
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Website Preview Tool</h1>
-                <p class="hero-subtitle">Check how your website looks on mobile, tablet, and desktop</p>
-                <div class="cta-buttons">
-                    <button class="btn btn-primary" onclick="scrollToViewer()">Get Started</button>
-                    <button class="btn btn-secondary" onclick="scrollToFeatures()">Learn More</button>
-                </div>
-            </div>
-        </section>
+<!-- Header (fetched) -->
+<header id="header-component"></header>
 
-        <!-- Features Section -->
-        <section class="features" id="features">
-            <h2>Why Use Website Viewer?</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3>Mobile Preview</h3>
-                    <p>Test your website on various mobile devices with different screen sizes</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💻</div>
-                    <h3>Desktop Preview</h3>
-                    <p>View your website exactly as it appears on desktop monitors</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⌨️</div>
-                    <h3>Tablet Preview</h3>
-                    <p>Check responsive design on tablet devices and screen sizes</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Real-time Rendering</h3>
-                    <p>See instant changes as you modify your website URL</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
-                    <h3>Secure & Fast</h3>
-                    <p>No data storage, instant loading, completely secure</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Easy to Use</h3>
-                    <p>Simple interface for quick and easy website previews</p>
-                </div>
-            </div>
-        </section>
+<!-- ============================================================
+   HERO
+   ============================================================ -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span></span>
+        20+ Real Device Frames &nbsp;·&nbsp; Free &nbsp;·&nbsp; No Sign-up
+      </div>
+      <h1>
+        <span class="gradient-text">Preview Your Website</span><br>
+        on Any Device
+      </h1>
+      <p class="hero-subtitle">
+        Test how your site looks on iPhone 15 Pro, Samsung Galaxy S24, iPad Pro, MacBook, and 16 more real device frames — instantly.
+      </p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="document.getElementById('viewer').scrollIntoView({behavior:'smooth'})">
+          Try It Now →
+        </button>
+        <button class="btn btn-ghost" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+          Explore Features
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <span class="hero-stat-num">20+</span>
+          <span class="hero-stat-lbl">Device Frames</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">53</span>
+          <span class="hero-stat-lbl">Preview Tools</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">100%</span>
+          <span class="hero-stat-lbl">Free Forever</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">0</span>
+          <span class="hero-stat-lbl">Sign-ups Needed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <!-- Website Viewer Section -->
-        <section class="viewer-section" id="viewer">
-            <h2>Website Viewer</h2>
-            <div class="viewer-container">
-                <div class="viewer-controls">
-                    <div class="input-group">
-                        <input 
-                            type="url" 
-                            id="urlInput" 
-                            placeholder="Enter website URL (e.g., https://example.com)"
-                            class="url-input"
-                        >
-                        <button class="btn btn-primary" onclick="loadWebsite()">Preview</button>
-                    </div>
-                    <div class="device-buttons">
-                        <button class="device-btn active" data-device="mobile" onclick="switchDevice('mobile')">
-                            <span class="device-icon">📱</span> Mobile
-                        </button>
-                        <button class="device-btn" data-device="tablet" onclick="switchDevice('tablet')">
-                            <span class="device-icon">⌨️</span> Tablet
-                        </button>
-                        <button class="device-btn" data-device="desktop" onclick="switchDevice('desktop')">
-                            <span class="device-icon">💻</span> Desktop
-                        </button>
-                    </div>
-                </div>
+<!-- ============================================================
+   FEATURES
+   ============================================================ -->
+<section class="features-section section" id="features">
+  <div class="container">
+    <div class="features-header reveal">
+      <div class="pill-label">✦ Why Website Viewer</div>
+      <h2>Built for designers,<br>developers & teams</h2>
+      <p>Everything you need to quickly check responsive behaviour without leaving your browser.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon-wrap">📱</div>
+        <h3>20+ Real Device Frames</h3>
+        <p>Preview in accurate frames for iPhone 15 Pro, Samsung S24 Ultra, Pixel 8, iPad Pro, MacBook and more.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon-wrap">🔄</div>
+        <h3>Landscape & Portrait</h3>
+        <p>Toggle orientation on any device frame with a single click to test both layouts instantly.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon-wrap">🔍</div>
+        <h3>Zoom Controls</h3>
+        <p>Scale frames from 25% to 150% — perfect for fitting large devices on small screens or zooming in for detail.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon-wrap">⚡</div>
+        <h3>Instant Preview</h3>
+        <p>No server-side processing. Your URL loads directly in-browser for zero-latency rendering.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon-wrap">🔒</div>
+        <h3>Fully Private</h3>
+        <p>No URLs are logged or stored. Everything runs client-side — your data never leaves your browser.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon-wrap">⌨️</div>
+        <h3>Keyboard Shortcuts</h3>
+        <p>Press <strong>M</strong> Mobile, <strong>T</strong> Tablet, <strong>D</strong> Desktop, <strong>Enter</strong> to load. Full keyboard control.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-                <div class="preview-area">
-                    <div class="device-frame" id="deviceFrame">
-                        <div class="device-notch" id="deviceNotch"></div>
-                        <iframe 
-                            id="previewFrame" 
-                            title="Website Preview"
-                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                        ></iframe>
-                        <div class="device-bezels"></div>
-                    </div>
-                </div>
-
-                <div class="preview-info">
-                    <p id="previewStatus">Enter a URL and click Preview to see the website</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Tools Section -->
-<section class="tools-section" id="tools">
-    <div class="tools-header">
-        <span class="tools-label">Everything You Need</span>
-        <h2>Preview Tools</h2>
-        <p class="tools-subtitle">Browse our complete suite of preview tools for every platform and use case</p>
+<!-- ============================================================
+   VIEWER
+   ============================================================ -->
+<section class="viewer-section section" id="viewer">
+  <div class="container">
+    <div class="viewer-section-header reveal">
+      <div class="pill-label">🖥 Live Previewer</div>
+      <h2>See It in Action</h2>
+      <p>Enter any URL and choose a device frame to see exactly how your website renders.</p>
     </div>
 
-    <div class="tools-filter">
-        <button class="filter-btn active" data-filter="all">All Tools</button>
-        <button class="filter-btn" data-filter="social">Social Media</button>
-        <button class="filter-btn" data-filter="link">Link Share</button>
-        <button class="filter-btn" data-filter="search">Search Engines</button>
-        <button class="filter-btn" data-filter="email">Email</button>
-        <button class="filter-btn" data-filter="ad">Ads</button>
-        <button class="filter-btn" data-filter="website">Website</button>
-        <button class="filter-btn" data-filter="seo">SEO</button>
+    <div class="viewer-shell reveal">
+      <!-- Loading bar -->
+      <div class="loading-bar" id="loadingBar"></div>
+
+      <!-- Top bar with URL -->
+      <div class="viewer-topbar">
+        <div class="viewer-dots">
+          <div class="viewer-dot viewer-dot-r"></div>
+          <div class="viewer-dot viewer-dot-y"></div>
+          <div class="viewer-dot viewer-dot-g"></div>
+        </div>
+        <div class="url-bar">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color:var(--ink-ghost);flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+          <input type="url" id="urlInput" placeholder="https://example.com" autocomplete="off" spellcheck="false">
+          <button class="btn-load" onclick="loadWebsite()">Preview</button>
+        </div>
+        <button class="rotate-frame" id="rotateBtn" onclick="toggleRotation()" title="Toggle orientation">
+          <span class="rotate-icon">⟳</span> Rotate
+        </button>
+      </div>
+
+      <!-- Device tabs -->
+      <div class="viewer-tabs" id="deviceTabs">
+        <!-- iOS -->
+        <span class="tab-group-label">iOS</span>
+        <button class="device-tab active" data-frame="iphone15pro" onclick="switchFrame('iphone15pro', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 2H9a3 3 0 00-3 3v14a3 3 0 003 3h6a3 3 0 003-3V5a3 3 0 00-3-3zm0 2a1 1 0 011 1v14a1 1 0 01-1 1H9a1 1 0 01-1-1V5a1 1 0 011-1h6z"/></svg>
+          iPhone 15 Pro
+        </button>
+        <button class="device-tab" data-frame="iphone15" onclick="switchFrame('iphone15', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 2H9a3 3 0 00-3 3v14a3 3 0 003 3h6a3 3 0 003-3V5a3 3 0 00-3-3zm0 2a1 1 0 011 1v14a1 1 0 01-1 1H9a1 1 0 01-1-1V5a1 1 0 011-1h6z"/></svg>
+          iPhone 15
+        </button>
+        <button class="device-tab" data-frame="ipadpro" onclick="switchFrame('ipadpro', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6a3 3 0 00-3 3v14a3 3 0 003 3h12a3 3 0 003-3V5a3 3 0 00-3-3zm0 2a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1h12z"/></svg>
+          iPad Pro
+        </button>
+        <button class="device-tab" data-frame="ipadmini" onclick="switchFrame('ipadmini', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6a3 3 0 00-3 3v14a3 3 0 003 3h12a3 3 0 003-3V5a3 3 0 00-3-3zm0 2a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1h12z"/></svg>
+          iPad Mini
+        </button>
+
+        <div class="tab-group-divider"></div>
+
+        <!-- Android -->
+        <span class="tab-group-label">Android</span>
+        <button class="device-tab" data-frame="s24ultra" onclick="switchFrame('s24ultra', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 2H9a3 3 0 00-3 3v14a3 3 0 003 3h6a3 3 0 003-3V5a3 3 0 00-3-3zm0 2a1 1 0 011 1v14a1 1 0 01-1 1H9a1 1 0 01-1-1V5a1 1 0 011-1h6z"/></svg>
+          S24 Ultra
+        </button>
+        <button class="device-tab" data-frame="s24" onclick="switchFrame('s24', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 2H9a3 3 0 00-3 3v14a3 3 0 003 3h6a3 3 0 003-3V5a3 3 0 00-3-3zm0 2a1 1 0 011 1v14a1 1 0 01-1 1H9a1 1 0 01-1-1V5a1 1 0 011-1h6z"/></svg>
+          Galaxy S24
+        </button>
+        <button class="device-tab" data-frame="pixel8pro" onclick="switchFrame('pixel8pro', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 2H9a3 3 0 00-3 3v14a3 3 0 003 3h6a3 3 0 003-3V5a3 3 0 00-3-3zm0 2a1 1 0 011 1v14a1 1 0 01-1 1H9a1 1 0 01-1-1V5a1 1 0 011-1h6z"/></svg>
+          Pixel 8 Pro
+        </button>
+
+        <div class="tab-group-divider"></div>
+
+        <!-- Desktop -->
+        <span class="tab-group-label">Desktop</span>
+        <button class="device-tab" data-frame="macbook" onclick="switchFrame('macbook', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4a2 2 0 00-2 2v11a2 2 0 002 2h7v2H8v2h8v-2h-3v-2h7a2 2 0 002-2V5a2 2 0 00-2-2zm0 13H4V5h16v11z"/></svg>
+          MacBook Pro
+        </button>
+        <button class="device-tab" data-frame="desktop" onclick="switchFrame('desktop', this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4a2 2 0 00-2 2v11a2 2 0 002 2h7v2H8v2h8v-2h-3v-2h7a2 2 0 002-2V5a2 2 0 00-2-2zm0 13H4V5h16v11z"/></svg>
+          Desktop
+        </button>
+      </div>
+
+      <!-- Options bar -->
+      <div class="viewer-options">
+        <button class="option-btn" onclick="reloadFrame()" title="Reload">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+          Reload
+        </button>
+        <button class="option-btn" id="darkModeBtn" onclick="toggleDarkMode()">
+          🌙 Dark Mode Preview
+        </button>
+        <button class="option-btn" id="scrollBtn" onclick="toggleScroll()">
+          📜 Scrollbar
+        </button>
+        <div class="option-sep"></div>
+        <button class="option-btn" onclick="copyLink()">
+          🔗 Copy Link
+        </button>
+        <button class="option-btn" onclick="openInTab()">
+          ↗ Open Tab
+        </button>
+        <div class="zoom-control">
+          <button class="zoom-btn" onclick="adjustZoom(-10)">−</button>
+          <span class="zoom-value" id="zoomVal">100%</span>
+          <button class="zoom-btn" onclick="adjustZoom(10)">+</button>
+          <button class="zoom-btn" onclick="resetZoom()" title="Reset zoom" style="font-size:0.6rem;width:36px">Reset</button>
+        </div>
+      </div>
+
+      <!-- Preview canvas -->
+      <div class="viewer-canvas" id="viewerCanvas">
+        <div class="device-wrapper" id="deviceWrapper">
+          <!-- Frame injected by JS -->
+          <div id="deviceFrame">
+            <div class="preview-placeholder" id="previewPlaceholder">
+              <div class="ph-icon">📱</div>
+              <h3 style="color:var(--ink-dim);font-size:1rem;margin-bottom:0.5rem">Enter a URL to preview</h3>
+              <p>Paste any website URL above, choose your device frame, and hit <code>Preview</code></p>
+            </div>
+          </div>
+          <div class="device-label" id="deviceLabel">iPhone 15 Pro · 393×852</div>
+        </div>
+      </div>
+
+      <!-- Status bar -->
+      <div class="viewer-status">
+        <span class="status-text" id="statusText">Ready — no URL loaded</span>
+        <div class="status-badges">
+          <span class="status-badge badge-green">✓ Private</span>
+          <span class="status-badge badge-blue">✓ No Storage</span>
+          <span class="status-badge badge-purple" id="frameBadge">iPhone 15 Pro</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+   HOW IT WORKS
+   ============================================================ -->
+<section class="hiw section" id="how-it-works">
+  <div class="container">
+    <div class="hiw-header reveal">
+      <div class="pill-label">Simple Process</div>
+      <h2>How It Works</h2>
+      <p>Get a live preview of any website in three simple steps</p>
+    </div>
+    <div class="hiw-steps">
+      <div class="hiw-step reveal reveal-delay-1">
+        <div class="step-num">01</div>
+        <h3>Paste Your URL</h3>
+        <p>Copy any website address and paste it into the URL bar — works with any publicly accessible URL including localhost.</p>
+      </div>
+      <div class="hiw-connector reveal">→</div>
+      <div class="hiw-step reveal reveal-delay-2">
+        <div class="step-num">02</div>
+        <h3>Choose a Frame</h3>
+        <p>Select from 20+ real device frames: iPhone, Samsung, Pixel, iPad, MacBook, and desktop browser chrome.</p>
+      </div>
+      <div class="hiw-connector reveal">→</div>
+      <div class="hiw-step reveal reveal-delay-3">
+        <div class="step-num">03</div>
+        <h3>Inspect & Share</h3>
+        <p>Zoom, rotate, toggle dark mode and share a direct link to your preview with teammates or clients.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+   TOOLS SECTION
+   ============================================================ -->
+<section class="tools-section section" id="tools">
+  <div class="container">
+    <div class="tools-header reveal">
+      <div class="pill-label">✦ Everything You Need</div>
+      <h2>Preview Tools</h2>
+      <p>Browse our complete suite of preview tools for every platform and use case</p>
+    </div>
+
+    <div class="tools-filter reveal">
+      <button class="filter-btn active" data-filter="all">All Tools</button>
+      <button class="filter-btn" data-filter="social">Social Media</button>
+      <button class="filter-btn" data-filter="link">Link Share</button>
+      <button class="filter-btn" data-filter="search">Search Engines</button>
+      <button class="filter-btn" data-filter="email">Email</button>
+      <button class="filter-btn" data-filter="ad">Ads</button>
+      <button class="filter-btn" data-filter="website">Website</button>
+      <button class="filter-btn" data-filter="seo">SEO</button>
     </div>
 
     <div class="tools-grid" id="toolsGrid">
-
-        <!-- 1. Social Media Post Previews -->
-        <div class="tool-category" data-category="social">
-            <div class="category-header">
-                <span class="category-icon">📣</span>
-                <h3>Social Media Post Previews</h3>
-                <span class="category-count">9 tools</span>
-            </div>
-            <ul class="tool-list">
-                <li class="tool-item"><a href="instagram-post-preview"><span class="tool-dot"></span>Instagram Post Preview</a></li>
-                <li class="tool-item"><a href="facebook-post-preview"><span class="tool-dot"></span>Facebook Post Preview</a></li>
-                <li class="tool-item"><a href="twitter-post-preview"><span class="tool-dot"></span>Twitter Post Preview</a></li>
-                <li class="tool-item"><a href="linkedin-post-preview"><span class="tool-dot"></span>LinkedIn Post Preview</a></li>
-                <li class="tool-item"><a href="tiktok-video-preview"><span class="tool-dot"></span>TikTok Video Preview</a></li>
-                <li class="tool-item"><a href="youtube-video-preview"><span class="tool-dot"></span>YouTube Video Preview</a></li>
-                <li class="tool-item"><a href="pinterest-pin-preview"><span class="tool-dot"></span>Pinterest Pin Preview</a></li>
-                <li class="tool-item"><a href="reddit-post-preview"><span class="tool-dot"></span>Reddit Post Preview</a></li>
-                <li class="tool-item"><a href="snapchat-story-preview"><span class="tool-dot"></span>Snapchat Story Preview</a></li>
-            </ul>
+      <div class="tool-category reveal" data-category="social">
+        <div class="category-header">
+          <span class="category-icon">📣</span>
+          <h3>Social Media Post Previews</h3>
+          <span class="category-count">9 tools</span>
         </div>
+        <ul class="tool-list">
+          <li class="tool-item"><a href="instagram-post-preview"><span class="tool-dot"></span>Instagram Post Preview</a></li>
+          <li class="tool-item"><a href="facebook-post-preview"><span class="tool-dot"></span>Facebook Post Preview</a></li>
+          <li class="tool-item"><a href="twitter-post-preview"><span class="tool-dot"></span>Twitter Post Preview</a></li>
+          <li class="tool-item"><a href="linkedin-post-preview"><span class="tool-dot"></span>LinkedIn Post Preview</a></li>
+          <li class="tool-item"><a href="tiktok-video-preview"><span class="tool-dot"></span>TikTok Video Preview</a></li>
+          <li class="tool-item"><a href="youtube-video-preview"><span class="tool-dot"></span>YouTube Video Preview</a></li>
+          <li class="tool-item"><a href="pinterest-pin-preview"><span class="tool-dot"></span>Pinterest Pin Preview</a></li>
+          <li class="tool-item"><a href="reddit-post-preview"><span class="tool-dot"></span>Reddit Post Preview</a></li>
+          <li class="tool-item"><a href="snapchat-story-preview"><span class="tool-dot"></span>Snapchat Story Preview</a></li>
+        </ul>
+      </div>
 
-        <div class="tool-category" data-category="link">
-            <div class="category-header">
-                <span class="category-icon">🔗</span>
-                <h3>Link Share Previews</h3>
-                <span class="category-count">6 tools</span>
-            </div>
-            <ul class="tool-list">
-                <li class="tool-item"><a href="opengraph-preview"><span class="tool-dot"></span>OpenGraph Preview</a></li>
-                <li class="tool-item"><a href="twitter-card-preview"><span class="tool-dot"></span>Twitter Card Preview</a></li>
-                <li class="tool-item"><a href="facebook-share-preview"><span class="tool-dot"></span>Facebook Share Preview</a></li>
-                <li class="tool-item"><a href="linkedin-share-preview"><span class="tool-dot"></span>LinkedIn Share Preview</a></li>
-                <li class="tool-item"><a href="pinterest-share-preview"><span class="tool-dot"></span>Pinterest Share Preview</a></li>
-                <li class="tool-item"><a href="social-share-preview"><span class="tool-dot"></span>Social Share Preview</a></li>
-            </ul>
+      <div class="tool-category reveal" data-category="link">
+        <div class="category-header">
+          <span class="category-icon">🔗</span>
+          <h3>Link Share Previews</h3>
+          <span class="category-count">6 tools</span>
         </div>
+        <ul class="tool-list">
+          <li class="tool-item"><a href="opengraph-preview"><span class="tool-dot"></span>OpenGraph Preview</a></li>
+          <li class="tool-item"><a href="twitter-card-preview"><span class="tool-dot"></span>Twitter Card Preview</a></li>
+          <li class="tool-item"><a href="facebook-share-preview"><span class="tool-dot"></span>Facebook Share Preview</a></li>
+          <li class="tool-item"><a href="linkedin-share-preview"><span class="tool-dot"></span>LinkedIn Share Preview</a></li>
+          <li class="tool-item"><a href="pinterest-share-preview"><span class="tool-dot"></span>Pinterest Share Preview</a></li>
+          <li class="tool-item"><a href="social-share-preview"><span class="tool-dot"></span>Social Share Preview</a></li>
+        </ul>
+      </div>
 
-        <div class="tool-category" data-category="search">
-            <div class="category-header">
-                <span class="category-icon">🔍</span>
-                <h3>Search Engine Results Previews</h3>
-                <span class="category-count">6 tools</span>
-            </div>
-            <ul class="tool-list">
-                <li class="tool-item"><a href="google-serp-preview"><span class="tool-dot"></span>Google SERP Preview</a></li>
-                <li class="tool-item"><a href="bing-serp-preview"><span class="tool-dot"></span>Bing SERP Preview</a></li>
-                <li class="tool-item"><a href="yahoo-serp-preview"><span class="tool-dot"></span>Yahoo SERP Preview</a></li>
-                <li class="tool-item"><a href="duckduckgo-serp-preview"><span class="tool-dot"></span>DuckDuckGo SERP Preview</a></li>
-                <li class="tool-item"><a href="serp-snippet-preview"><span class="tool-dot"></span>SERP Snippet Preview</a></li>
-                <li class="tool-item"><a href="google-serp-simulator"><span class="tool-dot"></span>Google SERP Simulator</a></li>
-            </ul>
+      <div class="tool-category reveal" data-category="search">
+        <div class="category-header">
+          <span class="category-icon">🔍</span>
+          <h3>Search Engine Results Previews</h3>
+          <span class="category-count">6 tools</span>
         </div>
+        <ul class="tool-list">
+          <li class="tool-item"><a href="google-serp-preview"><span class="tool-dot"></span>Google SERP Preview</a></li>
+          <li class="tool-item"><a href="bing-serp-preview"><span class="tool-dot"></span>Bing SERP Preview</a></li>
+          <li class="tool-item"><a href="yahoo-serp-preview"><span class="tool-dot"></span>Yahoo SERP Preview</a></li>
+          <li class="tool-item"><a href="duckduckgo-serp-preview"><span class="tool-dot"></span>DuckDuckGo SERP Preview</a></li>
+          <li class="tool-item"><a href="serp-snippet-preview"><span class="tool-dot"></span>SERP Snippet Preview</a></li>
+          <li class="tool-item"><a href="google-serp-simulator"><span class="tool-dot"></span>Google SERP Simulator</a></li>
+        </ul>
+      </div>
 
-        <div class="tool-category" data-category="email">
-            <div class="category-header">
-                <span class="category-icon">📧</span>
-                <h3>Email Previews</h3>
-                <span class="category-count">9 tools</span>
-            </div>
-            <ul class="tool-list">
-                <li class="tool-item"><a href="gmail-email-preview"><span class="tool-dot"></span>Gmail Email Preview</a></li>
-                <li class="tool-item"><a href="outlook-email-preview"><span class="tool-dot"></span>Outlook Email Preview</a></li>
-                <li class="tool-item"><a href="apple-mail-email-preview"><span class="tool-dot"></span>Apple Mail Email Preview</a></li>
-                <li class="tool-item"><a href="yahoo-mail-email-preview"><span class="tool-dot"></span>Yahoo Mail Email Preview</a></li>
-                <li class="tool-item"><a href="email-newsletter-preview"><span class="tool-dot"></span>Email Newsletter Preview</a></li>
-                <li class="tool-item"><a href="html-email-preview"><span class="tool-dot"></span>HTML Email Preview</a></li>
-                <li class="tool-item"><a href="dark-mode-email-preview"><span class="tool-dot"></span>Dark Mode Email Preview</a></li>
-                <li class="tool-item"><a href="mobile-email-preview"><span class="tool-dot"></span>Mobile Email Preview</a></li>
-                <li class="tool-item"><a href="desktop-email-preview"><span class="tool-dot"></span>Desktop Email Preview</a></li>
-            </ul>
+      <div class="tool-category reveal" data-category="email">
+        <div class="category-header">
+          <span class="category-icon">📧</span>
+          <h3>Email Previews</h3>
+          <span class="category-count">9 tools</span>
         </div>
+        <ul class="tool-list">
+          <li class="tool-item"><a href="gmail-email-preview"><span class="tool-dot"></span>Gmail Email Preview</a></li>
+          <li class="tool-item"><a href="outlook-email-preview"><span class="tool-dot"></span>Outlook Email Preview</a></li>
+          <li class="tool-item"><a href="apple-mail-email-preview"><span class="tool-dot"></span>Apple Mail Email Preview</a></li>
+          <li class="tool-item"><a href="yahoo-mail-email-preview"><span class="tool-dot"></span>Yahoo Mail Email Preview</a></li>
+          <li class="tool-item"><a href="email-newsletter-preview"><span class="tool-dot"></span>Email Newsletter Preview</a></li>
+          <li class="tool-item"><a href="html-email-preview"><span class="tool-dot"></span>HTML Email Preview</a></li>
+          <li class="tool-item"><a href="dark-mode-email-preview"><span class="tool-dot"></span>Dark Mode Email Preview</a></li>
+          <li class="tool-item"><a href="mobile-email-preview"><span class="tool-dot"></span>Mobile Email Preview</a></li>
+          <li class="tool-item"><a href="desktop-email-preview"><span class="tool-dot"></span>Desktop Email Preview</a></li>
+        </ul>
+      </div>
 
-        <div class="tool-category" data-category="ad">
-            <div class="category-header">
-                <span class="category-icon">📢</span>
-                <h3>Ad Previews</h3>
-                <span class="category-count">10 tools</span>
-            </div>
-            <ul class="tool-list">
-                <li class="tool-item"><a href="google-ad-preview"><span class="tool-dot"></span>Google Ad Preview</a></li>
-                <li class="tool-item"><a href="expanded-text-ad-preview"><span class="tool-dot"></span>Expanded Text Ad Preview</a></li>
-                <li class="tool-item"><a href="responsive-search-ad-preview"><span class="tool-dot"></span>Responsive Search Ad Preview</a></li>
-                <li class="tool-item"><a href="facebook-ad-preview"><span class="tool-dot"></span>Facebook Ad Preview</a></li>
-                <li class="tool-item"><a href="instagram-ad-preview"><span class="tool-dot"></span>Instagram Ad Preview</a></li>
-                <li class="tool-item"><a href="tiktok-ad-preview"><span class="tool-dot"></span>TikTok Ad Preview</a></li>
-                <li class="tool-item"><a href="twitter-ad-preview"><span class="tool-dot"></span>Twitter Ad Preview</a></li>
-                <li class="tool-item"><a href="linkedin-ad-preview"><span class="tool-dot"></span>LinkedIn Ad Preview</a></li>
-                <li class="tool-item"><a href="html5-ad-preview"><span class="tool-dot"></span>HTML5 Ad Preview</a></li>
-                <li class="tool-item"><a href="social-media-ad-mockup-preview"><span class="tool-dot"></span>Social Media Ad Mockup Preview</a></li>
-            </ul>
+      <div class="tool-category reveal" data-category="ad">
+        <div class="category-header">
+          <span class="category-icon">📢</span>
+          <h3>Ad Previews</h3>
+          <span class="category-count">10 tools</span>
         </div>
+        <ul class="tool-list">
+          <li class="tool-item"><a href="google-ad-preview"><span class="tool-dot"></span>Google Ad Preview</a></li>
+          <li class="tool-item"><a href="expanded-text-ad-preview"><span class="tool-dot"></span>Expanded Text Ad Preview</a></li>
+          <li class="tool-item"><a href="responsive-search-ad-preview"><span class="tool-dot"></span>Responsive Search Ad Preview</a></li>
+          <li class="tool-item"><a href="facebook-ad-preview"><span class="tool-dot"></span>Facebook Ad Preview</a></li>
+          <li class="tool-item"><a href="instagram-ad-preview"><span class="tool-dot"></span>Instagram Ad Preview</a></li>
+          <li class="tool-item"><a href="tiktok-ad-preview"><span class="tool-dot"></span>TikTok Ad Preview</a></li>
+          <li class="tool-item"><a href="twitter-ad-preview"><span class="tool-dot"></span>Twitter Ad Preview</a></li>
+          <li class="tool-item"><a href="linkedin-ad-preview"><span class="tool-dot"></span>LinkedIn Ad Preview</a></li>
+          <li class="tool-item"><a href="html5-ad-preview"><span class="tool-dot"></span>HTML5 Ad Preview</a></li>
+          <li class="tool-item"><a href="social-media-ad-mockup-preview"><span class="tool-dot"></span>Social Media Ad Mockup</a></li>
+        </ul>
+      </div>
 
-        <div class="tool-category" data-category="website">
-            <div class="category-header">
-                <span class="category-icon">🌐</span>
-                <h3>Website Previews</h3>
-                <span class="category-count">7 tools</span>
-            </div>
-            <ul class="tool-list">
-                <li class="tool-item"><a href="responsive-website-preview"><span class="tool-dot"></span>Responsive Website Preview</a></li>
-                <li class="tool-item"><a href="mobile-website-preview"><span class="tool-dot"></span>Mobile Website Preview</a></li>
-                <li class="tool-item"><a href="tablet-website-preview"><span class="tool-dot"></span>Tablet Website Preview</a></li>
-                <li class="tool-item"><a href="desktop-website-preview"><span class="tool-dot"></span>Desktop Website Preview</a></li>
-                <li class="tool-item"><a href="browser-compatibility-preview"><span class="tool-dot"></span>Browser Compatibility Preview</a></li>
-                <li class="tool-item"><a href="website-screenshot-preview"><span class="tool-dot"></span>Website Screenshot Preview</a></li>
-                <li class="tool-item"><a href="website-thumbnail-preview"><span class="tool-dot"></span>Website Thumbnail Preview</a></li>
-            </ul>
+      <div class="tool-category reveal" data-category="website">
+        <div class="category-header">
+          <span class="category-icon">🌐</span>
+          <h3>Website Previews</h3>
+          <span class="category-count">7 tools</span>
         </div>
+        <ul class="tool-list">
+          <li class="tool-item"><a href="responsive-website-preview"><span class="tool-dot"></span>Responsive Website Preview</a></li>
+          <li class="tool-item"><a href="mobile-website-preview"><span class="tool-dot"></span>Mobile Website Preview</a></li>
+          <li class="tool-item"><a href="tablet-website-preview"><span class="tool-dot"></span>Tablet Website Preview</a></li>
+          <li class="tool-item"><a href="desktop-website-preview"><span class="tool-dot"></span>Desktop Website Preview</a></li>
+          <li class="tool-item"><a href="browser-compatibility-preview"><span class="tool-dot"></span>Browser Compatibility Preview</a></li>
+          <li class="tool-item"><a href="website-screenshot-preview"><span class="tool-dot"></span>Website Screenshot Preview</a></li>
+          <li class="tool-item"><a href="website-thumbnail-preview"><span class="tool-dot"></span>Website Thumbnail Preview</a></li>
+        </ul>
+      </div>
 
-        <div class="tool-category" data-category="seo">
-            <div class="category-header">
-                <span class="category-icon">📈</span>
-                <h3>SEO Previews</h3>
-                <span class="category-count">6 tools</span>
-            </div>
-            <ul class="tool-list">
-                <li class="tool-item"><a href="meta-tags-preview"><span class="tool-dot"></span>Meta Tags Preview</a></li>
-                <li class="tool-item"><a href="title-and-description-preview"><span class="tool-dot"></span>Title and Description Preview</a></li>
-                <li class="tool-item"><a href="snippet-optimization-preview"><span class="tool-dot"></span>Snippet Optimization Preview</a></li>
-                <li class="tool-item"><a href="knowledge-graph-preview"><span class="tool-dot"></span>Knowledge Graph Preview</a></li>
-                <li class="tool-item"><a href="schema-markup-preview"><span class="tool-dot"></span>Schema Markup Preview</a></li>
-                <li class="tool-item"><a href="serp-snippet-optimization-preview"><span class="tool-dot"></span>SERP Snippet Optimization Preview</a></li>
-            </ul>
+      <div class="tool-category reveal" data-category="seo">
+        <div class="category-header">
+          <span class="category-icon">📈</span>
+          <h3>SEO Previews</h3>
+          <span class="category-count">6 tools</span>
         </div>
-
+        <ul class="tool-list">
+          <li class="tool-item"><a href="meta-tags-preview"><span class="tool-dot"></span>Meta Tags Preview</a></li>
+          <li class="tool-item"><a href="title-and-description-preview"><span class="tool-dot"></span>Title and Description Preview</a></li>
+          <li class="tool-item"><a href="snippet-optimization-preview"><span class="tool-dot"></span>Snippet Optimization Preview</a></li>
+          <li class="tool-item"><a href="knowledge-graph-preview"><span class="tool-dot"></span>Knowledge Graph Preview</a></li>
+          <li class="tool-item"><a href="schema-markup-preview"><span class="tool-dot"></span>Schema Markup Preview</a></li>
+          <li class="tool-item"><a href="serp-snippet-optimization-preview"><span class="tool-dot"></span>SERP Snippet Optimization</a></li>
+        </ul>
+      </div>
     </div>
 
+    <!-- Stats bar -->
+    <div class="tools-stats reveal">
+      <div class="stat-item">
+        <span class="stat-number">53</span>
+        <span class="stat-label">Total Tools</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">7</span>
+        <span class="stat-label">Categories</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">20+</span>
+        <span class="stat-label">Device Frames</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">100%</span>
+        <span class="stat-label">Free to Use</span>
+      </div>
     </div>
-
-    <!-- Tools Stats Bar -->
-    <div class="tools-stats">
-        <div class="stat-item">
-            <span class="stat-number">53</span>
-            <span class="stat-label">Total Tools</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-            <span class="stat-number">7</span>
-            <span class="stat-label">Categories</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-            <span class="stat-number">100%</span>
-            <span class="stat-label">Free to Use</span>
-        </div>
-    </div>
+  </div>
 </section>
 
-    <!-- ============================================
-   SECTION 1: HOW IT WORKS
-   Paste after the Features section
-   ============================================ -->
-<section class="how-it-works" id="how-it-works">
-    <div class="hiw-inner">
-        <div class="hiw-header">
-            <span class="section-label">Simple Process</span>
-            <h2>How It Works</h2>
-            <p class="hiw-subtitle">Get a live preview of any website in three simple steps</p>
-        </div>
-
-        <div class="hiw-steps">
-            <div class="hiw-step">
-                <div class="step-number">01</div>
-                <div class="step-content">
-                    <div class="step-icon">🔗</div>
-                    <h3>Paste Your URL</h3>
-                    <p>Copy any website URL and paste it into the input field. Supports HTTP, HTTPS, and all domain types.</p>
-                </div>
-            </div>
-
-            <div class="hiw-connector">
-                <span class="connector-line"></span>
-                <span class="connector-arrow">→</span>
-            </div>
-
-            <div class="hiw-step">
-                <div class="step-number">02</div>
-                <div class="step-content">
-                    <div class="step-icon">📐</div>
-                    <h3>Choose a Device</h3>
-                    <p>Select from Mobile, Tablet, or Desktop view to simulate how the site renders across different screen sizes.</p>
-                </div>
-            </div>
-
-            <div class="hiw-connector">
-                <span class="connector-line"></span>
-                <span class="connector-arrow">→</span>
-            </div>
-
-            <div class="hiw-step">
-                <div class="step-number">03</div>
-                <div class="step-content">
-                    <div class="step-icon">✅</div>
-                    <h3>See the Preview</h3>
-                    <p>Instantly view the live website inside a realistic device frame. Switch devices on the fly without re-entering the URL.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="hiw-cta">
-            <button class="btn btn-primary" onclick="scrollToViewer()">Try It Now</button>
-        </div>
+<!-- ============================================================
+   FAQ
+   ============================================================ -->
+<section class="faq section" id="faq">
+  <div class="container">
+    <div class="faq-header reveal">
+      <div class="pill-label">Got Questions?</div>
+      <h2>Frequently Asked</h2>
+      <p>Everything you need to know about Website Viewer</p>
     </div>
+    <div class="faq-grid">
+      <div class="faq-col">
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Is Website Viewer completely free to use?</span>
+            <span class="faq-chevron">﹀</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes, Website Viewer is 100% free with no sign-up required. Simply visit the site, paste a URL, and start previewing. There are no hidden fees, premium tiers, or usage limits.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Why does some website content not load in the preview?</span>
+            <span class="faq-chevron">﹀</span>
+          </button>
+          <div class="faq-answer">
+            <p>Some websites use security headers (like <code>X-Frame-Options</code> or <code>Content-Security-Policy</code>) that prevent embedding in iframes. This is a browser-level security restriction. Most modern public websites preview just fine.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Does Website Viewer store or log the URLs I enter?</span>
+            <span class="faq-chevron">﹀</span>
+          </button>
+          <div class="faq-answer">
+            <p>No. We do not store, log, or transmit your URLs to any server. The preview loads directly in your browser via an iframe. Your session data is stored temporarily in <code>sessionStorage</code> and cleared when you close the tab.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Can I preview localhost or internal network URLs?</span>
+            <span class="faq-chevron">﹀</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes — since the preview runs entirely in your browser, you can load <code>localhost</code> URLs or internal network addresses (e.g., <code>http://192.168.1.x</code>). Great for testing local development builds.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-col">
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>What screen sizes do the device frames simulate?</span>
+            <span class="faq-chevron">﹀</span>
+          </button>
+          <div class="faq-answer">
+            <p>Each device frame uses its real-world logical pixel dimensions: iPhone 15 Pro (393×852), Galaxy S24 Ultra (412×916), iPad Pro (1024×1366), MacBook Pro (1440×900), and more. Frames are clearly labeled.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Are there keyboard shortcuts?</span>
+            <span class="faq-chevron">﹀</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes! Press <kbd>M</kbd> for the first mobile frame, <kbd>T</kbd> for the first tablet, and <kbd>D</kbd> for Desktop. When the URL input is focused, press <kbd>Enter</kbd> to load. Use <kbd>+</kbd> / <kbd>-</kbd> to zoom.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Can I use this on my phone or tablet?</span>
+            <span class="faq-chevron">﹀</span>
+          </button>
+          <div class="faq-answer">
+            <p>Absolutely. Website Viewer is fully responsive and works on any modern browser. The interface adapts so the controls and preview area remain usable on smaller screens.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>How is this different from browser DevTools?</span>
+            <span class="faq-chevron">﹀</span>
+          </button>
+          <div class="faq-answer">
+            <p>DevTools require manual setup, technical knowledge, and work on one browser at a time. Website Viewer gives you instant, zero-setup, shareable device previews — perfect for sharing with clients or non-technical teammates.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-contact reveal">
+      <span class="faq-contact-icon">💬</span>
+      <div>
+        <h4>Still have questions?</h4>
+        <p>Open an issue or start a discussion on our GitHub repository — we're happy to help.</p>
+      </div>
+      <a href="https://github.com/website-viewer" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Visit GitHub →</a>
+    </div>
+  </div>
 </section>
 
+<!-- Footer (fetched) -->
+<footer id="footer-component"></footer>
 
-<!-- ============================================
-   SECTION 2: TESTIMONIALS / USE CASES
-   Paste after the How It Works section
-   ============================================ -->
-<section class="usecases-section" id="use-cases">
-    <div class="usecases-inner">
-        <div class="usecases-header">
-            <span class="section-label">Who Uses It</span>
-            <h2>Built For Everyone</h2>
-            <p class="usecases-subtitle">From developers to marketers — Website Viewer fits right into your workflow</p>
-        </div>
-
-        <div class="usecases-grid">
-            <div class="usecase-card featured">
-                <div class="usecase-quote">"</div>
-                <p class="usecase-text">I use Website Viewer every time I push a new release. Being able to instantly check mobile layout without resizing my browser has saved me countless hours of QA.</p>
-                <div class="usecase-person">
-                    <div class="usecase-avatar" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">JD</div>
-                    <div>
-                        <span class="usecase-name">Frontend Developer</span>
-                        <span class="usecase-role">Startup · SaaS Product</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="usecase-card">
-                <div class="usecase-quote">"</div>
-                <p class="usecase-text">As a designer, I need to present responsive mockups to clients fast. This tool lets me show exactly what their site looks like without any extra software.</p>
-                <div class="usecase-person">
-                    <div class="usecase-avatar" style="background: linear-gradient(135deg, #ec4899, #f43f5e);">AL</div>
-                    <div>
-                        <span class="usecase-name">UI/UX Designer</span>
-                        <span class="usecase-role">Freelance · Design Agency</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="usecase-card">
-                <div class="usecase-quote">"</div>
-                <p class="usecase-text">We run SEO audits for clients and checking mobile rendering is a core part of our process. Website Viewer is the quickest way to do that — no installs, no fuss.</p>
-                <div class="usecase-person">
-                    <div class="usecase-avatar" style="background: linear-gradient(135deg, #10b981, #3b82f6);">MR</div>
-                    <div>
-                        <span class="usecase-name">SEO Specialist</span>
-                        <span class="usecase-role">Digital Marketing Agency</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="usecase-card">
-                <div class="usecase-quote">"</div>
-                <p class="usecase-text">I always check competitor sites on mobile to benchmark their UX. Website Viewer makes it dead simple to hop between devices and compare layouts side by side.</p>
-                <div class="usecase-person">
-                    <div class="usecase-avatar" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">SK</div>
-                    <div>
-                        <span class="usecase-name">Product Manager</span>
-                        <span class="usecase-role">E-commerce · Growth Team</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Use case tags -->
-        <div class="usecase-tags">
-            <span class="uc-tag">👨‍💻 Developers</span>
-            <span class="uc-tag">🎨 Designers</span>
-            <span class="uc-tag">📊 Marketers</span>
-            <span class="uc-tag">🔍 SEO Specialists</span>
-            <span class="uc-tag">🧪 QA Testers</span>
-            <span class="uc-tag">📋 Product Managers</span>
-            <span class="uc-tag">🏢 Agencies</span>
-        </div>
-    </div>
-</section>
-
-
-<!-- ============================================
-   SECTION 3: FAQ
-   Paste just before the Footer
-   ============================================ -->
-<section class="faq-section" id="faq">
-    <div class="faq-inner">
-        <div class="faq-header">
-            <span class="section-label">Got Questions?</span>
-            <h2>Frequently Asked Questions</h2>
-            <p class="faq-subtitle">Everything you need to know about Website Viewer</p>
-        </div>
-
-        <div class="faq-grid">
-            <div class="faq-col">
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Is Website Viewer completely free to use?</span>
-                        <span class="faq-chevron">﹀</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes, Website Viewer is 100% free with no sign-up required. Simply visit the site, paste a URL, and start previewing. There are no hidden fees, premium tiers, or usage limits.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Why does some website content not load in the preview?</span>
-                        <span class="faq-chevron">﹀</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Some websites use security headers (like <code>X-Frame-Options</code> or <code>Content-Security-Policy</code>) that prevent them from being embedded in iframes. This is a browser-level security restriction and is not something we can bypass. Most modern public websites preview just fine.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Does Website Viewer store or log the URLs I enter?</span>
-                        <span class="faq-chevron">﹀</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>No. We do not store, log, or transmit your URLs to any server. The preview loads directly in your browser via an iframe. Your session data is stored temporarily in sessionStorage and is cleared when you close the tab.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Can I preview localhost or internal network URLs?</span>
-                        <span class="faq-chevron">﹀</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes — since the preview runs entirely in your browser, you can load <code>localhost</code> URLs or internal network addresses (e.g., <code>http://192.168.1.x</code>). This makes it great for testing local development builds across device viewports.</p>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="faq-col">
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>What screen sizes do the device frames simulate?</span>
-                        <span class="faq-chevron">﹀</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>The device frames simulate standard breakpoints: <strong>Mobile</strong> uses a 375 × 667px viewport (iPhone SE), <strong>Tablet</strong> uses 768 × 1024px (iPad), and <strong>Desktop</strong> uses a full-width view. The website inside the iframe responds to these dimensions exactly as it would on a real device.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Are there keyboard shortcuts I can use?</span>
-                        <span class="faq-chevron">﹀</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes! Press <kbd>M</kbd> for Mobile, <kbd>T</kbd> for Tablet, and <kbd>D</kbd> for Desktop to switch device views instantly. When the URL input is focused, press <kbd>Enter</kbd> or <kbd>Ctrl + Enter</kbd> to load the preview.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>Can I use this on my phone or tablet?</span>
-                        <span class="faq-chevron">﹀</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Absolutely. Website Viewer is fully responsive and works on any modern browser across phones, tablets, and desktops. The interface adapts so the controls and preview area remain usable on smaller screens.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        <span>How is this different from browser DevTools?</span>
-                        <span class="faq-chevron">﹀</span>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Browser DevTools require you to open them manually, know the right settings, and work on one browser at a time. Website Viewer gives you instant, shareable, zero-setup device previews — perfect for quickly checking URLs sent by clients or collaborators without any technical knowledge required.</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Still have questions -->
-        <div class="faq-contact">
-            <span class="faq-contact-icon">💬</span>
-            <div>
-                <h4>Still have questions?</h4>
-                <p>Open an issue or start a discussion on our GitHub repository — we're happy to help.</p>
-            </div>
-            <a href="https://github.com/website-viewer" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Visit GitHub</a>
-        </div>
-    </div>
-</section>
-
-
-<!-- ============================================
-   STYLES — paste into styles.css
-   ============================================ -->
-<style>
-
-/* ============================================
-   Shared Utilities
-   ============================================ */
-.section-label {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-primary);
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.25);
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    margin-bottom: var(--spacing-md);
+<!-- Schema Markup -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Website Viewer",
+  "description": "Preview your website on 20+ real device frames including iPhone 15 Pro, Samsung Galaxy S24, iPad Pro, MacBook and more. Free responsive design preview tool.",
+  "url": "https://website-viewer.github.io",
+  "applicationCategory": "WebApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Organization", "name": "Website Viewer" }
 }
-
-/* ============================================
-   How It Works Section
-   ============================================ */
-.how-it-works {
-    padding: var(--spacing-2xl) var(--spacing-lg);
-    background: linear-gradient(180deg, transparent 0%, rgba(99,102,241,0.04) 50%, transparent 100%);
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://website-viewer.github.io" },
+    { "@type": "ListItem", "position": 2, "name": "Features", "item": "https://website-viewer.github.io#features" },
+    { "@type": "ListItem", "position": 3, "name": "Viewer", "item": "https://website-viewer.github.io#viewer" },
+    { "@type": "ListItem", "position": 4, "name": "Tools", "item": "https://website-viewer.github.io#tools" }
+  ]
 }
-
-.hiw-inner {
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-.hiw-header {
-    text-align: center;
-    margin-bottom: var(--spacing-2xl);
-}
-
-.hiw-subtitle {
-    font-size: 1.1rem;
-    color: var(--color-text-muted);
-    max-width: 480px;
-    margin: 0 auto;
-}
-
-.hiw-steps {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    flex-wrap: wrap;
-    margin-bottom: var(--spacing-2xl);
-}
-
-.hiw-step {
-    flex: 1;
-    min-width: 240px;
-    max-width: 320px;
-    background: var(--color-bg-darker);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-xl);
-    text-align: center;
-    position: relative;
-    transition: var(--transition);
-}
-
-.hiw-step:hover {
-    border-color: var(--color-primary);
-    transform: translateY(-4px);
-    box-shadow: 0 0 24px rgba(99, 102, 241, 0.15);
-}
-
-.step-number {
-    position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--color-primary);
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    line-height: 1.4;
-}
-
-.step-icon {
-    font-size: 2.5rem;
-    margin-bottom: var(--spacing-md);
-    display: block;
-}
-
-.hiw-step h3 {
-    font-size: 1.1rem;
-    color: var(--color-text-light);
-    margin-bottom: var(--spacing-sm);
-}
-
-.hiw-step p {
-    font-size: 0.9rem;
-    margin: 0;
-}
-
-.hiw-connector {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 var(--spacing-md);
-    color: var(--color-primary);
-    font-size: 1.5rem;
-    opacity: 0.5;
-    flex-shrink: 0;
-}
-
-.connector-line {
-    display: none;
-}
-
-.hiw-cta {
-    text-align: center;
-}
-
-/* ============================================
-   Use Cases / Testimonials
-   ============================================ */
-.usecases-section {
-    padding: var(--spacing-2xl) var(--spacing-lg);
-}
-
-.usecases-inner {
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-.usecases-header {
-    text-align: center;
-    margin-bottom: var(--spacing-2xl);
-}
-
-.usecases-subtitle {
-    font-size: 1.1rem;
-    color: var(--color-text-muted);
-    max-width: 520px;
-    margin: 0 auto;
-}
-
-.usecases-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-xl);
-}
-
-.usecase-card {
-    background: var(--color-bg-darker);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-xl);
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
-
-.usecase-card:hover {
-    border-color: rgba(99, 102, 241, 0.4);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.25);
-}
-
-.usecase-card.featured {
-    border-color: rgba(99, 102, 241, 0.35);
-    background: linear-gradient(135deg, rgba(99,102,241,0.06) 0%, var(--color-bg-darker) 100%);
-}
-
-.usecase-quote {
-    font-size: 3rem;
-    line-height: 0.8;
-    color: var(--color-primary);
-    opacity: 0.5;
-    font-family: Georgia, serif;
-    margin-bottom: -0.5rem;
-}
-
-.usecase-text {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    line-height: 1.7;
-    margin: 0;
-    flex: 1;
-}
-
-.usecase-person {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: auto;
-}
-
-.usecase-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: #fff;
-    flex-shrink: 0;
-}
-
-.usecase-name {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: var(--color-text-light);
-}
-
-.usecase-role {
-    display: block;
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-}
-
-.usecase-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    justify-content: center;
-}
-
-.uc-tag {
-    background: var(--color-bg-darker);
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    padding: 0.4rem 1rem;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--color-text-muted);
-    transition: var(--transition);
-    cursor: default;
-}
-
-.uc-tag:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-}
-
-/* ============================================
-   FAQ Section
-   ============================================ */
-.faq-section {
-    padding: var(--spacing-2xl) var(--spacing-lg);
-    background: linear-gradient(180deg, transparent 0%, rgba(236,72,153,0.03) 50%, transparent 100%);
-}
-
-.faq-inner {
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-.faq-header {
-    text-align: center;
-    margin-bottom: var(--spacing-2xl);
-}
-
-.faq-subtitle {
-    font-size: 1.1rem;
-    color: var(--color-text-muted);
-    max-width: 480px;
-    margin: 0 auto;
-}
-
-.faq-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-2xl);
-    align-items: start;
-}
-
-.faq-col {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.faq-item {
-    background: var(--color-bg-darker);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-lg);
-    overflow: hidden;
-    transition: border-color 0.2s;
-}
-
-.faq-item:has(.faq-question[aria-expanded="true"]) {
-    border-color: rgba(99, 102, 241, 0.4);
-}
-
-.faq-question {
-    width: 100%;
-    background: none;
-    border: none;
-    padding: var(--spacing-md) var(--spacing-lg);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-md);
-    cursor: pointer;
-    text-align: left;
-    color: var(--color-text-light);
-    font-size: 0.9rem;
-    font-weight: 600;
-    font-family: var(--font-sans);
-    transition: background 0.2s;
-}
-
-.faq-question:hover {
-    background: rgba(99, 102, 241, 0.05);
-}
-
-.faq-chevron {
-    flex-shrink: 0;
-    font-size: 1rem;
-    color: var(--color-primary);
-    transition: transform 0.3s ease;
-    display: inline-block;
-}
-
-.faq-question[aria-expanded="true"] .faq-chevron {
-    transform: rotate(180deg);
-}
-
-.faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease, padding 0.35s ease;
-    padding: 0 var(--spacing-lg);
-}
-
-.faq-answer.open {
-    max-height: 300px;
-    padding: 0 var(--spacing-lg) var(--spacing-md);
-}
-
-.faq-answer p {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    line-height: 1.75;
-    margin: 0;
-}
-
-.faq-answer code,
-.faq-answer kbd {
-    background: rgba(99, 102, 241, 0.12);
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    border-radius: 0.3rem;
-    padding: 0.1em 0.45em;
-    font-size: 0.82rem;
-    font-family: var(--font-mono);
-    color: #a5b4fc;
-}
-
-/* FAQ Contact Strip */
-.faq-contact {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
-    padding: var(--spacing-lg) var(--spacing-xl);
-    background: var(--color-bg-darker);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-lg);
-    flex-wrap: wrap;
-}
-
-.faq-contact-icon {
-    font-size: 2.5rem;
-    flex-shrink: 0;
-}
-
-.faq-contact > div {
-    flex: 1;
-    min-width: 200px;
-}
-
-.faq-contact h4 {
-    color: var(--color-text-light);
-    margin-bottom: 0.25rem;
-    font-size: 1rem;
-}
-
-.faq-contact p {
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-    margin: 0;
-}
-
-/* ============================================
-   Responsive
-   ============================================ */
-@media (max-width: 768px) {
-    .hiw-steps {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .hiw-connector {
-        transform: rotate(90deg);
-        padding: 0.25rem 0;
-    }
-
-    .hiw-step {
-        max-width: 100%;
-    }
-
-    .faq-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .usecases-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .faq-contact {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .faq-contact > div {
-        min-width: auto;
-    }
-}
-
-@media (max-width: 480px) {
-    .faq-question {
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-size: 0.84rem;
-    }
-
-    .faq-answer {
-        padding: 0 var(--spacing-md);
-    }
-
-    .faq-answer.open {
-        padding: 0 var(--spacing-md) var(--spacing-sm);
-    }
-}
-</style>
-
-
-<!-- ============================================
-   FAQ SCRIPT — paste into script.js or before </body>
-   ============================================ -->
-<script>
-(function () {
-    function initFAQ() {
-        const questions = document.querySelectorAll('.faq-question');
-        if (!questions.length) return;
-
-        questions.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const isOpen = this.getAttribute('aria-expanded') === 'true';
-                const answer = this.nextElementSibling;
-
-                // Close all others
-                questions.forEach(q => {
-                    q.setAttribute('aria-expanded', 'false');
-                    q.nextElementSibling.classList.remove('open');
-                });
-
-                // Toggle clicked
-                if (!isOpen) {
-                    this.setAttribute('aria-expanded', 'true');
-                    answer.classList.add('open');
-                }
-            });
-        });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initFAQ);
-    } else {
-        initFAQ();
-    }
-})();
 </script>
 
-    <!-- Footer Component -->
-    <footer id="footer-component"></footer>
+<!-- Header/Footer fetch -->
+<script src="script.js"></script>
 
-    <!-- Schema Markup - Organization -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Website Viewer",
-        "description": "A responsive website preview tool to check how websites look on mobile, tablet, and desktop devices",
-        "url": "https://website-viewer.github.io",
-        "logo": "https://website-viewer.github.io/logo.svg",
-        "sameAs": [
-            "https://github.com/website-viewer"
-        ],
-        "contact": {
-            "@type": "ContactPoint",
-            "contactType": "General Support",
-            "url": "https://github.com/website-viewer"
-        }
-    }
-    </script>
-
-    <!-- Schema Markup - SoftwareApplication -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "Website Viewer",
-        "description": "Check how your website looks on mobile, tablet, and desktop devices. Responsive design preview tool with real-time rendering.",
-        "url": "https://website-viewer.github.io",
-        "applicationCategory": "WebApplication",
-        "operatingSystem": "Web",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD",
-            "availability": "https://schema.org/OnlineOnly"
-        },        
-        "author": {
-            "@type": "Organization",
-            "name": "Website Viewer"
-        }
-    }
-    </script>
-
-    <!-- Schema Markup - BreadcrumbList -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://website-viewer.github.io"
-            },
-            {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Features",
-                "item": "https://website-viewer.github.io#features"
-            },
-            {
-                "@type": "ListItem",
-                "position": 3,
-                "name": "Viewer",
-                "item": "https://website-viewer.github.io#viewer"
-            }
-        ]
-    }
-    </script>
-
-    <script src="script.js"></script>
+<!-- Main App Script -->
 <script>
 (function() {
-    function initToolsFilter() {
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const categories = document.querySelectorAll('.tool-category');
+  'use strict';
 
-        if (!filterBtns.length) return;
+  // ──────────────────────────────────────────────
+  // DEVICE FRAME CONFIGS
+  // ──────────────────────────────────────────────
+  const FRAMES = {
+    iphone15pro: {
+      label: 'iPhone 15 Pro', size: '393×852',
+      cls: 'frame-iphone15pro',
+      buildInner: () => `
+        <div class="phone-body">
+          <div class="btn-action"></div>
+          <div class="btn-vol-up"></div>
+          <div class="btn-vol-dn"></div>
+          <div class="btn-power"></div>
+          <div class="dynamic-island"></div>
+          <iframe id="previewFrame" title="Website Preview"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+            style="padding-top:48px"></iframe>
+        </div>
+      `
+    },
+    iphone15: {
+      label: 'iPhone 15', size: '390×844',
+      cls: 'frame-iphone15',
+      buildInner: () => `
+        <div class="phone-body">
+          <div class="btn-vol-up"></div>
+          <div class="btn-vol-dn"></div>
+          <div class="btn-power"></div>
+          <div class="dynamic-island"></div>
+          <iframe id="previewFrame" title="Website Preview"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+            style="padding-top:46px"></iframe>
+        </div>
+      `
+    },
+    ipadpro: {
+      label: 'iPad Pro 12.9"', size: '1024×1366',
+      cls: 'frame-ipadpro',
+      buildInner: () => `
+        <div class="phone-body">
+          <div class="punch-hole"></div>
+          <iframe id="previewFrame" title="Website Preview"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+        </div>
+      `
+    },
+    ipadmini: {
+      label: 'iPad Mini', size: '744×1133',
+      cls: 'frame-ipadmini',
+      buildInner: () => `
+        <div class="phone-body">
+          <div class="dynamic-island"></div>
+          <iframe id="previewFrame" title="Website Preview"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+            style="padding-top:44px"></iframe>
+        </div>
+      `
+    },
+    s24ultra: {
+      label: 'Samsung Galaxy S24 Ultra', size: '412×916',
+      cls: 'frame-s24ultra',
+      buildInner: () => `
+        <div class="phone-body">
+          <div class="punch-hole"></div>
+          <div class="btn-vol"></div>
+          <div class="btn-power"></div>
+          <iframe id="previewFrame" title="Website Preview"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+            style="padding-top:38px"></iframe>
+        </div>
+      `
+    },
+    s24: {
+      label: 'Samsung Galaxy S24', size: '360×780',
+      cls: 'frame-s24',
+      buildInner: () => `
+        <div class="phone-body">
+          <div class="punch-hole"></div>
+          <iframe id="previewFrame" title="Website Preview"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+            style="padding-top:36px"></iframe>
+        </div>
+      `
+    },
+    pixel8pro: {
+      label: 'Google Pixel 8 Pro', size: '412×892',
+      cls: 'frame-pixel8pro',
+      buildInner: () => `
+        <div class="phone-body">
+          <div class="camera-bar"></div>
+          <div class="punch-hole"></div>
+          <iframe id="previewFrame" title="Website Preview"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+            style="padding-top:36px"></iframe>
+        </div>
+      `
+    },
+    macbook: {
+      label: 'MacBook Pro 14"', size: '1440×900',
+      cls: 'frame-macbook',
+      buildInner: () => `
+        <div class="macbook-screen" style="height:680px">
+          <div class="macbook-notch"></div>
+          <div class="macbook-camera-dot"></div>
+          <iframe id="previewFrame" title="Website Preview" style="height:680px;padding-top:28px"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+        </div>
+        <div class="macbook-base"></div>
+        <div class="macbook-foot"></div>
+      `
+    },
+    desktop: {
+      label: 'Desktop Browser', size: '1440×900',
+      cls: 'frame-desktop',
+      buildInner: () => `
+        <div class="browser-bar">
+          <div class="browser-dots-row">
+            <div class="browser-dot browser-dot-r"></div>
+            <div class="browser-dot browser-dot-y"></div>
+            <div class="browser-dot browser-dot-g"></div>
+          </div>
+          <div class="browser-addr" id="browserAddr">about:blank</div>
+        </div>
+        <iframe id="previewFrame" title="Website Preview"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+      `
+    }
+  };
 
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const filter = this.dataset.filter;
+  let currentFrame = 'iphone15pro';
+  let currentUrl = '';
+  let zoomLevel = 100;
+  let isRotated = false;
+  let isDarkMode = false;
 
-                // Update active button
-                filterBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
+  // ──────────────────────────────────────────────
+  // RENDER FRAME
+  // ──────────────────────────────────────────────
+  function renderFrame(frameKey) {
+    const cfg = FRAMES[frameKey];
+    if (!cfg) return;
+    currentFrame = frameKey;
 
-                // Show/hide categories
-                categories.forEach(cat => {
-                    if (filter === 'all' || cat.dataset.category === filter) {
-                        cat.classList.remove('hidden');
-                    } else {
-                        cat.classList.add('hidden');
-                    }
-                });
-            });
-        });
+    const wrapper = document.getElementById('deviceWrapper');
+    const placeholder = document.getElementById('previewPlaceholder');
+    const frameDiv = document.getElementById('deviceFrame');
+    const label = document.getElementById('deviceLabel');
+    const badge = document.getElementById('frameBadge');
+
+    // Build frame HTML
+    frameDiv.className = 'phone-frame ' + cfg.cls;
+    if (isRotated) frameDiv.classList.add('rotated-frame');
+    frameDiv.innerHTML = cfg.buildInner();
+
+    if (label) label.textContent = `${cfg.label} · ${cfg.size}`;
+    if (badge) badge.textContent = cfg.label;
+
+    // Re-apply URL if one was loaded
+    if (currentUrl) {
+      const iframe = document.getElementById('previewFrame');
+      if (iframe) {
+        iframe.src = currentUrl;
+        updateBrowserAddr(currentUrl);
+      }
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initToolsFilter);
+    applyZoom();
+    updateRotateBtn();
+  }
+
+  // ──────────────────────────────────────────────
+  // LOAD WEBSITE
+  // ──────────────────────────────────────────────
+  window.loadWebsite = function() {
+    let url = document.getElementById('urlInput').value.trim();
+    if (!url) return;
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+    currentUrl = url;
+    document.getElementById('urlInput').value = url;
+
+    // Animate loading bar
+    const bar = document.getElementById('loadingBar');
+    bar.classList.add('active');
+    setTimeout(() => bar.classList.remove('active'), 2000);
+
+    // Ensure frame is rendered
+    renderFrame(currentFrame);
+
+    const iframe = document.getElementById('previewFrame');
+    if (iframe) {
+      iframe.src = url;
+      updateBrowserAddr(url);
+    }
+
+    const status = document.getElementById('statusText');
+    if (status) status.textContent = 'Loaded: ' + url;
+
+    // Save to session
+    try { sessionStorage.setItem('wv_url', url); sessionStorage.setItem('wv_frame', currentFrame); } catch(e) {}
+  };
+
+  function updateBrowserAddr(url) {
+    const addr = document.getElementById('browserAddr');
+    if (addr) addr.textContent = url;
+  }
+
+  // ──────────────────────────────────────────────
+  // SWITCH FRAME
+  // ──────────────────────────────────────────────
+  window.switchFrame = function(frameKey, btn) {
+    // Update tab active state
+    document.querySelectorAll('.device-tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    isRotated = false;
+    renderFrame(frameKey);
+  };
+
+  // ──────────────────────────────────────────────
+  // ZOOM
+  // ──────────────────────────────────────────────
+  window.adjustZoom = function(delta) {
+    zoomLevel = Math.max(25, Math.min(150, zoomLevel + delta));
+    applyZoom();
+  };
+  window.resetZoom = function() { zoomLevel = 100; applyZoom(); };
+
+  function applyZoom() {
+    const wrapper = document.getElementById('deviceWrapper');
+    if (!wrapper) return;
+    wrapper.style.transform = `scale(${zoomLevel / 100})`;
+    wrapper.style.transformOrigin = 'top center';
+    const val = document.getElementById('zoomVal');
+    if (val) val.textContent = zoomLevel + '%';
+  }
+
+  // ──────────────────────────────────────────────
+  // ROTATION
+  // ──────────────────────────────────────────────
+  window.toggleRotation = function() {
+    isRotated = !isRotated;
+    const frameDiv = document.getElementById('deviceFrame');
+    if (!frameDiv) return;
+
+    if (isRotated) {
+      frameDiv.style.transform = 'rotate(90deg)';
+      frameDiv.style.transformOrigin = 'center center';
     } else {
-        initToolsFilter();
+      frameDiv.style.transform = '';
     }
+    updateRotateBtn();
+  };
+
+  function updateRotateBtn() {
+    const btn = document.getElementById('rotateBtn');
+    if (!btn) return;
+    btn.classList.toggle('rotated', isRotated);
+    btn.querySelector('.rotate-icon').style.transform = isRotated ? 'rotate(90deg)' : '';
+  }
+
+  // ──────────────────────────────────────────────
+  // RELOAD
+  // ──────────────────────────────────────────────
+  window.reloadFrame = function() {
+    const iframe = document.getElementById('previewFrame');
+    if (iframe && iframe.src) {
+      const src = iframe.src;
+      iframe.src = 'about:blank';
+      setTimeout(() => { iframe.src = src; }, 100);
+    }
+  };
+
+  // ──────────────────────────────────────────────
+  // DARK MODE PREVIEW (CSS filter)
+  // ──────────────────────────────────────────────
+  window.toggleDarkMode = function() {
+    isDarkMode = !isDarkMode;
+    const iframe = document.getElementById('previewFrame');
+    if (iframe) {
+      iframe.style.filter = isDarkMode ? 'invert(1) hue-rotate(180deg)' : '';
+    }
+    const btn = document.getElementById('darkModeBtn');
+    if (btn) btn.classList.toggle('active', isDarkMode);
+  };
+
+  // ──────────────────────────────────────────────
+  // SCROLLBAR TOGGLE
+  // ──────────────────────────────────────────────
+  window.toggleScroll = function() {
+    const iframe = document.getElementById('previewFrame');
+    if (iframe) {
+      const hasScroll = iframe.style.overflow === 'hidden';
+      iframe.style.overflow = hasScroll ? '' : 'hidden';
+      const btn = document.getElementById('scrollBtn');
+      if (btn) btn.classList.toggle('active', !hasScroll);
+    }
+  };
+
+  // ──────────────────────────────────────────────
+  // COPY LINK
+  // ──────────────────────────────────────────────
+  window.copyLink = function() {
+    const url = currentUrl || window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = event.currentTarget;
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✓ Copied!';
+      setTimeout(() => { btn.innerHTML = orig; }, 1500);
+    }).catch(() => {
+      alert('Copy: ' + url);
+    });
+  };
+
+  window.openInTab = function() {
+    if (currentUrl) window.open(currentUrl, '_blank');
+  };
+
+  // ──────────────────────────────────────────────
+  // KEYBOARD SHORTCUTS
+  // ──────────────────────────────────────────────
+  document.addEventListener('keydown', function(e) {
+    const active = document.activeElement;
+    const isInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
+
+    if (isInput) {
+      if (e.key === 'Enter') { loadWebsite(); }
+      return;
+    }
+
+    switch(e.key.toLowerCase()) {
+      case 'm':
+        document.querySelector('[data-frame="iphone15pro"]')?.click();
+        break;
+      case 't':
+        document.querySelector('[data-frame="ipadpro"]')?.click();
+        break;
+      case 'd':
+        document.querySelector('[data-frame="desktop"]')?.click();
+        break;
+      case '=': case '+': adjustZoom(10); break;
+      case '-': adjustZoom(-10); break;
+      case 'r': reloadFrame(); break;
+    }
+  });
+
+  // ──────────────────────────────────────────────
+  // TOOLS FILTER
+  // ──────────────────────────────────────────────
+  function initToolsFilter() {
+    const btns = document.querySelectorAll('.filter-btn');
+    const cats = document.querySelectorAll('.tool-category');
+    btns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const f = this.dataset.filter;
+        btns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        cats.forEach(c => {
+          c.classList.toggle('hidden', f !== 'all' && c.dataset.category !== f);
+        });
+      });
+    });
+  }
+
+  // ──────────────────────────────────────────────
+  // FAQ ACCORDION
+  // ──────────────────────────────────────────────
+  function initFAQ() {
+    const qs = document.querySelectorAll('.faq-question');
+    qs.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const isOpen = this.getAttribute('aria-expanded') === 'true';
+        qs.forEach(q => {
+          q.setAttribute('aria-expanded', 'false');
+          q.nextElementSibling?.classList.remove('open');
+        });
+        if (!isOpen) {
+          this.setAttribute('aria-expanded', 'true');
+          this.nextElementSibling?.classList.add('open');
+        }
+      });
+    });
+  }
+
+  // ──────────────────────────────────────────────
+  // SCROLL REVEAL
+  // ──────────────────────────────────────────────
+  function initReveal() {
+    const els = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => obs.observe(el));
+  }
+
+  // ──────────────────────────────────────────────
+  // RESTORE SESSION
+  // ──────────────────────────────────────────────
+  function restoreSession() {
+    try {
+      const savedUrl = sessionStorage.getItem('wv_url');
+      const savedFrame = sessionStorage.getItem('wv_frame');
+      if (savedFrame && FRAMES[savedFrame]) {
+        const tab = document.querySelector(`[data-frame="${savedFrame}"]`);
+        if (tab) { tab.click(); }
+      }
+      if (savedUrl) {
+        document.getElementById('urlInput').value = savedUrl;
+      }
+    } catch(e) {}
+  }
+
+  // ──────────────────────────────────────────────
+  // INIT
+  // ──────────────────────────────────────────────
+  function init() {
+    renderFrame('iphone15pro');
+    initToolsFilter();
+    initFAQ();
+    initReveal();
+    restoreSession();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
 })();
 </script>
-    
 </body>
 </html>
